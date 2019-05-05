@@ -1,3 +1,5 @@
+import { State } from "./classes";
+
 class LaserUIBox {
   box: HTMLDivElement;
   waveLengthLabel: HTMLLabelElement;
@@ -72,4 +74,18 @@ export function lightUpLaserBox(laserBox: LaserUIBox) {
   laserBox.box.classList.remove("grayed-out");
   laserBox.btn.classList.remove("laser-btn-off");
   laserBox.btn.classList.add("laser-btn-on");
+}
+
+export function updateUILasers(state : State) {
+  laserUIBoxes.forEach((laserUIBox, i) => {
+    //hide empty lasers
+    if (i >= state.lasers.length) laserUIBoxes[i].visible = false;
+    else {
+      laserUIBoxes[i].powerLabel.innerHTML = state.lasers[i].power.toString() + "%";
+      laserUIBoxes[i].slider.value = state.lasers[i].power.toString();
+      laserUIBoxes[i].waveLengthLabel.innerHTML = state.lasers[i].waveLength.toString() + "nm";
+      if (state.lasers[i].isOn) lightUpLaserBox(laserUIBoxes[i]);
+      else grayOutLaserBox(laserUIBoxes[i]);
+    }
+  });
 }

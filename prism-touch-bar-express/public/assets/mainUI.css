@@ -12,6 +12,7 @@
   --sky-blue: #2e83b3;
   --white: white;
   --slider-thumb: #5f5f5f;
+  --red-limit: #cf2828;
 }
 
 .grayed-out {
@@ -177,6 +178,11 @@ body {
 .highlighted {
   border: 2px solid var(--sky-blue);
   transition: 0.2s ease;
+}
+
+.limit {
+  border: 2px solid var(--red-limit);
+  transition: 0.4s ease-in-out;
 }
 
 /*to remove blinking cursor*/

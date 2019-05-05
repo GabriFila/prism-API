@@ -1,6 +1,228 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+class LaserUIBox {
+    constructor(box, waveLengthLabel, slider, btn, powerLabel, visible, position) {
+        this.box = box;
+        this.waveLengthLabel = waveLengthLabel;
+        this.slider = slider;
+        this.btn = btn;
+        this.powerLabel = powerLabel;
+        this.visible = visible;
+        this.position = position;
+        this.isOn = false;
+    }
+}
+const laserBox0 = document.querySelector("#slider-box-0");
+const laserBox1 = document.querySelector("#slider-box-1");
+const laserBox2 = document.querySelector("#slider-box-2");
+const laserBox3 = document.querySelector("#slider-box-3");
+const laserPower0 = document.querySelector("#slider-value-0");
+const laserPower1 = document.querySelector("#slider-value-1");
+const laserPower2 = document.querySelector("#slider-value-2");
+const laserPower3 = document.querySelector("#slider-value-3");
+const laserSlider0 = document.querySelector("#slider-0");
+const laserSlider1 = document.querySelector("#slider-1");
+const laserSlider2 = document.querySelector("#slider-2");
+const laserSlider3 = document.querySelector("#slider-3");
+const laserOnOffBtn0 = document.querySelector("#laser-on-off-btn-0");
+const laserOnOffBtn1 = document.querySelector("#laser-on-off-btn-1");
+const laserOnOffBtn2 = document.querySelector("#laser-on-off-btn-2");
+const laserOnOffBtn3 = document.querySelector("#laser-on-off-btn-3");
+const laserWaveLength0 = document.querySelector("#laser-type-0");
+const laserWaveLength1 = document.querySelector("#laser-type-1");
+const laserWaveLength2 = document.querySelector("#laser-type-2");
+const laserWaveLength3 = document.querySelector("#laser-type-3");
+exports.laserUIBoxes = [
+    new LaserUIBox(laserBox0, laserWaveLength0, laserSlider0, laserOnOffBtn0, laserPower0, true, 0),
+    new LaserUIBox(laserBox1, laserWaveLength1, laserSlider1, laserOnOffBtn1, laserPower1, true, 1),
+    new LaserUIBox(laserBox2, laserWaveLength2, laserSlider2, laserOnOffBtn2, laserPower2, true, 2),
+    new LaserUIBox(laserBox3, laserWaveLength3, laserSlider3, laserOnOffBtn3, laserPower3, true, 3)
+];
+function grayOutLaserBox(laserBox) {
+    laserBox.slider.disabled = true;
+    laserBox.box.classList.add("grayed-out");
+    laserBox.btn.classList.remove("laser-btn-on");
+    laserBox.btn.classList.add("laser-btn-off");
+}
+exports.grayOutLaserBox = grayOutLaserBox;
+function lightUpLaserBox(laserBox) {
+    laserBox.slider.disabled = false;
+    laserBox.box.classList.remove("grayed-out");
+    laserBox.btn.classList.remove("laser-btn-off");
+    laserBox.btn.classList.add("laser-btn-on");
+}
+exports.lightUpLaserBox = lightUpLaserBox;
+function updateUILasers(state) {
+    exports.laserUIBoxes.forEach((laserUIBox, i) => {
+        //hide empty lasers
+        if (i >= state.lasers.length)
+            exports.laserUIBoxes[i].visible = false;
+        else {
+            exports.laserUIBoxes[i].powerLabel.innerHTML = state.lasers[i].power.toString() + "%";
+            exports.laserUIBoxes[i].slider.value = state.lasers[i].power.toString();
+            exports.laserUIBoxes[i].waveLengthLabel.innerHTML = state.lasers[i].waveLength.toString() + "nm";
+            if (state.lasers[i].isOn)
+                lightUpLaserBox(exports.laserUIBoxes[i]);
+            else
+                grayOutLaserBox(exports.laserUIBoxes[i]);
+        }
+    });
+}
+exports.updateUILasers = updateUILasers;
+
+},{}],2:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const btn0 = document.querySelector("#btn0");
+const btn1 = document.querySelector("#btn1");
+const btn2 = document.querySelector("#btn2");
+const btn3 = document.querySelector("#btn3");
+const btn4 = document.querySelector("#btn4");
+const btn5 = document.querySelector("#btn5");
+const btn6 = document.querySelector("#btn6");
+const btn7 = document.querySelector("#btn7");
+const btn8 = document.querySelector("#btn8");
+const btn9 = document.querySelector("#btn9");
+exports.dotBtn = document.querySelector("#btnDot");
+exports.delBtn = document.querySelector("#btnDel");
+exports.numPad = [btn0, btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9];
+
+},{}],3:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class MaxMin {
+    constructor() {
+        this.max = Number.POSITIVE_INFINITY;
+        this.min = Number.NEGATIVE_INFINITY;
+    }
+}
+/*
+export class Preset {
+    name: string;
+    param: ParamState;
+    constructor(name: string, param: ParamState) {
+        this.name = name;
+        this.param = param;
+    }
+}
+*/
+//export const presets: Preset[] = [];
+const offsetX = document.querySelector("#offset-X");
+const offsetY = document.querySelector("#offset-Y");
+const offsetZ = document.querySelector("#offset-Z");
+const pixelNumberX = document.querySelector("#pixel-number-X");
+const pixelNumberY = document.querySelector("#pixel-number-Y");
+const pixelNumberZ = document.querySelector("#pixel-number-Z");
+const rangeX = document.querySelector("#range-X");
+const rangeY = document.querySelector("#range-Y");
+const rangeZ = document.querySelector("#range-Z");
+const dwellTime = document.querySelector("#dwell-time");
+const totalTime = document.querySelector("#total-time");
+exports.UIparameters = [
+    offsetX,
+    offsetY,
+    offsetZ,
+    pixelNumberX,
+    pixelNumberY,
+    pixelNumberZ,
+    rangeX,
+    rangeY,
+    rangeZ,
+    dwellTime
+];
+exports.addPresetBtn = document.querySelector("#add-preset-btn");
+exports.presetSelector = document.querySelector("#preset-selector");
+exports.limits = [];
+//fills limits
+exports.UIparameters.forEach(() => exports.limits.push(new MaxMin()));
+function sendParamChange(param) {
+    let target = param.id;
+    let resource;
+    let dim = "offset";
+    switch (target) {
+        case "offset-X":
+            resource = "offset/X";
+            break;
+        case "offset-Y":
+            resource = "offset/Y";
+            break;
+        case "offset-Z":
+            resource = "offset/Z";
+            break;
+        case "pixel-number-X":
+            resource = "pixelNumber/X";
+            break;
+        case "pixel-number-Y":
+            resource = "pixelNumber/Y";
+            break;
+        case "pixel-number-Z":
+            resource = "pixelNumber/Z";
+            break;
+        case "range-X":
+            resource = "range/X";
+            break;
+        case "range-Y":
+            resource = "range/Y";
+            break;
+        case "range-Z":
+            resource = "range/Z";
+            break;
+        case "dwell-time":
+            resource = "dwellTime";
+            break;
+    }
+    fetch("/prismState/scanParams/" + resource, {
+        method: "PUT",
+        body: JSON.stringify({
+            newValue: Number(param.value)
+        }),
+        headers: new Headers({
+            "Content-Type": "application/json"
+        })
+    });
+}
+exports.sendParamChange = sendParamChange;
+function updateUIParameters(state) {
+    exports.UIparameters[0].value = state.scanParams.offset.x.current.toString();
+    exports.UIparameters[1].value = state.scanParams.offset.y.current.toString();
+    exports.UIparameters[2].value = state.scanParams.offset.z.current.toString();
+    exports.UIparameters[3].value = state.scanParams.pixelNumber.x.current.toString();
+    exports.UIparameters[4].value = state.scanParams.pixelNumber.y.current.toString();
+    exports.UIparameters[5].value = state.scanParams.pixelNumber.z.current.toString();
+    exports.UIparameters[6].value = state.scanParams.range.x.current.toString();
+    exports.UIparameters[7].value = state.scanParams.range.y.current.toString();
+    exports.UIparameters[8].value = state.scanParams.range.z.current.toString();
+    exports.UIparameters[9].value = state.scanParams.dwellTime.toString();
+}
+exports.updateUIParameters = updateUIParameters;
+function updateLimits(newState) {
+    exports.limits[0].max = newState.scanParams.offset.x.max;
+    exports.limits[0].min = newState.scanParams.offset.x.min;
+    exports.limits[1].max = newState.scanParams.offset.y.max;
+    exports.limits[1].min = newState.scanParams.offset.y.min;
+    exports.limits[2].max = newState.scanParams.offset.z.max;
+    exports.limits[2].min = newState.scanParams.offset.z.min;
+    exports.limits[3].max = newState.scanParams.pixelNumber.x.max;
+    exports.limits[3].min = newState.scanParams.pixelNumber.x.min;
+    exports.limits[4].max = newState.scanParams.pixelNumber.y.max;
+    exports.limits[4].min = newState.scanParams.pixelNumber.y.min;
+    exports.limits[5].max = newState.scanParams.pixelNumber.z.max;
+    exports.limits[5].min = newState.scanParams.pixelNumber.z.min;
+    exports.limits[6].max = newState.scanParams.range.x.max;
+    exports.limits[6].min = newState.scanParams.range.x.min;
+    exports.limits[7].max = newState.scanParams.range.y.max;
+    exports.limits[7].min = newState.scanParams.range.y.min;
+    exports.limits[8].max = newState.scanParams.range.z.max;
+    exports.limits[8].min = newState.scanParams.range.z.min;
+    exports.limits[0].max = 100;
+    exports.limits[0].min = 0;
+}
+exports.updateLimits = updateLimits;
+
+},{}],4:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const movInfo_1 = require("./movInfo");
 const movInfo_2 = require("./movInfo");
 const movInfo_3 = require("./movInfo");
@@ -76,7 +298,7 @@ function dragEnd(e) {
 }
 exports.dragEnd = dragEnd;
 
-},{"./movInfo":3}],2:[function(require,module,exports){
+},{"./movInfo":6}],5:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const movInfo_1 = require("./movInfo");
@@ -168,7 +390,7 @@ function joyEnd(e) {
 }
 exports.joyEnd = joyEnd;
 
-},{"./movInfo":3}],3:[function(require,module,exports){
+},{"./movInfo":6}],6:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class RelPosInfo {
@@ -250,7 +472,7 @@ function translateToUI(xPos, yPos, el) {
 }
 exports.translateToUI = translateToUI;
 
-},{}],4:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const movInfo_1 = require("./movInfo");
@@ -320,252 +542,15 @@ function touchingOnlyRightPoints(e, element, area) {
         e.touches[0].target === area && e.touches[1].target === element;
 }
 
-},{"./movInfo":3}],5:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class Motors {
-}
-exports.Motors = Motors;
-class State {
-    constructor() {
-        this.scanParams = new ScanParams();
-        this.lasers = [new Laser(), new Laser(), new Laser(), new Laser()];
-    }
-}
-exports.State = State;
-class Laser {
-    constructor() {
-        this.power = null;
-        this.waveLength = null;
-    }
-}
-class ScanParams {
-    constructor() {
-        this.offset = new XYZ();
-        this.pixelNumber = new XYZ();
-        this.range = new XYZ();
-        this.dwellTime = null;
-    }
-}
-//for XYZ parameters
-class XYZ {
-    constructor() {
-        this.x = new CurrMaxMin();
-        this.y = new CurrMaxMin();
-        this.z = new CurrMaxMin();
-    }
-}
-//Current Value, Max Value, Min Value
-class CurrMaxMin {
-    get current() {
-        return this._current;
-    }
-    set current(value) {
-        if (value > this.max)
-            console.log("value greater than max");
-        //throw new Error(        "bella"`Current Value:${this._current} exceeded Max value:${this.max}`      );
-        else if (value < this.min)
-            console.log("value lower than min");
-        //throw new Error(        "bella"`Current Value:${this._current} exceeded Min value:${this.min}`      );
-        this._current = value;
-    }
-    constructor() {
-        this._current = null;
-        this.max = Number.POSITIVE_INFINITY;
-        this.min = Number.POSITIVE_INFINITY;
-    }
-}
-
-},{}],6:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class LaserUIBox {
-    constructor(box, waveLengthLabel, slider, btn, powerLabel, visible, position) {
-        this.box = box;
-        this.waveLengthLabel = waveLengthLabel;
-        this.slider = slider;
-        this.btn = btn;
-        this.powerLabel = powerLabel;
-        this.visible = visible;
-        this.position = position;
-        this.isOn = false;
-    }
-}
-const laserBox0 = document.querySelector("#slider-box-0");
-const laserBox1 = document.querySelector("#slider-box-1");
-const laserBox2 = document.querySelector("#slider-box-2");
-const laserBox3 = document.querySelector("#slider-box-3");
-const laserPower0 = document.querySelector("#slider-value-0");
-const laserPower1 = document.querySelector("#slider-value-1");
-const laserPower2 = document.querySelector("#slider-value-2");
-const laserPower3 = document.querySelector("#slider-value-3");
-const laserSlider0 = document.querySelector("#slider-0");
-const laserSlider1 = document.querySelector("#slider-1");
-const laserSlider2 = document.querySelector("#slider-2");
-const laserSlider3 = document.querySelector("#slider-3");
-const laserOnOffBtn0 = document.querySelector("#laser-on-off-btn-0");
-const laserOnOffBtn1 = document.querySelector("#laser-on-off-btn-1");
-const laserOnOffBtn2 = document.querySelector("#laser-on-off-btn-2");
-const laserOnOffBtn3 = document.querySelector("#laser-on-off-btn-3");
-const laserWaveLength0 = document.querySelector("#laser-type-0");
-const laserWaveLength1 = document.querySelector("#laser-type-1");
-const laserWaveLength2 = document.querySelector("#laser-type-2");
-const laserWaveLength3 = document.querySelector("#laser-type-3");
-exports.laserSliders = [laserSlider0, laserSlider1, laserSlider2, laserSlider3];
-exports.laserPowers = [laserPower0, laserPower1, laserPower2, laserPower3];
-exports.laserOnOffBtns = [laserOnOffBtn0, laserOnOffBtn1, laserOnOffBtn2, laserOnOffBtn3];
-exports.laserWaveLengths = [laserWaveLength0, laserWaveLength1, laserWaveLength2, laserWaveLength3];
-exports.laserUIBoxes = [
-    new LaserUIBox(laserBox0, laserWaveLength0, laserSlider0, laserOnOffBtn0, laserPower0, true, 0),
-    new LaserUIBox(laserBox1, laserWaveLength1, laserSlider1, laserOnOffBtn1, laserPower1, true, 1),
-    new LaserUIBox(laserBox2, laserWaveLength2, laserSlider2, laserOnOffBtn2, laserPower2, true, 2),
-    new LaserUIBox(laserBox3, laserWaveLength3, laserSlider3, laserOnOffBtn3, laserPower3, true, 3)
-];
-function laserOff(i) {
-    exports.laserSliders[i].disabled = true;
-    exports.laserSliders[i].classList.add("grayed-out");
-    exports.laserWaveLengths[i].classList.add("grayed-out");
-    exports.laserPowers[i].classList.add("grayed-out");
-    exports.laserOnOffBtns[i].classList.add("laser-btn-off");
-    exports.laserOnOffBtns[i].classList.remove("laser-btn-on");
-}
-exports.laserOff = laserOff;
-function grayOutLaserBox(laserBox) {
-    laserBox.slider.disabled = true;
-    laserBox.box.classList.add("grayed-out");
-    laserBox.btn.classList.remove("laser-btn-on");
-    laserBox.btn.classList.add("laser-btn-off");
-}
-exports.grayOutLaserBox = grayOutLaserBox;
-function lightUpLaserBox(laserBox) {
-    laserBox.slider.disabled = false;
-    laserBox.box.classList.remove("grayed-out");
-    laserBox.btn.classList.remove("laser-btn-off");
-    laserBox.btn.classList.add("laser-btn-on");
-}
-exports.lightUpLaserBox = lightUpLaserBox;
-function laserOn(i) {
-    exports.laserSliders[i].disabled = false;
-    exports.laserSliders[i].classList.remove("grayed-out");
-    exports.laserWaveLengths[i].classList.remove("grayed-out");
-    exports.laserPowers[i].classList.remove("grayed-out");
-    exports.laserOnOffBtns[i].classList.remove("laser-btn-off");
-    exports.laserOnOffBtns[i].classList.add("laser-btn-on");
-}
-exports.laserOn = laserOn;
-
-},{}],7:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const btn0 = document.querySelector("#btn0");
-const btn1 = document.querySelector("#btn1");
-const btn2 = document.querySelector("#btn2");
-const btn3 = document.querySelector("#btn3");
-const btn4 = document.querySelector("#btn4");
-const btn5 = document.querySelector("#btn5");
-const btn6 = document.querySelector("#btn6");
-const btn7 = document.querySelector("#btn7");
-const btn8 = document.querySelector("#btn8");
-const btn9 = document.querySelector("#btn9");
-exports.dotBtn = document.querySelector("#btnDot");
-exports.delBtn = document.querySelector("#btnDel");
-exports.numPad = [btn0, btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9];
-
-},{}],8:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-/*
-export class Preset {
-    name: string;
-    param: ParamState;
-    constructor(name: string, param: ParamState) {
-        this.name = name;
-        this.param = param;
-    }
-}
-*/
-//export const presets: Preset[] = [];
-const offsetX = document.querySelector("#offset-X");
-const offsetY = document.querySelector("#offset-Y");
-const offsetZ = document.querySelector("#offset-Z");
-const pixelNumberX = document.querySelector("#pixel-number-X");
-const pixelNumberY = document.querySelector("#pixel-number-Y");
-const pixelNumberZ = document.querySelector("#pixel-number-Z");
-const rangeX = document.querySelector("#range-X");
-const rangeY = document.querySelector("#range-Y");
-const rangeZ = document.querySelector("#range-Z");
-const dwellTime = document.querySelector("#dwell-time");
-const totalTime = document.querySelector("#total-time");
-exports.UIparameters = [
-    offsetX,
-    offsetY,
-    offsetZ,
-    pixelNumberX,
-    pixelNumberY,
-    pixelNumberZ,
-    rangeX,
-    rangeY,
-    rangeZ,
-    dwellTime
-];
-exports.addPresetBtn = document.querySelector("#add-preset-btn");
-exports.presetSelector = document.querySelector("#preset-selector");
-function sendParamChange(input) {
-    let target = input.id;
-    let resource;
-    switch (target) {
-        case "offset-X":
-            resource = "offset/X";
-            break;
-        case "offset-Y":
-            resource = "offset/Y";
-            break;
-        case "offset-Z":
-            resource = "offset/Z";
-            break;
-        case "pixel-number-X":
-            resource = "pixelNumber/X";
-            break;
-        case "pixel-number-Y":
-            resource = "pixelNumber/Y";
-            break;
-        case "pixel-number-Z":
-            resource = "pixelNumber/Z";
-            break;
-        case "range-X":
-            resource = "range/X";
-            break;
-        case "range-Y":
-            resource = "range/Y";
-            break;
-        case "range-Z":
-            resource = "range/Z";
-            break;
-        case "dwell-time":
-            resource = "dwellTime";
-            break;
-    }
-    fetch("/prismState/scanParams/" + resource, {
-        method: "PUT",
-        body: JSON.stringify({
-            newValue: Number(input.value)
-        }),
-        headers: new Headers({
-            "Content-Type": "application/json"
-        })
-    }).then(res => res.json());
-}
-exports.sendParamChange = sendParamChange;
-
-},{}],9:[function(require,module,exports){
+},{"./movInfo":6}],8:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /*slider initialization*/
-const lasers_1 = require("./initializations/lasers");
+const lasers_1 = require("./UIparts/lasers");
 /*numpad initialization*/
-const numpad_1 = require("./initializations/numpad");
+const numpad_1 = require("./UIparts/numpad");
 /*parameters initialization*/
-const scanParameteres_1 = require("./initializations/scanParameteres");
+const scanParameteres_1 = require("./UIparts/scanParameteres");
 /*drag capabilties*/
 const drag_1 = require("./drag-pinch-joystick/drag");
 /*pinch capabilties*/
@@ -574,15 +559,12 @@ const pinch_1 = require("./drag-pinch-joystick/pinch");
 const joystick_1 = require("./drag-pinch-joystick/joystick");
 /*z slider sensitivity */
 const movInfo_1 = require("./drag-pinch-joystick/movInfo");
-const classes_1 = require("./initializations/classes");
 /*last item in focus*/
 let lastFocus = undefined;
 /*start btn  initialization */
 const liveBtn = document.querySelector("#live-btn");
 const captureBtn = document.querySelector("#capture-btn");
 const stackBtn = document.querySelector("#stack-btn");
-let state = new classes_1.State();
-//prepareUI();
 document.body.addEventListener("click", function (e) {
     //remove highlight border only when touching something excluding numpad and selectred parameter
     if (numpad_1.numPad.filter(numBtn => numBtn === e.target).length == 0) {
@@ -600,14 +582,13 @@ document.body.addEventListener("click", function (e) {
             }
     });
 });
+//adds event to slider box for slider movement and on/off button
 lasers_1.laserUIBoxes.forEach(laserUIBox => {
     laserUIBox.slider.oninput = () => {
         let tempValue = laserUIBox.slider.value;
         laserUIBox.powerLabel.innerHTML = tempValue + "%";
-        //  state.lasers[i].power = Number(tempValue);
     };
     laserUIBox.btn.addEventListener("click", () => {
-        //state.lasers[i].isOn = !state.lasers[i].isOn;
         laserUIBox.isOn = !laserUIBox.isOn;
         if (laserUIBox.isOn)
             lasers_1.grayOutLaserBox(laserUIBox);
@@ -630,11 +611,21 @@ numpad_1.numPad.forEach((numBtn, i) => {
     numBtn.addEventListener("click", () => {
         if (lastFocus != null) {
             lastFocus.classList.add("highlighted");
-            lastFocus.value += i;
-            scanParameteres_1.sendParamChange(lastFocus);
+            let lastFocusParamIndex = scanParameteres_1.UIparameters.indexOf(lastFocus);
+            console.log(scanParameteres_1.limits[lastFocusParamIndex].max);
+            if (Number(scanParameteres_1.UIparameters[lastFocusParamIndex].value + i) > scanParameteres_1.limits[lastFocusParamIndex].max ||
+                Number(scanParameteres_1.UIparameters[lastFocusParamIndex].value + i) < scanParameteres_1.limits[lastFocusParamIndex].min) {
+                lastFocus.classList.add("limit");
+                setTimeout(() => lastFocus.classList.remove("limit"), 600);
+            }
+            else {
+                lastFocus.value += i;
+                scanParameteres_1.sendParamChange(lastFocus);
+            }
         }
     });
 });
+scanParameteres_1.UIparameters.forEach(param => param.addEventListener("change", () => alert("cambiato")));
 /*add dot to last focus element when dot button pressed */
 numpad_1.dotBtn.addEventListener("click", () => {
     if (lastFocus !== null && lastFocus.value.slice(-1) !== "." && lastFocus.value.length != 0) {
@@ -647,7 +638,7 @@ numpad_1.delBtn.addEventListener("click", () => {
     if (lastFocus != null) {
         lastFocus.classList.add("highlighted");
         lastFocus.value = lastFocus.value.slice(0, -1); /*remove last character */
-        scanParameteres_1.sendParamChange(lastFocus);
+        //sendParamChange(lastFocus);
     }
 });
 /*add dragable capabilities*/
@@ -679,58 +670,18 @@ movInfo_1.zSensBtn.addEventListener("click", () => {
 function removeHighlithBoder() {
     scanParameteres_1.UIparameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));
 }
-function prepareUI() {
-    scanParameteres_1.UIparameters.forEach(parameter => (parameter.value = "0"));
-    movInfo_1.zSensBtn.innerHTML = movInfo_1.zSenses[0];
-}
 setInterval(getCurrentState, 200);
 function getCurrentState() {
     fetch("/prismState/")
         .then(res => res.json())
-        .then(newState => (state = newState))
-        .then(updateUIParameters)
-        .then(updateUILasers);
-}
-function updateUIParameters() {
-    scanParameteres_1.UIparameters[0].value = state.scanParams.offset.x.current.toString();
-    scanParameteres_1.UIparameters[1].value = state.scanParams.offset.y.current.toString();
-    scanParameteres_1.UIparameters[2].value = state.scanParams.offset.z.current.toString();
-    scanParameteres_1.UIparameters[3].value = state.scanParams.pixelNumber.x.current.toString();
-    scanParameteres_1.UIparameters[4].value = state.scanParams.pixelNumber.y.current.toString();
-    scanParameteres_1.UIparameters[5].value = state.scanParams.pixelNumber.z.current.toString();
-    scanParameteres_1.UIparameters[6].value = state.scanParams.range.x.current.toString();
-    scanParameteres_1.UIparameters[7].value = state.scanParams.range.y.current.toString();
-    scanParameteres_1.UIparameters[8].value = state.scanParams.range.z.current.toString();
-    scanParameteres_1.UIparameters[9].value = state.scanParams.dwellTime.toString();
-}
-function updateUILasers() {
-    lasers_1.laserUIBoxes.forEach((laserUIBox, i) => {
-        //hide empty lasers
-        if (i >= state.lasers.length)
-            lasers_1.laserUIBoxes[i].visible = false;
-        else {
-            lasers_1.laserUIBoxes[i].powerLabel.innerHTML = state.lasers[i].power.toString() + "%";
-            lasers_1.laserUIBoxes[i].slider.value = state.lasers[i].power.toString();
-            lasers_1.laserUIBoxes[i].waveLengthLabel.innerHTML = state.lasers[i].waveLength.toString() + "nm";
-            if (state.lasers[i].isOn)
-                lasers_1.lightUpLaserBox(lasers_1.laserUIBoxes[i]);
-            else
-                lasers_1.grayOutLaserBox(lasers_1.laserUIBoxes[i]);
-        }
+        .then(newState => {
+        newState;
+        scanParameteres_1.updateLimits(newState);
+        lasers_1.updateUILasers(newState);
+        scanParameteres_1.updateUIParameters(newState);
     });
-    /*
-      state.lasers.forEach((stateLaser, i) => {
-        laserPowers[i].innerHTML = stateLaser.power.toString();
-        laserSliders[i].value = state.lasers[i].power.toString();
-        if (state.lasers[i].isOn) laserOn(i);
-        else laserOff(i);
-        laserWaveLengths[i].innerHTML = stateLaser.waveLength.toString();
-      });*/
 }
-function updateUIPads() {
-    drag_1.dragInfos[0].relPos.left = state.scanParams.offset.x.current;
-    drag_1.dragInfos[0].relPos.top = state.scanParams.offset.y.current;
-}
+function updateUIPads() { }
 //incomplete
 function sendLaserData(targetWaveLength) {
     fetch(`prismState/lasers/${targetWaveLength}`, {
@@ -741,6 +692,5 @@ function sendLaserData(targetWaveLength) {
         body: JSON.stringify({})
     });
 }
-function sendScanParam() { }
 
-},{"./drag-pinch-joystick/drag":1,"./drag-pinch-joystick/joystick":2,"./drag-pinch-joystick/movInfo":3,"./drag-pinch-joystick/pinch":4,"./initializations/classes":5,"./initializations/lasers":6,"./initializations/numpad":7,"./initializations/scanParameteres":8}]},{},[9]);
+},{"./UIparts/lasers":1,"./UIparts/numpad":2,"./UIparts/scanParameteres":3,"./drag-pinch-joystick/drag":4,"./drag-pinch-joystick/joystick":5,"./drag-pinch-joystick/movInfo":6,"./drag-pinch-joystick/pinch":7}]},{},[8]);

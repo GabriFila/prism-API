@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /*slider initialization*/
-const lasers_1 = require("./initializations/lasers");
+const lasers_1 = require("./UIparts/lasers");
 /*numpad initialization*/
-const numpad_1 = require("./initializations/numpad");
+const numpad_1 = require("./UIparts/numpad");
 /*parameters initialization*/
-const scanParameteres_1 = require("./initializations/scanParameteres");
+const scanParameteres_1 = require("./UIparts/scanParameteres");
 /*drag capabilties*/
 const drag_1 = require("./drag-pinch-joystick/drag");
 /*pinch capabilties*/
@@ -14,15 +14,12 @@ const pinch_1 = require("./drag-pinch-joystick/pinch");
 const joystick_1 = require("./drag-pinch-joystick/joystick");
 /*z slider sensitivity */
 const movInfo_1 = require("./drag-pinch-joystick/movInfo");
-const classes_1 = require("./initializations/classes");
 /*last item in focus*/
 let lastFocus = undefined;
 /*start btn  initialization */
 const liveBtn = document.querySelector("#live-btn");
 const captureBtn = document.querySelector("#capture-btn");
 const stackBtn = document.querySelector("#stack-btn");
-let state = new classes_1.State();
-//prepareUI();
 document.body.addEventListener("click", function (e) {
     //remove highlight border only when touching something excluding numpad and selectred parameter
     if (numpad_1.numPad.filter(numBtn => numBtn === e.target).length == 0) {
@@ -40,14 +37,13 @@ document.body.addEventListener("click", function (e) {
             }
     });
 });
+//adds event to slider box for slider movement and on/off button
 lasers_1.laserUIBoxes.forEach(laserUIBox => {
     laserUIBox.slider.oninput = () => {
         let tempValue = laserUIBox.slider.value;
         laserUIBox.powerLabel.innerHTML = tempValue + "%";
-        //  state.lasers[i].power = Number(tempValue);
     };
     laserUIBox.btn.addEventListener("click", () => {
-        //state.lasers[i].isOn = !state.lasers[i].isOn;
         laserUIBox.isOn = !laserUIBox.isOn;
         if (laserUIBox.isOn)
             lasers_1.grayOutLaserBox(laserUIBox);
@@ -70,11 +66,21 @@ numpad_1.numPad.forEach((numBtn, i) => {
     numBtn.addEventListener("click", () => {
         if (lastFocus != null) {
             lastFocus.classList.add("highlighted");
-            lastFocus.value += i;
-            scanParameteres_1.sendParamChange(lastFocus);
+            let lastFocusParamIndex = scanParameteres_1.UIparameters.indexOf(lastFocus);
+            console.log(scanParameteres_1.limits[lastFocusParamIndex].max);
+            if (Number(scanParameteres_1.UIparameters[lastFocusParamIndex].value + i) > scanParameteres_1.limits[lastFocusParamIndex].max ||
+                Number(scanParameteres_1.UIparameters[lastFocusParamIndex].value + i) < scanParameteres_1.limits[lastFocusParamIndex].min) {
+                lastFocus.classList.add("limit");
+                setTimeout(() => lastFocus.classList.remove("limit"), 600);
+            }
+            else {
+                lastFocus.value += i;
+                scanParameteres_1.sendParamChange(lastFocus);
+            }
         }
     });
 });
+scanParameteres_1.UIparameters.forEach(param => param.addEventListener("change", () => alert("cambiato")));
 /*add dot to last focus element when dot button pressed */
 numpad_1.dotBtn.addEventListener("click", () => {
     if (lastFocus !== null && lastFocus.value.slice(-1) !== "." && lastFocus.value.length != 0) {
@@ -87,7 +93,7 @@ numpad_1.delBtn.addEventListener("click", () => {
     if (lastFocus != null) {
         lastFocus.classList.add("highlighted");
         lastFocus.value = lastFocus.value.slice(0, -1); /*remove last character */
-        scanParameteres_1.sendParamChange(lastFocus);
+        //sendParamChange(lastFocus);
     }
 });
 /*add dragable capabilities*/
@@ -119,58 +125,18 @@ movInfo_1.zSensBtn.addEventListener("click", () => {
 function removeHighlithBoder() {
     scanParameteres_1.UIparameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));
 }
-function prepareUI() {
-    scanParameteres_1.UIparameters.forEach(parameter => (parameter.value = "0"));
-    movInfo_1.zSensBtn.innerHTML = movInfo_1.zSenses[0];
-}
 setInterval(getCurrentState, 200);
 function getCurrentState() {
     fetch("/prismState/")
         .then(res => res.json())
-        .then(newState => (state = newState))
-        .then(updateUIParameters)
-        .then(updateUILasers);
-}
-function updateUIParameters() {
-    scanParameteres_1.UIparameters[0].value = state.scanParams.offset.x.current.toString();
-    scanParameteres_1.UIparameters[1].value = state.scanParams.offset.y.current.toString();
-    scanParameteres_1.UIparameters[2].value = state.scanParams.offset.z.current.toString();
-    scanParameteres_1.UIparameters[3].value = state.scanParams.pixelNumber.x.current.toString();
-    scanParameteres_1.UIparameters[4].value = state.scanParams.pixelNumber.y.current.toString();
-    scanParameteres_1.UIparameters[5].value = state.scanParams.pixelNumber.z.current.toString();
-    scanParameteres_1.UIparameters[6].value = state.scanParams.range.x.current.toString();
-    scanParameteres_1.UIparameters[7].value = state.scanParams.range.y.current.toString();
-    scanParameteres_1.UIparameters[8].value = state.scanParams.range.z.current.toString();
-    scanParameteres_1.UIparameters[9].value = state.scanParams.dwellTime.toString();
-}
-function updateUILasers() {
-    lasers_1.laserUIBoxes.forEach((laserUIBox, i) => {
-        //hide empty lasers
-        if (i >= state.lasers.length)
-            lasers_1.laserUIBoxes[i].visible = false;
-        else {
-            lasers_1.laserUIBoxes[i].powerLabel.innerHTML = state.lasers[i].power.toString() + "%";
-            lasers_1.laserUIBoxes[i].slider.value = state.lasers[i].power.toString();
-            lasers_1.laserUIBoxes[i].waveLengthLabel.innerHTML = state.lasers[i].waveLength.toString() + "nm";
-            if (state.lasers[i].isOn)
-                lasers_1.lightUpLaserBox(lasers_1.laserUIBoxes[i]);
-            else
-                lasers_1.grayOutLaserBox(lasers_1.laserUIBoxes[i]);
-        }
+        .then(newState => {
+        newState;
+        scanParameteres_1.updateLimits(newState);
+        lasers_1.updateUILasers(newState);
+        scanParameteres_1.updateUIParameters(newState);
     });
-    /*
-      state.lasers.forEach((stateLaser, i) => {
-        laserPowers[i].innerHTML = stateLaser.power.toString();
-        laserSliders[i].value = state.lasers[i].power.toString();
-        if (state.lasers[i].isOn) laserOn(i);
-        else laserOff(i);
-        laserWaveLengths[i].innerHTML = stateLaser.waveLength.toString();
-      });*/
 }
-function updateUIPads() {
-    drag_1.dragInfos[0].relPos.left = state.scanParams.offset.x.current;
-    drag_1.dragInfos[0].relPos.top = state.scanParams.offset.y.current;
-}
+function updateUIPads() { }
 //incomplete
 function sendLaserData(targetWaveLength) {
     fetch(`prismState/lasers/${targetWaveLength}`, {
@@ -181,5 +147,4 @@ function sendLaserData(targetWaveLength) {
         body: JSON.stringify({})
     });
 }
-function sendScanParam() { }
 //# sourceMappingURL=mainUI.js.map
