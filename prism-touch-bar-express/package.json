@@ -4,7 +4,8 @@
   "description": "An express-based api to control prism microscope",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "tsc && npm run prepare-browser && node ./ts-dist/server.js",
+    "prepare-browser": "browserify ts-dist/src/UI/mainUI.js -o public/codeBehind/mainUI.js "
   },
   "author": "Gabriele Filaferro",
   "license": "MIT",
