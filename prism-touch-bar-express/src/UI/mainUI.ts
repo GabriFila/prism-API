@@ -1,21 +1,9 @@
 /*slider initialization*/
-import {
-  laserSliders,
-  laserOnOffBtns,
-  laserPowers,
-  laserWaveLengths,
-  laserOff,
-  laserOn
-} from "./initializations/lasers";
+import { laserSliders, laserOnOffBtns, laserPowers, laserWaveLengths, laserOff, laserOn } from "./initializations/lasers";
 /*numpad initialization*/
 import { numPad, delBtn, dotBtn } from "./initializations/numpad";
 /*parameters initialization*/
-import {
-  parameters,
-  presetSelector,
-  addPresetBtn,
-  /*presets, Preset,*/ sendParamChange
-} from "./initializations/scanParameteres";
+import { parameters, presetSelector, addPresetBtn, /*presets, Preset,*/ sendParamChange } from "./initializations/scanParameteres";
 /*drag capabilties*/
 import { dragStart, drag, dragEnd, dragInfos } from "./drag-pinch-joystick/drag";
 /*pinch capabilties*/
@@ -38,12 +26,8 @@ let state = new State();
 
 prepareUI();
 
-liveBtn.addEventListener("click", () => {
-  fetch("/prism-state/scan-param");
-});
-
 document.body.addEventListener("click", function(e) {
-  //removes highlight border only when not touching numpad
+  //remove highlight border only when touching something excluding numpad and selectred parameter
   if (numPad.filter(numBtn => numBtn === e.target).length == 0) {
     if (e.target !== delBtn && e.target !== dotBtn)
       if (parameters.filter(param => param === e.target).length == 0) {
@@ -51,7 +35,7 @@ document.body.addEventListener("click", function(e) {
         lastFocus = null;
       }
   }
-  //set parameter UI value to 0 when is empty
+  //set UI parameter value to 0 when empty
   parameters.forEach(param => {
     if (param != lastFocus)
       if (param.value == "") {
@@ -60,44 +44,25 @@ document.body.addEventListener("click", function(e) {
   });
 });
 
-/*open window to add preset */
-addPresetBtn.addEventListener("click", () => {
-  //open preset window
-});
-
-/*fires when add preset window is closed
-ipcHome.on("added-preset", (event: IpcMessageEvent, presetName: string) => {
-    let option = document.createElement("option");
-    option.text = presetName;
-    presetSelector.add(option);
-    presets.push(new Preset(presetName, state));
-})
-*/
-
-/*choose preset*/
-presetSelector.addEventListener("change", () => {
-  //  state = presets.find(preset => preset.name === presetSelector.selectedOptions[0].text).param;
-});
-
-/*add laser slider move event */
-laserSliders.forEach((slider, i) => {
-  slider.oninput = function() {
-    let tempValue = slider.value;
+/*laser slider move event */
+laserSliders.forEach((laserSlider, i) => {
+  laserSlider.oninput = function() {
+    let tempValue = laserSlider.value;
     laserPowers[i].innerHTML = tempValue + "%";
     //  state.lasers[i].power = Number(tempValue);
   };
 });
 
 /*turn on/off lasers */
-laserOnOffBtns.forEach((sliderBtn, i) => {
-  sliderBtn.addEventListener("click", () => {
+laserOnOffBtns.forEach((laserBtn, i) => {
+  laserBtn.addEventListener("click", () => {
     state.lasers[i].isOn = !state.lasers[i].isOn;
     if (state.lasers[i].isOn) laserOn(i);
     else laserOff(i);
   });
 });
 
-/*store last element in focus of paramentres input*/
+/*store last parameters input in focus*/
 parameters.forEach(param => {
   param.addEventListener("click", () => {
     removeHighlithBoder();
@@ -108,7 +73,7 @@ parameters.forEach(param => {
   });
 });
 
-/*input numpad value in last focus element*/
+/*add touched num in last focus element*/
 numPad.forEach((numBtn, i) => {
   numBtn.addEventListener("click", () => {
     if (lastFocus != null) {
@@ -127,7 +92,7 @@ dotBtn.addEventListener("click", () => {
   }
 });
 
-/*delet number to last focus element when dot button pressed */
+/*delete number to last focus element when delete button pressed */
 delBtn.addEventListener("click", () => {
   if (lastFocus != null) {
     lastFocus.classList.add("highlighted");
@@ -167,9 +132,7 @@ zSensBtn.addEventListener("click", () => {
 });
 
 function removeHighlithBoder() {
-  parameters
-    .filter(param => param.classList.contains("highlighted"))
-    .forEach(param => param.classList.remove("highlighted"));
+  parameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));
 }
 
 function prepareUI() {
@@ -210,8 +173,6 @@ function updateUIParameters() {
 }
 
 function updateUILasers() {
-  console.log(state.lasers);
-
   state.lasers.forEach((stateLaser, i) => {
     laserPowers[i].innerHTML = stateLaser.power.toString();
     laserSliders[i].value = state.lasers[i].power.toString();
@@ -225,3 +186,16 @@ function updateUIPads() {
   dragInfos[0].relPos.left = state.scanParams.offset.x.current;
   dragInfos[0].relPos.top = state.scanParams.offset.y.current;
 }
+
+//incomplete
+function sendLaserData(targetWaveLength: number) {
+  fetch(`state/lasers/${targetWaveLength}`, {
+    method: "PUT",
+    headers: {
+      "Content-type": "application/json"
+    },
+    body: JSON.stringify({})
+  });
+}
+
+function sendScanParam() {}
