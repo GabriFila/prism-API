@@ -24,7 +24,7 @@ const rangeZ: HTMLInputElement = document.querySelector("#range-Z");
 const dwellTime: HTMLInputElement = document.querySelector("#dwell-time");
 const totalTime: HTMLInputElement = document.querySelector("#total-time");
 
-export const parameters: HTMLInputElement[] = [
+export const UIparameters: HTMLInputElement[] = [
   offsetX,
   offsetY,
   offsetZ,
@@ -41,50 +41,58 @@ export const addPresetBtn: HTMLButtonElement = document.querySelector("#add-pres
 export const presetSelector: HTMLSelectElement = document.querySelector("#preset-selector");
 
 export function sendParamChange(input: HTMLInputElement) {
+  let target: string = input.id;
   let resource: string;
 
-  switch (input) {
-    case parameters[0]:
+  console.log("send param change");
+
+  switch (target) {
+    case "offset-X":
       resource = "offset/X";
       break;
-    case parameters[1]:
+    case "offset-Y":
       resource = "offset/Y";
       break;
-    case parameters[2]:
+    case "offset-Z":
       resource = "offset/Z";
       break;
-    case parameters[3]:
-      resource = "pix-num/X";
+    case "pixel-number-X":
+      resource = "pixelNumber/X";
       break;
-    case parameters[4]:
-      resource = "pix-num/Y";
+    case "pixel-number-Y":
+      resource = "pixelNumber/Y";
       break;
-    case parameters[5]:
-      resource = "pix-num/Z";
+    case "pixel-number-Z":
+      resource = "pixelNumber/Z";
       break;
-    case parameters[6]:
+    case "range-X":
       resource = "range/X";
       break;
-    case parameters[7]:
+    case "range-Y":
       resource = "range/Y";
       break;
-    case parameters[8]:
+    case "range-Z":
       resource = "range/Z";
       break;
-    case parameters[9]:
-      resource = "time";
+    case "dwell-time":
+      resource = "dwellTime";
       break;
   }
-  let msg = {
-    title: "messaggio",
-    testo: "testo del messaggio"
-  };
+  console.log(
+    JSON.stringify({
+      newValue: Number(input.value)
+    })
+  );
 
-  fetch("/prism-state/scan-param/" + resource, {
+  fetch("/prismState/scanParams/" + resource, {
     method: "PUT",
-    body: JSON.stringify(msg),
+    body: JSON.stringify({
+      newValue: Number(input.value)
+    }),
     headers: new Headers({
       "Content-Type": "application/json"
     })
-  });
+  })
+    .then(res => res.json())
+    .then(body => console.log(body));
 }

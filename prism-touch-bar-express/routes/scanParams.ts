@@ -8,16 +8,18 @@ scanParam.get("/", (req, res) => {
 });
 
 scanParam.put("/:dim/:axis", (req, res) => {
+  console.log("accesed scanparams");
+  
   let errors: string[] = [];
-  let dim = (req.params.dim as string).toLowerCase();
+  let dim = (req.params.dim as string);
   let axis = (req.params.axis as string).toLowerCase();
   let newValue;
   if (dim == "offset" || dim == "range" || dim == "pixelNumber" || dim == "offset") {
     if (axis == "x" || axis == "y" || axis == "z") {
-      if (req.body.newValue) {
+      if ("newValue" in req.body) {
         newValue = req.body.newValue;
-        if (newValue > state.scanParams[dim][axis].min) {
-          if (newValue < state.scanParams[dim][axis].max) {
+        if (newValue >= state.scanParams[dim][axis].min) {
+          if (newValue <= state.scanParams[dim][axis].max) {
             state.scanParams[dim][axis].current = newValue;
           } else errors.push(`${newValue} is higher than max value(${state.scanParams[dim][axis].max})`);
         } else errors.push(`${newValue} is lower than min value (${state.scanParams[dim][axis].min})`);

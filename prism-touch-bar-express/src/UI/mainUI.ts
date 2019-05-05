@@ -3,7 +3,7 @@ import { laserSliders, laserOnOffBtns, laserPowers, laserWaveLengths, laserOff, 
 /*numpad initialization*/
 import { numPad, delBtn, dotBtn } from "./initializations/numpad";
 /*parameters initialization*/
-import { parameters, presetSelector, addPresetBtn, /*presets, Preset,*/ sendParamChange } from "./initializations/scanParameteres";
+import { UIparameters, presetSelector, addPresetBtn, /*presets, Preset,*/ sendParamChange } from "./initializations/scanParameteres";
 /*drag capabilties*/
 import { dragStart, drag, dragEnd, dragInfos } from "./drag-pinch-joystick/drag";
 /*pinch capabilties*/
@@ -30,13 +30,13 @@ document.body.addEventListener("click", function(e) {
   //remove highlight border only when touching something excluding numpad and selectred parameter
   if (numPad.filter(numBtn => numBtn === e.target).length == 0) {
     if (e.target !== delBtn && e.target !== dotBtn)
-      if (parameters.filter(param => param === e.target).length == 0) {
+      if (UIparameters.filter(param => param === e.target).length == 0) {
         removeHighlithBoder();
         lastFocus = null;
       }
   }
   //set UI parameter value to 0 when empty
-  parameters.forEach(param => {
+  UIparameters.forEach(param => {
     if (param != lastFocus)
       if (param.value == "") {
         param.value = "0";
@@ -63,7 +63,7 @@ laserOnOffBtns.forEach((laserBtn, i) => {
 });
 
 /*store last parameters input in focus*/
-parameters.forEach(param => {
+UIparameters.forEach(param => {
   param.addEventListener("click", () => {
     removeHighlithBoder();
     lastFocus = param;
@@ -132,7 +132,7 @@ zSensBtn.addEventListener("click", () => {
 });
 
 function removeHighlithBoder() {
-  parameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));
+  UIparameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));
 }
 
 function prepareUI() {
@@ -144,7 +144,7 @@ function prepareUI() {
   laserWaveLengths.forEach(sliderColor => sliderColor.classList.add("grayed-out"));
   laserPowers.forEach(sliderValue => sliderValue.classList.add("grayed-out"));
 
-  parameters.forEach(parameter => (parameter.value = "0"));
+  UIparameters.forEach(parameter => (parameter.value = "0"));
 
   zSensBtn.innerHTML = zSenses[0];
 }
@@ -152,24 +152,26 @@ function prepareUI() {
 setInterval(getCurrentState, 200);
 //getCurrentState();
 function getCurrentState() {
-  fetch("/prism-state/")
+  fetch("/prismState/")
     .then(res => res.json())
-    .then(newState => (state = newState))
+    .then(newState => {
+      state = newState;
+    })
     .then(updateUIParameters)
     .then(updateUILasers);
 }
 
 function updateUIParameters() {
-  parameters[0].value = state.scanParams.offset.x.current.toString();
-  parameters[1].value = state.scanParams.offset.y.current.toString();
-  parameters[2].value = state.scanParams.offset.z.current.toString();
-  parameters[3].value = state.scanParams.pixelNumber.x.current.toString();
-  parameters[4].value = state.scanParams.pixelNumber.y.current.toString();
-  parameters[5].value = state.scanParams.pixelNumber.z.current.toString();
-  parameters[6].value = state.scanParams.range.x.current.toString();
-  parameters[7].value = state.scanParams.range.y.current.toString();
-  parameters[8].value = state.scanParams.range.z.current.toString();
-  parameters[9].value = state.scanParams.dwellTime.toString();
+  UIparameters[0].value = state.scanParams.offset.x.current.toString();
+  UIparameters[1].value = state.scanParams.offset.y.current.toString();
+  UIparameters[2].value = state.scanParams.offset.z.current.toString();
+  UIparameters[3].value = state.scanParams.pixelNumber.x.current.toString();
+  UIparameters[4].value = state.scanParams.pixelNumber.y.current.toString();
+  UIparameters[5].value = state.scanParams.pixelNumber.z.current.toString();
+  UIparameters[6].value = state.scanParams.range.x.current.toString();
+  UIparameters[7].value = state.scanParams.range.y.current.toString();
+  UIparameters[8].value = state.scanParams.range.z.current.toString();
+  UIparameters[9].value = state.scanParams.dwellTime.toString();
 }
 
 function updateUILasers() {
@@ -189,7 +191,7 @@ function updateUIPads() {
 
 //incomplete
 function sendLaserData(targetWaveLength: number) {
-  fetch(`state/lasers/${targetWaveLength}`, {
+  fetch(`prismState/lasers/${targetWaveLength}`, {
     method: "PUT",
     headers: {
       "Content-type": "application/json"

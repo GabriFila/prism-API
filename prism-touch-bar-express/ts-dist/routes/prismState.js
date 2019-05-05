@@ -4,7 +4,7 @@ const express = require("express");
 const server_1 = require("../server");
 const prismState = express.Router();
 const lasers = require("./lasers");
-const scanParams = require("./scan-params");
+const scanParams = require("./scanParams");
 prismState.get("/", (req, res) => {
     res.json(server_1.state);
 });
@@ -42,6 +42,6 @@ prismState.put("/mode", (req, res) => {
         res.status(200).json({ newMode: server_1.state.mode });
 });
 prismState.use("/lasers", lasers);
-prismState.use("/scan-params", scanParams);
+prismState.use("/scanParams", scanParams);
 module.exports = prismState;
-//# sourceMappingURL=prism-state.js.map
+//# sourceMappingURL=prismState.js.map

@@ -15,8 +15,8 @@ server.use(bodyParser.json());
 //static file to render UI on client
 server.use("/public", express.static(path.join(__dirname + "/../public")));
 //routes
-server.use("/prism-state", require("./routes/prism-state"));
-server.use("/prism-motors", require("./routes/prism-motors"));
+server.use("/prismState", require("./routes/prismState"));
+server.use("/prismMotors", require("./routes/prismMotors"));
 //send web app UI
 server.get("/", (req, res) => {
     res.sendFile(path.join(__dirname + "/../public/views/mainUI.html"));
@@ -26,7 +26,7 @@ let port = process.env.PORT || 5000;
 server.listen(5000, () => console.log(`Listening from ${port}`));
 function getStateFromMicroscope() {
     exports.state.scanParams.dwellTime = 50;
-    exports.state.scanParams.offset.x.current = 500;
+    exports.state.scanParams.offset.x.current = 200;
     exports.state.scanParams.offset.x.max = 1000;
     exports.state.scanParams.offset.x.min = 0;
     exports.state.scanParams.offset.y.current = 500;

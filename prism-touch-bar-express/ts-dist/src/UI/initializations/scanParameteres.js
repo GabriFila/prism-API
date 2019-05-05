@@ -22,7 +22,7 @@ const rangeY = document.querySelector("#range-Y");
 const rangeZ = document.querySelector("#range-Z");
 const dwellTime = document.querySelector("#dwell-time");
 const totalTime = document.querySelector("#total-time");
-exports.parameters = [
+exports.UIparameters = [
     offsetX,
     offsetY,
     offsetZ,
@@ -37,50 +37,55 @@ exports.parameters = [
 exports.addPresetBtn = document.querySelector("#add-preset-btn");
 exports.presetSelector = document.querySelector("#preset-selector");
 function sendParamChange(input) {
+    let target = input.id;
     let resource;
-    switch (input) {
-        case exports.parameters[0]:
+    console.log("send param change");
+    switch (target) {
+        case "offset-X":
             resource = "offset/X";
             break;
-        case exports.parameters[1]:
+        case "offset-Y":
             resource = "offset/Y";
             break;
-        case exports.parameters[2]:
+        case "offset-Z":
             resource = "offset/Z";
             break;
-        case exports.parameters[3]:
-            resource = "pix-num/X";
+        case "pixel-number-X":
+            resource = "pixelNumber/X";
             break;
-        case exports.parameters[4]:
-            resource = "pix-num/Y";
+        case "pixel-number-Y":
+            resource = "pixelNumber/Y";
             break;
-        case exports.parameters[5]:
-            resource = "pix-num/Z";
+        case "pixel-number-Z":
+            resource = "pixelNumber/Z";
             break;
-        case exports.parameters[6]:
+        case "range-X":
             resource = "range/X";
             break;
-        case exports.parameters[7]:
+        case "range-Y":
             resource = "range/Y";
             break;
-        case exports.parameters[8]:
+        case "range-Z":
             resource = "range/Z";
             break;
-        case exports.parameters[9]:
-            resource = "time";
+        case "dwell-time":
+            resource = "dwellTime";
             break;
     }
-    let msg = {
-        title: "messaggio",
-        testo: "testo del messaggio"
-    };
-    fetch("/prism-state/scan-param/" + resource, {
+    console.log(JSON.stringify({
+        newValue: Number(input.value)
+    }));
+    fetch("/prismState/scanParams/" + resource, {
         method: "PUT",
-        body: JSON.stringify(msg),
+        body: JSON.stringify({
+            newValue: Number(input.value)
+        }),
         headers: new Headers({
             "Content-Type": "application/json"
         })
-    });
+    })
+        .then(res => res.json())
+        .then(body => console.log(body));
 }
 exports.sendParamChange = sendParamChange;
 //# sourceMappingURL=scanParameteres.js.map
