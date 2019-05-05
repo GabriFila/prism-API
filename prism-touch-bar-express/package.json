@@ -1,0 +1,18 @@
+{
+  "name": "prism-touch-bar-express",
+  "version": "1.0.0",
+  "description": "An express-based api to control prism microscope",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Gabriele Filaferro",
+  "license": "MIT",
+  "dependencies": {
+    "express": "4.16.4"
+  },
+  "devDependencies": {
+    "browserify": "16.2.3",
+    "typescript": "3.4.5"
+  }
+}
