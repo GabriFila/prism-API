@@ -44,8 +44,6 @@ export function sendParamChange(input: HTMLInputElement) {
   let target: string = input.id;
   let resource: string;
 
-  console.log("send param change");
-
   switch (target) {
     case "offset-X":
       resource = "offset/X";
@@ -78,11 +76,6 @@ export function sendParamChange(input: HTMLInputElement) {
       resource = "dwellTime";
       break;
   }
-  console.log(
-    JSON.stringify({
-      newValue: Number(input.value)
-    })
-  );
 
   fetch("/prismState/scanParams/" + resource, {
     method: "PUT",
@@ -92,7 +85,5 @@ export function sendParamChange(input: HTMLInputElement) {
     headers: new Headers({
       "Content-Type": "application/json"
     })
-  })
-    .then(res => res.json())
-    .then(body => console.log(body));
+  }).then(res => res.json());
 }

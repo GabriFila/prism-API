@@ -39,7 +39,6 @@ exports.presetSelector = document.querySelector("#preset-selector");
 function sendParamChange(input) {
     let target = input.id;
     let resource;
-    console.log("send param change");
     switch (target) {
         case "offset-X":
             resource = "offset/X";
@@ -72,9 +71,6 @@ function sendParamChange(input) {
             resource = "dwellTime";
             break;
     }
-    console.log(JSON.stringify({
-        newValue: Number(input.value)
-    }));
     fetch("/prismState/scanParams/" + resource, {
         method: "PUT",
         body: JSON.stringify({
@@ -83,9 +79,7 @@ function sendParamChange(input) {
         headers: new Headers({
             "Content-Type": "application/json"
         })
-    })
-        .then(res => res.json())
-        .then(body => console.log(body));
+    }).then(res => res.json());
 }
 exports.sendParamChange = sendParamChange;
 //# sourceMappingURL=scanParameteres.js.map

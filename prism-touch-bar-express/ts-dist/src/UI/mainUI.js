@@ -22,7 +22,7 @@ const liveBtn = document.querySelector("#live-btn");
 const captureBtn = document.querySelector("#capture-btn");
 const stackBtn = document.querySelector("#stack-btn");
 let state = new classes_1.State();
-prepareUI();
+//prepareUI();
 document.body.addEventListener("click", function (e) {
     //remove highlight border only when touching something excluding numpad and selectred parameter
     if (numpad_1.numPad.filter(numBtn => numBtn === e.target).length == 0) {
@@ -40,22 +40,19 @@ document.body.addEventListener("click", function (e) {
             }
     });
 });
-/*laser slider move event */
-lasers_1.laserSliders.forEach((laserSlider, i) => {
-    laserSlider.oninput = function () {
-        let tempValue = laserSlider.value;
-        lasers_1.laserPowers[i].innerHTML = tempValue + "%";
+lasers_1.laserUIBoxes.forEach(laserUIBox => {
+    laserUIBox.slider.oninput = () => {
+        let tempValue = laserUIBox.slider.value;
+        laserUIBox.powerLabel.innerHTML = tempValue + "%";
         //  state.lasers[i].power = Number(tempValue);
     };
-});
-/*turn on/off lasers */
-lasers_1.laserOnOffBtns.forEach((laserBtn, i) => {
-    laserBtn.addEventListener("click", () => {
-        state.lasers[i].isOn = !state.lasers[i].isOn;
-        if (state.lasers[i].isOn)
-            lasers_1.laserOn(i);
+    laserUIBox.btn.addEventListener("click", () => {
+        //state.lasers[i].isOn = !state.lasers[i].isOn;
+        laserUIBox.isOn = !laserUIBox.isOn;
+        if (laserUIBox.isOn)
+            lasers_1.grayOutLaserBox(laserUIBox);
         else
-            lasers_1.laserOff(i);
+            lasers_1.lightUpLaserBox(laserUIBox);
     });
 });
 /*store last parameters input in focus*/
@@ -123,24 +120,14 @@ function removeHighlithBoder() {
     scanParameteres_1.UIparameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));
 }
 function prepareUI() {
-    lasers_1.laserSliders.forEach(slider => {
-        slider.disabled = true;
-        slider.classList.add("grayed-out");
-    });
-    lasers_1.laserOnOffBtns.forEach(sliderBtn => sliderBtn.classList.add("laser-btn-off"));
-    lasers_1.laserWaveLengths.forEach(sliderColor => sliderColor.classList.add("grayed-out"));
-    lasers_1.laserPowers.forEach(sliderValue => sliderValue.classList.add("grayed-out"));
     scanParameteres_1.UIparameters.forEach(parameter => (parameter.value = "0"));
     movInfo_1.zSensBtn.innerHTML = movInfo_1.zSenses[0];
 }
 setInterval(getCurrentState, 200);
-//getCurrentState();
 function getCurrentState() {
     fetch("/prismState/")
         .then(res => res.json())
-        .then(newState => {
-        state = newState;
-    })
+        .then(newState => (state = newState))
         .then(updateUIParameters)
         .then(updateUILasers);
 }
@@ -157,15 +144,28 @@ function updateUIParameters() {
     scanParameteres_1.UIparameters[9].value = state.scanParams.dwellTime.toString();
 }
 function updateUILasers() {
-    state.lasers.forEach((stateLaser, i) => {
-        lasers_1.laserPowers[i].innerHTML = stateLaser.power.toString();
-        lasers_1.laserSliders[i].value = state.lasers[i].power.toString();
-        if (state.lasers[i].isOn)
-            lasers_1.laserOn(i);
-        else
-            lasers_1.laserOff(i);
-        lasers_1.laserWaveLengths[i].innerHTML = stateLaser.waveLength.toString();
+    lasers_1.laserUIBoxes.forEach((laserUIBox, i) => {
+        //hide empty lasers
+        if (i >= state.lasers.length)
+            lasers_1.laserUIBoxes[i].visible = false;
+        else {
+            lasers_1.laserUIBoxes[i].powerLabel.innerHTML = state.lasers[i].power.toString() + "%";
+            lasers_1.laserUIBoxes[i].slider.value = state.lasers[i].power.toString();
+            lasers_1.laserUIBoxes[i].waveLengthLabel.innerHTML = state.lasers[i].waveLength.toString() + "nm";
+            if (state.lasers[i].isOn)
+                lasers_1.lightUpLaserBox(lasers_1.laserUIBoxes[i]);
+            else
+                lasers_1.grayOutLaserBox(lasers_1.laserUIBoxes[i]);
+        }
     });
+    /*
+      state.lasers.forEach((stateLaser, i) => {
+        laserPowers[i].innerHTML = stateLaser.power.toString();
+        laserSliders[i].value = state.lasers[i].power.toString();
+        if (state.lasers[i].isOn) laserOn(i);
+        else laserOff(i);
+        laserWaveLengths[i].innerHTML = stateLaser.waveLength.toString();
+      });*/
 }
 function updateUIPads() {
     drag_1.dragInfos[0].relPos.left = state.scanParams.offset.x.current;
