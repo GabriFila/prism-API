@@ -215,8 +215,6 @@ function updateLimits(newState) {
     exports.limits[7].min = newState.scanParams.range.y.min;
     exports.limits[8].max = newState.scanParams.range.z.max;
     exports.limits[8].min = newState.scanParams.range.z.min;
-    exports.limits[0].max = 100;
-    exports.limits[0].min = 0;
 }
 exports.updateLimits = updateLimits;
 
@@ -631,6 +629,7 @@ numpad_1.dotBtn.addEventListener("click", () => {
     if (lastFocus !== null && lastFocus.value.slice(-1) !== "." && lastFocus.value.length != 0) {
         lastFocus.classList.add("highlighted");
         lastFocus.value += ".";
+        scanParameteres_1.sendParamChange(lastFocus);
     }
 });
 /*delete number to last focus element when delete button pressed */
@@ -638,7 +637,7 @@ numpad_1.delBtn.addEventListener("click", () => {
     if (lastFocus != null) {
         lastFocus.classList.add("highlighted");
         lastFocus.value = lastFocus.value.slice(0, -1); /*remove last character */
-        //sendParamChange(lastFocus);
+        scanParameteres_1.sendParamChange(lastFocus);
     }
 });
 /*add dragable capabilities*/

@@ -95,11 +95,13 @@ numPad.forEach((numBtn, i) => {
 
 UIparameters.forEach(param => param.addEventListener("change", () => alert("cambiato")));
 
+//problem
 /*add dot to last focus element when dot button pressed */
 dotBtn.addEventListener("click", () => {
   if (lastFocus !== null && lastFocus.value.slice(-1) !== "." && lastFocus.value.length != 0) {
     lastFocus.classList.add("highlighted");
     lastFocus.value += ".";
+  //  sendParamChange(lastFocus);
   }
 });
 
@@ -108,7 +110,7 @@ delBtn.addEventListener("click", () => {
   if (lastFocus != null) {
     lastFocus.classList.add("highlighted");
     lastFocus.value = lastFocus.value.slice(0, -1); /*remove last character */
-    //sendParamChange(lastFocus);
+    sendParamChange(lastFocus);
   }
 });
 

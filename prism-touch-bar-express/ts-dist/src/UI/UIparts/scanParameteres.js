@@ -124,8 +124,6 @@ function updateLimits(newState) {
     exports.limits[7].min = newState.scanParams.range.y.min;
     exports.limits[8].max = newState.scanParams.range.z.max;
     exports.limits[8].min = newState.scanParams.range.z.min;
-    exports.limits[0].max = 100;
-    exports.limits[0].min = 0;
 }
 exports.updateLimits = updateLimits;
 //# sourceMappingURL=scanParameteres.js.map
