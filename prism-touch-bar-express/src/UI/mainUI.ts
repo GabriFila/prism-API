@@ -1,13 +1,9 @@
 /*slider initialization*/
-import {
-  laserUIBoxes,
-  grayOutLaserBox,
-  lightUpLaserBox
-} from "./initializations/lasers";
+import { laserUIBoxes, grayOutLaserBox, lightUpLaserBox } from "./UIparts/lasers";
 /*numpad initialization*/
-import { numPad, delBtn, dotBtn } from "./initializations/numpad";
+import { numPad, delBtn, dotBtn } from "./UIparts/numpad";
 /*parameters initialization*/
-import { UIparameters, presetSelector, addPresetBtn, /*presets, Preset,*/ sendParamChange } from "./initializations/scanParameteres";
+import { UIparameters, presetSelector, addPresetBtn, /*presets, Preset,*/ sendParamChange } from "./UIparts/scanParameteres";
 /*drag capabilties*/
 import { dragStart, drag, dragEnd, dragInfos } from "./drag-pinch-joystick/drag";
 /*pinch capabilties*/
@@ -16,8 +12,7 @@ import { pinchStart, pinch, pinchEnd, pinchInfos } from "./drag-pinch-joystick/p
 import { joystickInfos, joyStart, joyMove, joyEnd } from "./drag-pinch-joystick/joystick";
 /*z slider sensitivity */
 import { zSensBtn, zSenses, inspectArea } from "./drag-pinch-joystick/movInfo";
-import { State } from "./initializations/classes";
-import { generateKeyPair } from "crypto";
+import { State } from "./UIparts/classes";
 
 /*last item in focus*/
 let lastFocus: HTMLInputElement = undefined;
