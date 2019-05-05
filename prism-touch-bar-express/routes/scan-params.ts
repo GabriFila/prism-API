@@ -26,7 +26,7 @@ scanParam.put("/:dim/:axis", (req, res) => {
   } else errors.push(`${dim} is not a valid dimension`);
 
   if (errors.length > 0) res.status(400).json({ errors });
-  else res.status(200).json({ dim, axis, newValue });
+  else res.status(200).json({ dim, axis, newValue, state });
 });
 
 scanParam.put("/:dim", (req, res) => {

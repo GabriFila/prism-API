@@ -35,7 +35,7 @@ prismMotors.put("/:axis", (req, res) => {
     if (errors.length > 0)
         res.status(400).json({ errors });
     else
-        res.status(200).json({ steps: `${newSteps} steps on ${axis} axis` });
+        res.status(200).json({ newSteps, axis });
 });
 module.exports = prismMotors;
 //# sourceMappingURL=prism-motors.js.map

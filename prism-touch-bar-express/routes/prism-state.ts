@@ -24,7 +24,7 @@ prismState.put("/mode", (req, res) => {
   } else errors.push(`no newMode field in request`);
 
   if (errors.length > 0) res.status(400).json({ errors });
-  else res.status(200).json({ newMode });
+  else res.status(200).json({ newMode:state.mode });
 });
 
 prismState.use("/lasers", lasers);

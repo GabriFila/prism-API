@@ -27,7 +27,7 @@ prismState.put("/mode", (req, res) => {
     if (errors.length > 0)
         res.status(400).json({ errors });
     else
-        res.status(200).json({ newMode });
+        res.status(200).json({ newMode: server_1.state.mode });
 });
 prismState.use("/lasers", lasers);
 prismState.use("/scan-params", scanParams);

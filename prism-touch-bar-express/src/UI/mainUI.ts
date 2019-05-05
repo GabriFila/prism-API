@@ -192,7 +192,7 @@ function getCurrentState() {
   fetch("/prism-state/")
     .then(res => res.json())
     .then(newState => (state = newState))
-    //.then(updateUIParameters)
+    .then(updateUIParameters)
     .then(updateUILasers);
 }
 

@@ -36,7 +36,7 @@ scanParam.put("/:dim/:axis", (req, res) => {
     if (errors.length > 0)
         res.status(400).json({ errors });
     else
-        res.status(200).json({ dim, axis, newValue });
+        res.status(200).json({ dim, axis, newValue, state: server_1.state });
 });
 scanParam.put("/:dim", (req, res) => {
     let errors = [];

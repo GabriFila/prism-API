@@ -32,9 +32,43 @@ let port = process.env.PORT || 5000;
 server.listen(5000, () => console.log(`Listening from ${port}`));
 
 function getStateFromMicroscope() {
-  state.scanParams.offset.x.current = 100;
-  state.scanParams.offset.y.current = 100;
-  state.scanParams.offset.x.max = 200;
+  state.scanParams.dwellTime = 50;
+
+  state.scanParams.offset.x.current = 500;
+  state.scanParams.offset.x.max = 1000;
+  state.scanParams.offset.x.min = 0;
+
+  state.scanParams.offset.y.current = 500;
+  state.scanParams.offset.y.max = 1000;
+  state.scanParams.offset.y.min = 0;
+
+  state.scanParams.offset.z.current = 500;
+  state.scanParams.offset.z.max = 1000;
+  state.scanParams.offset.z.min = 0;
+
+  state.scanParams.pixelNumber.x.current = 500;
+  state.scanParams.pixelNumber.x.max = 1000;
+  state.scanParams.pixelNumber.x.min = 0;
+
+  state.scanParams.pixelNumber.y.current = 500;
+  state.scanParams.pixelNumber.y.max = 1000;
+  state.scanParams.pixelNumber.y.min = 0;
+
+  state.scanParams.pixelNumber.z.current = 500;
+  state.scanParams.pixelNumber.z.max = 1000;
+  state.scanParams.pixelNumber.z.min = 0;
+
+  state.scanParams.range.x.current = 500;
+  state.scanParams.range.x.max = 1000;
+  state.scanParams.range.x.min = 0;
+
+  state.scanParams.range.y.current = 500;
+  state.scanParams.range.y.max = 1000;
+  state.scanParams.range.y.min = 0;
+
+  state.scanParams.range.z.current = 500;
+  state.scanParams.range.z.max = 1000;
+  state.scanParams.range.z.min = 0;
 
   state.lasers[0].waveLength = 300;
   state.lasers[0].isOn = true;

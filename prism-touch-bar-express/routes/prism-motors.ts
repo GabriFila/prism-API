@@ -30,7 +30,7 @@ prismMotors.put("/:axis", (req, res) => {
     } else errors.push(`no steps field in request body`);
   }
   if (errors.length > 0) res.status(400).json({ errors });
-  else res.status(200).json({ steps: `${newSteps} steps on ${axis} axis` });
+  else res.status(200).json({ newSteps, axis });
 });
 
 module.exports = prismMotors;
