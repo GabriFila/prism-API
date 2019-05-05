@@ -16,9 +16,7 @@ getStateFromMicroscope();
 server.use(bodyParser.json());
 
 //static file to render UI on client
-server.use("/views", express.static(path.join(__dirname + "/../views")));
-server.use("/assets", express.static(path.join(__dirname + "/../assets")));
-server.use("/codeBehind", express.static(path.join(__dirname + "/../codeBehind")));
+server.use("/public", express.static(path.join(__dirname + "/../public")));
 
 //routes
 server.use("/prism-state", require("./routes/prism-state"));
@@ -26,7 +24,7 @@ server.use("/prism-motors", require("./routes/prism-motors"));
 
 //send web app UI
 server.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname + "/../views/mainUI.html"));
+  res.sendFile(path.join(__dirname + "/../public/views/mainUI.html"));
 });
 
 //Start server

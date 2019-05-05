@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Prism touchbar</title>
+    <link rel="stylesheet" href="../assets/mainUI.css" />
+    <!-- to add lock icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+  </head>
+
+  <body>
+    <div id="col-0" class="col">
+      <!--start button-->
+      <div id="start-sector" class="sector">
+        <div class="div-action-buttons">
+          <button id="live-btn" class="action-btn">L</button>
+          <button id="capture-btn" class="action-btn">C</button>
+          <button id="stack-btn" class="action-btn">S</button>
+        </div>
+      </div>
+      <!--parameter selector-->
+      <div id="param-box" class="sector">
+        <div id="preset-row" class="param-row">
+          <select id="preset-selector"></select>
+          <button id="add-preset-btn">+</button>
+        </div>
+        <!--top parameters labels-->
+        <div class="top-param-label-row">
+          <div class="top-param-label-spacer"></div>
+          <label class="top-param-label">x</label>
+          <label class="top-param-label">y</label>
+          <label class="top-param-label">z</label>
+        </div>
+        <!-- offset-->
+        <div class="param-row">
+          <label class="left-param-label"> offset </label>
+          <input id="offset-X" type="text" class="param-input" />
+          <input id="offset-Y" type="text" class="param-input" />
+          <input id="offset-Z" type="text" class="param-input" />
+        </div>
+        <!-- pixel number-->
+        <div class="param-row">
+          <label class="left-param-label"># pixel</label>
+          <input id="pixel-number-X" type="text" class="param-input" />
+          <input id="pixel-number-Y" type="text" class="param-input" />
+          <input id="pixel-number-Z" type="text" class="param-input" />
+        </div>
+        <!-- range-->
+        <div class="param-row">
+          <label class="left-param-label">range</label>
+          <input id="range-X" type="text" class="param-input" />
+          <input id="range-Y" type="text" class="param-input" />
+          <input id="range-Z" type="text" class="param-input" />
+        </div>
+        <!-- pixel size-->
+        <div class="param-row">
+          <label class="left-param-label ">px-size</label>
+          <input id="pixel-size-X" type="text" class="param-input grayed-out" />
+          <input id="pixel-size-Y" type="text" class="param-input grayed-out" />
+          <input id="pixel-size-Z" type="text" class="param-input grayed-out" />
+        </div>
+        <!-- time parameters-->
+        <div class="param-row">
+          <label class="left-param-label">dwell time</label>
+          <input id="dwell-time" type="number" class="param-input" />
+          <label class="left-param-label">total time</label>
+          <input id="total-time" type="number" class="param-input grayed-out" />
+        </div>
+      </div>
+    </div>
+    <div id="col-1" class="col">
+      <!--sliders-->
+      <div id="sliders-box" class="sector">
+        <!--slider 0-->
+        <div class="slider-box">
+          <div class="slider-labels">
+            <label id="laser-type-0" class="laser-type">300 nm</label>
+            <label id="slider-value-0" class="slider-value">0%</label>
+          </div>
+          <input id="slider-0" class="slider" type="range" min="0" max="100" step="5" value="0" />
+          <div class="div-laser-on-off-btn">
+            <button id="laser-on-off-btn-0" class="laser-on-off-btn">
+              <i class="fa fa-power-off "></i>
+            </button>
+          </div>
+        </div>
+        <!--slider 1-->
+        <div class="slider-box">
+          <div class="slider-labels">
+            <label id="laser-type-1" class="laser-type">550 nm</label>
+            <label id="slider-value-1" class="slider-value">0%</label>
+          </div>
+          <input id="slider-1" class="slider" type="range" min="0" max="100" step="5" value="0" />
+          <div class="div-laser-on-off-btn">
+            <button id="laser-on-off-btn-1" class="laser-on-off-btn">
+              <i class="fa fa-power-off"></i>
+            </button>
+          </div>
+        </div>
+        <!--slider 2-->
+        <div class="slider-box">
+          <div class="slider-labels">
+            <label id="laser-type-2" class="laser-type">650 nm</label>
+            <label id="slider-value-2" class="slider-value">0%</label>
+          </div>
+          <input id="slider-2" class="slider" type="range" min="0" max="100" step="5" value="0" />
+          <div class="div-laser-on-off-btn">
+            <button id="laser-on-off-btn-2" class="laser-on-off-btn">
+              <i class="fa fa-power-off"></i>
+            </button>
+          </div>
+        </div>
+        <!--slider 3-->
+        <div class="slider-box">
+          <div class="slider-labels">
+            <label id="laser-type-3" class="laser-type">750 nm</label>
+            <label id="slider-value-3" class="slider-value">0%</label>
+          </div>
+          <input id="slider-3" class="slider" type="range" min="0" max="100" step="5" value="0" />
+          <div class="div-laser-on-off-btn">
+            <button id="laser-on-off-btn-3" class="laser-on-off-btn">
+              <i class="fa fa-power-off"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <!--numpad-->
+      <div id="numpad" class="sector">
+        <div class="numpad-row">
+          <button id="btn7" class="numpad-btn">7</button>
+          <button id="btn8" class="numpad-btn">8</button>
+          <button id="btn9" class="numpad-btn">9</button>
+        </div>
+        <div class="numpad-row">
+          <button id="btn4" class="numpad-btn">4</button>
+          <button id="btn5" class="numpad-btn">5</button>
+          <button id="btn6" class="numpad-btn">6</button>
+        </div>
+        <div class="numpad-row">
+          <button id="btn1" class="numpad-btn">1</button>
+          <button id="btn2" class="numpad-btn">2</button>
+          <button id="btn3" class="numpad-btn">3</button>
+        </div>
+        <div class="numpad-row">
+          <button id="btn0" class="numpad-btn">0</button>
+          <button id="btnDot" class="numpad-btn">.</button>
+          <button id="btnDel" class="numpad-btn">del</button>
+        </div>
+      </div>
+    </div>
+    <div id="col-2" class="col">
+      <!-- sample area-->
+      <div id="border-square">
+        <div id="sample-area">
+          <div id="inspect-area-0" class="inspect-area"></div>
+        </div>
+      </div>
+      <!-- joystick area-->
+      <div id="joystick-pad" class="sector">
+        <div id="joystick-thumb" class=""></div>
+      </div>
+    </div>
+    <div id="col-3" class="col">
+      <div id="z-slider">
+        <div id="z-thumb" class="thumb"></div>
+      </div>
+      <button id="z-sens-btn"></button>
+    </div>
+
+    <script src="../codeBehind/mainUI.js"></script>
+  </body>
+</html>
