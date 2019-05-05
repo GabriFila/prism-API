@@ -101,7 +101,7 @@ dotBtn.addEventListener("click", () => {
   if (lastFocus !== null && lastFocus.value.slice(-1) !== "." && lastFocus.value.length != 0) {
     lastFocus.classList.add("highlighted");
     lastFocus.value += ".";
-  //  sendParamChange(lastFocus);
+    //  sendParamChange(lastFocus);
   }
 });
 
