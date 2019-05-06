@@ -226,10 +226,9 @@ class DragObj extends movObj_1.MovObj {
     constructor(element, area) {
         super(element, area);
         this.dragStart = (e) => {
-            alert(this.initialX);
-            this.topRelPos = 100;
+            console.log("dragstart inital: " + this.initialX);
+            console.log("dragstart element: " + this.element.id);
             if (e.target === this.element) {
-                alert("touched");
                 this.active = true;
                 //set start position
                 if (e.type === "touchstart") {
@@ -245,6 +244,45 @@ class DragObj extends movObj_1.MovObj {
                 }
             }
         };
+        this.drag = (e) => {
+            //if user is touching
+            if (this.active) {
+                e.preventDefault();
+                let currentX;
+                let currentY;
+                //set offset position relative to top-left of draggable area
+                if (e.type === "touchmove") {
+                    let eTouch = e;
+                    if (eTouch.touches.length === 1) {
+                        currentX = eTouch.touches[0].clientX - this.initialX;
+                        currentY = eTouch.touches[0].clientY - this.initialY;
+                    }
+                }
+                else {
+                    currentX = e.clientX - this.initialX;
+                    currentY = e.clientY - this.initialY;
+                }
+                //stops movable element from going outside the draggable area when dragging it
+                let areaWidth = this.area.getBoundingClientRect().width;
+                let dragElWidth = this.element.getBoundingClientRect().width;
+                let areaHeight = this.area.getBoundingClientRect().height;
+                let dragElHeight = this.element.getBoundingClientRect().height;
+                let dragAreaBorderSize = this.areaBorderSize;
+                if (currentX + dragElWidth + 2 * dragAreaBorderSize > areaWidth)
+                    currentX = areaWidth - dragElWidth - 2 * dragAreaBorderSize;
+                if (currentX < 0)
+                    currentX = 0;
+                if (currentY + dragElHeight + 2 * dragAreaBorderSize > areaHeight)
+                    currentY = areaHeight - dragElHeight - 2 * dragAreaBorderSize;
+                if (currentY < 0)
+                    currentY = 0;
+                this.leftRelPos = currentX;
+                this.topRelPos = currentY;
+            }
+        };
+        this.dragEnd = (e) => {
+            this.active = false;
+        };
         this.area.addEventListener("mousedown", this.dragStart);
         this.area.addEventListener("touchstart", this.dragStart);
         this.area.addEventListener("mousemove", this.drag);
@@ -252,85 +290,137 @@ class DragObj extends movObj_1.MovObj {
         this.area.addEventListener("mouseup", this.dragEnd);
         this.area.addEventListener("touchend", this.dragEnd);
     }
-    drag(e) {
-        //if user is touching
-        if (this.active) {
-            e.preventDefault();
-            let currentX;
-            let currentY;
-            //set offset position relative to top-left of draggable area
-            if (e.type === "touchmove") {
-                let eTouch = e;
-                if (eTouch.touches.length === 1) {
-                    currentX = eTouch.touches[0].clientX - this.initialX;
-                    currentY = eTouch.touches[0].clientY - this.initialY;
-                }
-            }
-            else {
-                currentX = e.clientX - this.initialX;
-                currentY = e.clientY - this.initialY;
-            }
-            //stops movable element from going outside the draggable area when dragging it
-            let areaWidth = this.area.getBoundingClientRect().width;
-            let dragElWidth = this.element.getBoundingClientRect().width;
-            let areaHeight = this.area.getBoundingClientRect().height;
-            let dragElHeight = this.element.getBoundingClientRect().height;
-            let dragAreaBorderSize = this.areaBorderSize;
-            if (currentX + dragElWidth + 2 * dragAreaBorderSize > areaWidth)
-                currentX = areaWidth - dragElWidth - 2 * dragAreaBorderSize;
-            if (currentX < 0)
-                currentX = 0;
-            if (currentY + dragElHeight + 2 * dragAreaBorderSize > areaHeight)
-                currentY = areaHeight - dragElHeight - 2 * dragAreaBorderSize;
-            if (currentY < 0)
-                currentY = 0;
-            this.leftRelPos = currentX;
-            this.topRelPos = currentY;
-        }
-    }
-    dragEnd(e) {
-        this.active = false;
-    }
 }
 exports.DragObj = DragObj;
-//export const dragObjs: DragInfo[] = [new DragInfo(inspectArea, sampleArea)];
+
+},{"./movObj":7}],5:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const movObj_1 = require("./movObj");
+class JoystickObj extends movObj_1.MovObj {
+    constructor(element, area) {
+        super(element, area);
+        this.joyStart = (e) => {
+            if (e.target === this.element) {
+                this.active = true;
+                //set start position
+                if (e.type === "touchstart") {
+                    let eTouch = e;
+                    if (eTouch.touches.length === 1) {
+                        this.initialX = eTouch.touches[0].clientX - this.defaultX;
+                        this.initialY = eTouch.touches[0].clientY - this.defaultY;
+                    }
+                }
+                else {
+                    this.initialX = e.clientX - this.defaultX;
+                    this.initialY = e.clientY - this.defaultY;
+                }
+                this.setDefaultXY();
+                this.element.classList.remove("smooth-transition");
+            }
+        };
+        this.joyMove = (e) => {
+            //if user is touching
+            if (this.active) {
+                let xOffset;
+                let yOffset;
+                e.preventDefault();
+                //set offset position relative to top-left of draggable area
+                if (e.type === "touchmove") {
+                    let eTouch = e;
+                    if (eTouch.touches.length === 1) {
+                        xOffset = eTouch.touches[0].clientX - this.initialX;
+                        yOffset = eTouch.touches[0].clientY - this.initialY;
+                    }
+                }
+                else {
+                    xOffset = e.clientX - this.initialX;
+                    yOffset = e.clientY - this.initialY;
+                }
+                //stops movable element from going outside the draggable area when dragging it
+                let areaWidth = this.area.getBoundingClientRect().width;
+                let dragElWidth = this.element.getBoundingClientRect().width;
+                let areaHeight = this.area.getBoundingClientRect().height;
+                let dragElHeight = this.element.getBoundingClientRect().height;
+                let padAreaBorderSize = this.areaBorderSize;
+                if (xOffset + dragElWidth + 2 * padAreaBorderSize > areaWidth)
+                    xOffset = areaWidth - dragElWidth - 2 * padAreaBorderSize;
+                if (xOffset < 0)
+                    xOffset = 0;
+                if (yOffset + dragElHeight + 2 * padAreaBorderSize > areaHeight)
+                    yOffset = areaHeight - dragElHeight - 2 * padAreaBorderSize;
+                if (yOffset < 0)
+                    yOffset = 0;
+                this.leftRelPos = xOffset;
+                this.topRelPos = yOffset;
+            }
+        };
+        this.joyEnd = (e) => {
+            this.moveToDefaultXY();
+            this.active = false;
+            this.element.classList.add("smooth-transition");
+        };
+        this.setDefaultXY();
+        this.moveToDefaultXY();
+        this.area.addEventListener("touchstart", this.joyStart);
+        this.area.addEventListener("mousedown", this.joyStart);
+        this.area.addEventListener("touchmove", this.joyMove);
+        this.area.addEventListener("mousemove", this.joyMove);
+        this.area.addEventListener("touchend", this.joyEnd);
+        this.area.addEventListener("mouseup", this.joyEnd);
+    }
+    setDefaultXY() {
+        this.defaultX = this.area.getBoundingClientRect().width / 2 - this.element.getBoundingClientRect().width / 2 - this.areaBorderSize;
+        this.defaultY = this.area.getBoundingClientRect().height / 2 - this.element.getBoundingClientRect().height / 2 - this.areaBorderSize;
+        console.log(`X: ${this.defaultX}`);
+        console.log(`Y: ${this.defaultY}`);
+    }
+    moveToDefaultXY() {
+        this.topRelPos = this.defaultY;
+        this.leftRelPos = this.defaultX;
+    }
+}
+exports.JoystickObj = JoystickObj;
 /*
-export function dragStart(e: TouchEvent | MouseEvent) {
-  dragObjs.forEach(info => {
+export function joyStart(e: TouchEvent | MouseEvent) {
+  joystickInfos.forEach(info => {
     if (e.target === info.element) {
       info.active = true;
       //set start position
       if (e.type === "touchstart") {
         let eTouch = e as TouchEvent;
         if (eTouch.touches.length === 1) {
-          info.initialX = eTouch.touches[0].clientX - info.leftRelPos;
-          info.initialY = eTouch.touches[0].clientY - info.topRelPos;
+          info.initialX = eTouch.touches[0].clientX - info.defaultX;
+          info.initialY = eTouch.touches[0].clientY - info.defaultY;
         }
       } else {
-        info.initialX = (e as MouseEvent).clientX - info.leftRelPos;
-        info.initialY = (e as MouseEvent).clientY - info.topRelPos;
+        info.initialX = (e as MouseEvent).clientX - info.defaultX;
+        info.initialY = (e as MouseEvent).clientY - info.defaultY;
       }
+      info.setDefaultXY();
+      info.element.classList.remove("smooth-transition");
     }
   });
 }
 
-export function drag(e: TouchEvent | MouseEvent) {
-  dragObjs.forEach(info => {
+
+export function joyMove(e: TouchEvent | MouseEvent) {
+  joystickInfos.forEach(info => {
     //if user is touching
     if (info.active) {
+      let xOffset;
+      let yOffset;
       e.preventDefault();
-      let currentX;
-      let currentY;
       //set offset position relative to top-left of draggable area
       if (e.type === "touchmove") {
         let eTouch = e as TouchEvent;
         if (eTouch.touches.length === 1) {
-          currentX = eTouch.touches[0].clientX - info.initialX;
-          currentY = eTouch.touches[0].clientY - info.initialY;
+          xOffset = eTouch.touches[0].clientX - info.initialX;
+          yOffset = eTouch.touches[0].clientY - info.initialY;
         }
       } else {
-        currentX = (e as MouseEvent).clientX - info.initialX;
-        currentY = (e as MouseEvent).clientY - info.initialY;
+        xOffset = (e as MouseEvent).clientX - info.initialX;
+        yOffset = (e as MouseEvent).clientY - info.initialY;
       }
 
       //stops movable element from going outside the draggable area when dragging it
@@ -338,118 +428,29 @@ export function drag(e: TouchEvent | MouseEvent) {
       let dragElWidth: number = info.element.getBoundingClientRect().width;
       let areaHeight: number = info.area.getBoundingClientRect().height;
       let dragElHeight: number = info.element.getBoundingClientRect().height;
-      let dragAreaBorderSize: number = info.areaBorderSize;
+      let padAreaBorderSize: number = getBorderSize(info.area);
 
-      if (currentX + dragElWidth + 2 * dragAreaBorderSize > areaWidth) currentX = areaWidth - dragElWidth - 2 * dragAreaBorderSize;
-      if (currentX < 0) currentX = 0;
-      if (currentY + dragElHeight + 2 * dragAreaBorderSize > areaHeight) currentY = areaHeight - dragElHeight - 2 * dragAreaBorderSize;
-      if (currentY < 0) currentY = 0;
+      if (xOffset + dragElWidth + 2 * padAreaBorderSize > areaWidth) xOffset = areaWidth - dragElWidth - 2 * padAreaBorderSize;
+      if (xOffset < 0) xOffset = 0;
+      if (yOffset + dragElHeight + 2 * padAreaBorderSize > areaHeight) yOffset = areaHeight - dragElHeight - 2 * padAreaBorderSize;
+      if (yOffset < 0) yOffset = 0;
 
-      info.leftRelPos = currentX;
-      info.topRelPos = currentY;
+      translateToUI(xOffset, yOffset, info.element);
     }
   });
 }
 
 
-export function dragEnd(e: TouchEvent | MouseEvent) {
-  dragObjs.forEach(info => (info.active = false));
+export function joyEnd(e: TouchEvent | MouseEvent) {
+  joystickInfos.forEach(info => {
+    info.moveToDefaultXY();
+    info.active = false;
+    info.element.classList.add("smooth-transition");
+  });
 }
 */
 
-},{"./movObj":7}],5:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const movInfo_1 = require("./movInfo");
-const movInfo_2 = require("./movInfo");
-const movInfo_3 = require("./movInfo");
-class JoystickInfo extends movInfo_1.MovInfo {
-    constructor(element, area) {
-        super(element, area);
-        this.setDefaultXY();
-        this.moveToDefaultXY();
-    }
-    setDefaultXY() {
-        this.defaultX = this.area.getBoundingClientRect().width / 2 - this.element.getBoundingClientRect().width / 2 - movInfo_1.getBorderSize(this.area);
-        this.defaultY = this.area.getBoundingClientRect().height / 2 - this.element.getBoundingClientRect().height / 2 - movInfo_1.getBorderSize(this.area);
-    }
-    moveToDefaultXY() {
-        this.setRelPosTop(this.defaultY);
-        this.setRelPosLeft(this.defaultX);
-    }
-}
-exports.joystickInfos = [new JoystickInfo(movInfo_3.joyThumb, movInfo_3.joyPad), new JoystickInfo(movInfo_2.zThumb, movInfo_2.zSlider)];
-function joyStart(e) {
-    exports.joystickInfos.forEach((info) => {
-        if (e.target === info.element) {
-            info.active = true;
-            //set start position
-            if (e.type === "touchstart") {
-                let eTouch = e;
-                if ((eTouch).touches.length === 1) {
-                    info.initialX = (eTouch).touches[0].clientX - info.defaultX;
-                    info.initialY = (eTouch).touches[0].clientY - info.defaultY;
-                }
-            }
-            else {
-                info.initialX = e.clientX - info.defaultX;
-                info.initialY = e.clientY - info.defaultY;
-            }
-            info.setDefaultXY();
-            info.element.classList.remove("smooth-transition");
-        }
-    });
-}
-exports.joyStart = joyStart;
-function joyMove(e) {
-    exports.joystickInfos.forEach((info) => {
-        //if user is touching
-        if (info.active) {
-            let xOffset;
-            let yOffset;
-            e.preventDefault();
-            //set offset position relative to top-left of draggable area
-            if (e.type === "touchmove") {
-                let eTouch = e;
-                if ((eTouch).touches.length === 1) {
-                    xOffset = (eTouch).touches[0].clientX - info.initialX;
-                    yOffset = (eTouch).touches[0].clientY - info.initialY;
-                }
-            }
-            else {
-                xOffset = e.clientX - info.initialX;
-                yOffset = e.clientY - info.initialY;
-            }
-            //stops movable element from going outside the draggable area when dragging it
-            let areaWidth = info.area.getBoundingClientRect().width;
-            let dragElWidth = info.element.getBoundingClientRect().width;
-            let areaHeight = info.area.getBoundingClientRect().height;
-            let dragElHeight = info.element.getBoundingClientRect().height;
-            let padAreaBorderSize = movInfo_1.getBorderSize(info.area);
-            if (xOffset + dragElWidth + 2 * padAreaBorderSize > areaWidth)
-                xOffset = areaWidth - dragElWidth - 2 * padAreaBorderSize;
-            if (xOffset < 0)
-                xOffset = 0;
-            if (yOffset + dragElHeight + 2 * padAreaBorderSize > areaHeight)
-                yOffset = areaHeight - dragElHeight - 2 * padAreaBorderSize;
-            if (yOffset < 0)
-                yOffset = 0;
-            movInfo_1.translateToUI(xOffset, yOffset, info.element);
-        }
-    });
-}
-exports.joyMove = joyMove;
-;
-function joyEnd(e) {
-    exports.joystickInfos.forEach((info) => {
-        info.moveToDefaultXY();
-        info.active = false;
-        info.element.classList.add("smooth-transition");
-    });
-}
-exports.joyEnd = joyEnd;
-
-},{"./movInfo":6}],6:[function(require,module,exports){
+},{"./movObj":7}],6:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class RelPosInfo {
@@ -546,14 +547,14 @@ class MovObj {
     }
     set topRelPos(value) {
         this._topRelPos = value;
-        this.translateToUI(this._topRelPos, this.leftRelPos, this.element);
+        this.translateToUI(this._leftRelPos, this._topRelPos, this.element);
     }
     get leftRelPos() {
         return this._leftRelPos;
     }
     set leftRelPos(value) {
         this._leftRelPos = value;
-        this.translateToUI(this._topRelPos, this.leftRelPos, this.element);
+        this.translateToUI(this._leftRelPos, this.topRelPos, this.element);
     }
     constructor(element, area) {
         this.element = element;
@@ -672,13 +673,14 @@ const lasers_1 = require("./UIparts/lasers");
 const numpad_1 = require("./UIparts/numpad");
 /*parameters initialization*/
 const scanParameteres_1 = require("./UIparts/scanParameteres");
+/*drag capabilties*/
 /*pinch capabilties*/
 const pinch_1 = require("./drag-pinch-joystick/pinch");
 /*joystick capabilties*/
-const joystick_1 = require("./drag-pinch-joystick/joystick");
 /*z slider sensitivity */
 const movInfo_1 = require("./drag-pinch-joystick/movInfo");
 const dragObj_1 = require("./drag-pinch-joystick/dragObj");
+const joystickObj_1 = require("./drag-pinch-joystick/joystickObj");
 /*last item in focus*/
 let lastFocus = undefined;
 /*start btn  initialization */
@@ -764,30 +766,25 @@ numpad_1.delBtn.addEventListener("click", () => {
     }
 });
 /*add dragable capabilities*/
-/*
-dragInfos.forEach(info => {
-  info.area.addEventListener("touchstart", dragStart);
-  info.area.addEventListener("touchmove", drag);
-  info.area.addEventListener("touchend", dragEnd);
-  info.area.addEventListener("mousedown", dragStart);
-  info.area.addEventListener("mousemove", drag);
-  info.area.addEventListener("mouseup", dragEnd);
-});
-*/
+let dragObj = new dragObj_1.DragObj(movInfo_1.inspectArea, movInfo_1.sampleArea);
+let xyMotor = new joystickObj_1.JoystickObj(movInfo_1.joyThumb, movInfo_1.joyPad);
+let zMotor = new joystickObj_1.JoystickObj(movInfo_1.zThumb, movInfo_1.zSlider);
 /*add pinchable capabilities*/
 pinch_1.pinchInfos.forEach(info => {
     info.pinchArea.addEventListener("touchstart", pinch_1.pinchStart);
     info.pinchArea.addEventListener("touchmove", pinch_1.pinch);
     info.pinchArea.addEventListener("touchend", pinch_1.pinchEnd);
 });
-joystick_1.joystickInfos.forEach(info => {
-    info.area.addEventListener("touchstart", joystick_1.joyStart);
-    info.area.addEventListener("touchmove", joystick_1.joyMove);
-    info.area.addEventListener("touchend", joystick_1.joyEnd);
-    info.area.addEventListener("mousedown", joystick_1.joyStart);
-    info.area.addEventListener("mousemove", joystick_1.joyMove);
-    info.area.addEventListener("mouseup", joystick_1.joyEnd);
+/*
+joystickInfos.forEach(info => {
+  info.area.addEventListener("touchstart", joyStart);
+  info.area.addEventListener("touchmove", joyMove);
+  info.area.addEventListener("touchend", joyEnd);
+  info.area.addEventListener("mousedown", joyStart);
+  info.area.addEventListener("mousemove", joyMove);
+  info.area.addEventListener("mouseup", joyEnd);
 });
+*/
 movInfo_1.zSensBtn.addEventListener("click", () => {
     movInfo_1.zSensBtn.innerHTML = movInfo_1.zSenses[(movInfo_1.zSenses.indexOf(movInfo_1.zSensBtn.innerHTML) + 1) % movInfo_1.zSenses.length];
 });
@@ -816,6 +813,5 @@ function sendLaserData(targetWaveLength) {
         body: JSON.stringify({})
     });
 }
-let tempDragObj = new dragObj_1.DragObj(movInfo_1.inspectArea, movInfo_1.sampleArea);
 
-},{"./UIparts/lasers":1,"./UIparts/numpad":2,"./UIparts/scanParameteres":3,"./drag-pinch-joystick/dragObj":4,"./drag-pinch-joystick/joystick":5,"./drag-pinch-joystick/movInfo":6,"./drag-pinch-joystick/pinch":8}]},{},[9]);
+},{"./UIparts/lasers":1,"./UIparts/numpad":2,"./UIparts/scanParameteres":3,"./drag-pinch-joystick/dragObj":4,"./drag-pinch-joystick/joystickObj":5,"./drag-pinch-joystick/movInfo":6,"./drag-pinch-joystick/pinch":8}]},{},[9]);

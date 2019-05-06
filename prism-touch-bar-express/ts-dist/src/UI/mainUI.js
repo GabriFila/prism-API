@@ -6,13 +6,14 @@ const lasers_1 = require("./UIparts/lasers");
 const numpad_1 = require("./UIparts/numpad");
 /*parameters initialization*/
 const scanParameteres_1 = require("./UIparts/scanParameteres");
+/*drag capabilties*/
 /*pinch capabilties*/
 const pinch_1 = require("./drag-pinch-joystick/pinch");
 /*joystick capabilties*/
-const joystick_1 = require("./drag-pinch-joystick/joystick");
 /*z slider sensitivity */
 const movInfo_1 = require("./drag-pinch-joystick/movInfo");
 const dragObj_1 = require("./drag-pinch-joystick/dragObj");
+const joystickObj_1 = require("./drag-pinch-joystick/joystickObj");
 /*last item in focus*/
 let lastFocus = undefined;
 /*start btn  initialization */
@@ -98,30 +99,25 @@ numpad_1.delBtn.addEventListener("click", () => {
     }
 });
 /*add dragable capabilities*/
-/*
-dragInfos.forEach(info => {
-  info.area.addEventListener("touchstart", dragStart);
-  info.area.addEventListener("touchmove", drag);
-  info.area.addEventListener("touchend", dragEnd);
-  info.area.addEventListener("mousedown", dragStart);
-  info.area.addEventListener("mousemove", drag);
-  info.area.addEventListener("mouseup", dragEnd);
-});
-*/
+let dragObj = new dragObj_1.DragObj(movInfo_1.inspectArea, movInfo_1.sampleArea);
+let xyMotor = new joystickObj_1.JoystickObj(movInfo_1.joyThumb, movInfo_1.joyPad);
+let zMotor = new joystickObj_1.JoystickObj(movInfo_1.zThumb, movInfo_1.zSlider);
 /*add pinchable capabilities*/
 pinch_1.pinchInfos.forEach(info => {
     info.pinchArea.addEventListener("touchstart", pinch_1.pinchStart);
     info.pinchArea.addEventListener("touchmove", pinch_1.pinch);
     info.pinchArea.addEventListener("touchend", pinch_1.pinchEnd);
 });
-joystick_1.joystickInfos.forEach(info => {
-    info.area.addEventListener("touchstart", joystick_1.joyStart);
-    info.area.addEventListener("touchmove", joystick_1.joyMove);
-    info.area.addEventListener("touchend", joystick_1.joyEnd);
-    info.area.addEventListener("mousedown", joystick_1.joyStart);
-    info.area.addEventListener("mousemove", joystick_1.joyMove);
-    info.area.addEventListener("mouseup", joystick_1.joyEnd);
+/*
+joystickInfos.forEach(info => {
+  info.area.addEventListener("touchstart", joyStart);
+  info.area.addEventListener("touchmove", joyMove);
+  info.area.addEventListener("touchend", joyEnd);
+  info.area.addEventListener("mousedown", joyStart);
+  info.area.addEventListener("mousemove", joyMove);
+  info.area.addEventListener("mouseup", joyEnd);
 });
+*/
 movInfo_1.zSensBtn.addEventListener("click", () => {
     movInfo_1.zSensBtn.innerHTML = movInfo_1.zSenses[(movInfo_1.zSenses.indexOf(movInfo_1.zSensBtn.innerHTML) + 1) % movInfo_1.zSenses.length];
 });
@@ -150,5 +146,4 @@ function sendLaserData(targetWaveLength) {
         body: JSON.stringify({})
     });
 }
-let tempDragObj = new dragObj_1.DragObj(movInfo_1.inspectArea, movInfo_1.sampleArea);
 //# sourceMappingURL=mainUI.js.map

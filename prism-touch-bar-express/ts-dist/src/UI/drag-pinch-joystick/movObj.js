@@ -12,14 +12,14 @@ class MovObj {
     }
     set topRelPos(value) {
         this._topRelPos = value;
-        this.translateToUI(this._topRelPos, this.leftRelPos, this.element);
+        this.translateToUI(this._leftRelPos, this._topRelPos, this.element);
     }
     get leftRelPos() {
         return this._leftRelPos;
     }
     set leftRelPos(value) {
         this._leftRelPos = value;
-        this.translateToUI(this._topRelPos, this.leftRelPos, this.element);
+        this.translateToUI(this._leftRelPos, this.topRelPos, this.element);
     }
     constructor(element, area) {
         this.element = element;

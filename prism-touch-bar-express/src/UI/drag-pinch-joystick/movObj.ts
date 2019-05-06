@@ -18,7 +18,7 @@ export class MovObj {
   }
   public set topRelPos(value: number) {
     this._topRelPos = value;
-    this.translateToUI(this._topRelPos, this.leftRelPos, this.element);
+    this.translateToUI(this._leftRelPos, this._topRelPos, this.element);
   }
 
   private _leftRelPos: number;
@@ -27,7 +27,7 @@ export class MovObj {
   }
   public set leftRelPos(value: number) {
     this._leftRelPos = value;
-    this.translateToUI(this._topRelPos, this.leftRelPos, this.element);
+    this.translateToUI(this._leftRelPos, this.topRelPos, this.element);
   }
 
   constructor(element: HTMLDivElement, area: HTMLDivElement) {

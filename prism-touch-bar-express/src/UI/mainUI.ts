@@ -13,15 +13,13 @@ import {
   limits
 } from "./UIparts/scanParameteres";
 /*drag capabilties*/
-import { dragStart, drag, dragEnd, dragInfos } from "./drag-pinch-joystick/drag";
 /*pinch capabilties*/
 import { pinchStart, pinch, pinchEnd, pinchInfos } from "./drag-pinch-joystick/pinch";
 /*joystick capabilties*/
-import { joystickInfos, joyStart, joyMove, joyEnd } from "./drag-pinch-joystick/joystick";
 /*z slider sensitivity */
-import { zSensBtn, zSenses, inspectArea, sampleArea } from "./drag-pinch-joystick/movInfo";
-import { MovObj } from "./drag-pinch-joystick/movObj";
+import { zSensBtn, zSenses, inspectArea, sampleArea, joyThumb, joyPad, zThumb, zSlider } from "./drag-pinch-joystick/movInfo";
 import { DragObj } from "./drag-pinch-joystick/dragObj";
+import { JoystickObj } from "./drag-pinch-joystick/joystickObj";
 
 /*last item in focus*/
 let lastFocus: HTMLInputElement = undefined;
@@ -117,23 +115,17 @@ delBtn.addEventListener("click", () => {
 });
 
 /*add dragable capabilities*/
-/*
-dragInfos.forEach(info => {
-  info.area.addEventListener("touchstart", dragStart);
-  info.area.addEventListener("touchmove", drag);
-  info.area.addEventListener("touchend", dragEnd);
-  info.area.addEventListener("mousedown", dragStart);
-  info.area.addEventListener("mousemove", drag);
-  info.area.addEventListener("mouseup", dragEnd);
-});
-*/
+let dragObj = new DragObj(inspectArea, sampleArea);
+
+let xyMotor = new JoystickObj(joyThumb, joyPad);
+let zMotor = new JoystickObj(zThumb, zSlider);
 /*add pinchable capabilities*/
 pinchInfos.forEach(info => {
   info.pinchArea.addEventListener("touchstart", pinchStart);
   info.pinchArea.addEventListener("touchmove", pinch);
   info.pinchArea.addEventListener("touchend", pinchEnd);
 });
-
+/*
 joystickInfos.forEach(info => {
   info.area.addEventListener("touchstart", joyStart);
   info.area.addEventListener("touchmove", joyMove);
@@ -142,7 +134,7 @@ joystickInfos.forEach(info => {
   info.area.addEventListener("mousemove", joyMove);
   info.area.addEventListener("mouseup", joyEnd);
 });
-
+*/
 zSensBtn.addEventListener("click", () => {
   zSensBtn.innerHTML = zSenses[(zSenses.indexOf(zSensBtn.innerHTML) + 1) % zSenses.length];
 });
@@ -176,5 +168,3 @@ function sendLaserData(targetWaveLength: number) {
     body: JSON.stringify({})
   });
 }
-
-let tempDragObj = new DragObj(inspectArea, sampleArea);
