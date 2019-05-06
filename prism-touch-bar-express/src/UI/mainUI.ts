@@ -19,7 +19,9 @@ import { pinchStart, pinch, pinchEnd, pinchInfos } from "./drag-pinch-joystick/p
 /*joystick capabilties*/
 import { joystickInfos, joyStart, joyMove, joyEnd } from "./drag-pinch-joystick/joystick";
 /*z slider sensitivity */
-import { zSensBtn, zSenses, inspectArea } from "./drag-pinch-joystick/movInfo";
+import { zSensBtn, zSenses, inspectArea, sampleArea } from "./drag-pinch-joystick/movInfo";
+import { MovObj } from "./drag-pinch-joystick/movObj";
+import { DragObj } from "./drag-pinch-joystick/dragObj";
 
 /*last item in focus*/
 let lastFocus: HTMLInputElement = undefined;
@@ -115,6 +117,7 @@ delBtn.addEventListener("click", () => {
 });
 
 /*add dragable capabilities*/
+/*
 dragInfos.forEach(info => {
   info.area.addEventListener("touchstart", dragStart);
   info.area.addEventListener("touchmove", drag);
@@ -123,7 +126,7 @@ dragInfos.forEach(info => {
   info.area.addEventListener("mousemove", drag);
   info.area.addEventListener("mouseup", dragEnd);
 });
-
+*/
 /*add pinchable capabilities*/
 pinchInfos.forEach(info => {
   info.pinchArea.addEventListener("touchstart", pinchStart);
@@ -173,3 +176,5 @@ function sendLaserData(targetWaveLength: number) {
     body: JSON.stringify({})
   });
 }
+
+let tempDragObj = new DragObj(inspectArea, sampleArea);

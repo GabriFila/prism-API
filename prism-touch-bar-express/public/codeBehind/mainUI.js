@@ -221,60 +221,61 @@ exports.updateLimits = updateLimits;
 },{}],4:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const movInfo_1 = require("./movInfo");
-const movInfo_2 = require("./movInfo");
-const movInfo_3 = require("./movInfo");
-class DragInfo extends movInfo_1.MovInfo {
+const movObj_1 = require("./movObj");
+class DragObj extends movObj_1.MovObj {
     constructor(element, area) {
         super(element, area);
-    }
-}
-exports.dragInfos = [new DragInfo(movInfo_3.inspectArea, movInfo_2.sampleArea)];
-function dragStart(e) {
-    exports.dragInfos.forEach((info) => {
-        if (e.target === info.element) {
-            info.active = true;
-            //set start position
-            if (e.type === "touchstart") {
-                let eTouch = e;
-                if ((eTouch).touches.length === 1) {
-                    info.initialX = (eTouch).touches[0].clientX - info.relPos.left;
-                    info.initialY = (eTouch).touches[0].clientY - info.relPos.top;
+        this.dragStart = (e) => {
+            alert(this.initialX);
+            this.topRelPos = 100;
+            if (e.target === this.element) {
+                alert("touched");
+                this.active = true;
+                //set start position
+                if (e.type === "touchstart") {
+                    let eTouch = e;
+                    if (eTouch.touches.length === 1) {
+                        this.initialX = eTouch.touches[0].clientX - this.leftRelPos;
+                        this.initialY = eTouch.touches[0].clientY - this.topRelPos;
+                    }
+                }
+                else {
+                    this.initialX = e.clientX - this.leftRelPos;
+                    this.initialY = e.clientY - this.topRelPos;
                 }
             }
-            else {
-                info.initialX = e.clientX - info.relPos.left;
-                info.initialY = e.clientY - info.relPos.top;
-            }
-        }
-    });
-}
-exports.dragStart = dragStart;
-function drag(e) {
-    exports.dragInfos.forEach((info) => {
+        };
+        this.area.addEventListener("mousedown", this.dragStart);
+        this.area.addEventListener("touchstart", this.dragStart);
+        this.area.addEventListener("mousemove", this.drag);
+        this.area.addEventListener("touchmove", this.drag);
+        this.area.addEventListener("mouseup", this.dragEnd);
+        this.area.addEventListener("touchend", this.dragEnd);
+    }
+    drag(e) {
         //if user is touching
-        if (info.active) {
+        if (this.active) {
             e.preventDefault();
             let currentX;
             let currentY;
             //set offset position relative to top-left of draggable area
             if (e.type === "touchmove") {
                 let eTouch = e;
-                if ((eTouch).touches.length === 1) {
-                    currentX = (eTouch).touches[0].clientX - info.initialX;
-                    currentY = (eTouch).touches[0].clientY - info.initialY;
+                if (eTouch.touches.length === 1) {
+                    currentX = eTouch.touches[0].clientX - this.initialX;
+                    currentY = eTouch.touches[0].clientY - this.initialY;
                 }
             }
             else {
-                currentX = e.clientX - info.initialX;
-                currentY = e.clientY - info.initialY;
+                currentX = e.clientX - this.initialX;
+                currentY = e.clientY - this.initialY;
             }
             //stops movable element from going outside the draggable area when dragging it
-            let areaWidth = info.area.getBoundingClientRect().width;
-            let dragElWidth = info.element.getBoundingClientRect().width;
-            let areaHeight = info.area.getBoundingClientRect().height;
-            let dragElHeight = info.element.getBoundingClientRect().height;
-            let dragAreaBorderSize = movInfo_1.getBorderSize(info.area);
+            let areaWidth = this.area.getBoundingClientRect().width;
+            let dragElWidth = this.element.getBoundingClientRect().width;
+            let areaHeight = this.area.getBoundingClientRect().height;
+            let dragElHeight = this.element.getBoundingClientRect().height;
+            let dragAreaBorderSize = this.areaBorderSize;
             if (currentX + dragElWidth + 2 * dragAreaBorderSize > areaWidth)
                 currentX = areaWidth - dragElWidth - 2 * dragAreaBorderSize;
             if (currentX < 0)
@@ -283,20 +284,80 @@ function drag(e) {
                 currentY = areaHeight - dragElHeight - 2 * dragAreaBorderSize;
             if (currentY < 0)
                 currentY = 0;
-            info.setRelPosLeft(currentX);
-            info.setRelPosTop(currentY);
-            //translateToUI(currentX, currentY, info.element);
+            this.leftRelPos = currentX;
+            this.topRelPos = currentY;
         }
-    });
+    }
+    dragEnd(e) {
+        this.active = false;
+    }
 }
-exports.drag = drag;
-;
-function dragEnd(e) {
-    exports.dragInfos.forEach((info) => info.active = false);
+exports.DragObj = DragObj;
+//export const dragObjs: DragInfo[] = [new DragInfo(inspectArea, sampleArea)];
+/*
+export function dragStart(e: TouchEvent | MouseEvent) {
+  dragObjs.forEach(info => {
+    if (e.target === info.element) {
+      info.active = true;
+      //set start position
+      if (e.type === "touchstart") {
+        let eTouch = e as TouchEvent;
+        if (eTouch.touches.length === 1) {
+          info.initialX = eTouch.touches[0].clientX - info.leftRelPos;
+          info.initialY = eTouch.touches[0].clientY - info.topRelPos;
+        }
+      } else {
+        info.initialX = (e as MouseEvent).clientX - info.leftRelPos;
+        info.initialY = (e as MouseEvent).clientY - info.topRelPos;
+      }
+    }
+  });
 }
-exports.dragEnd = dragEnd;
 
-},{"./movInfo":6}],5:[function(require,module,exports){
+export function drag(e: TouchEvent | MouseEvent) {
+  dragObjs.forEach(info => {
+    //if user is touching
+    if (info.active) {
+      e.preventDefault();
+      let currentX;
+      let currentY;
+      //set offset position relative to top-left of draggable area
+      if (e.type === "touchmove") {
+        let eTouch = e as TouchEvent;
+        if (eTouch.touches.length === 1) {
+          currentX = eTouch.touches[0].clientX - info.initialX;
+          currentY = eTouch.touches[0].clientY - info.initialY;
+        }
+      } else {
+        currentX = (e as MouseEvent).clientX - info.initialX;
+        currentY = (e as MouseEvent).clientY - info.initialY;
+      }
+
+      //stops movable element from going outside the draggable area when dragging it
+      let areaWidth: number = info.area.getBoundingClientRect().width;
+      let dragElWidth: number = info.element.getBoundingClientRect().width;
+      let areaHeight: number = info.area.getBoundingClientRect().height;
+      let dragElHeight: number = info.element.getBoundingClientRect().height;
+      let dragAreaBorderSize: number = info.areaBorderSize;
+
+      if (currentX + dragElWidth + 2 * dragAreaBorderSize > areaWidth) currentX = areaWidth - dragElWidth - 2 * dragAreaBorderSize;
+      if (currentX < 0) currentX = 0;
+      if (currentY + dragElHeight + 2 * dragAreaBorderSize > areaHeight) currentY = areaHeight - dragElHeight - 2 * dragAreaBorderSize;
+      if (currentY < 0) currentY = 0;
+
+      info.leftRelPos = currentX;
+      info.topRelPos = currentY;
+    }
+  });
+}
+
+
+export function dragEnd(e: TouchEvent | MouseEvent) {
+  dragObjs.forEach(info => (info.active = false));
+}
+*/
+
+},{"./movObj":7}],5:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const movInfo_1 = require("./movInfo");
@@ -473,6 +534,68 @@ exports.translateToUI = translateToUI;
 },{}],7:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+class MovObj {
+    get elBorderSize() {
+        return this._elBorderSize;
+    }
+    get areaBorderSize() {
+        return this._areaBorderSize;
+    }
+    get topRelPos() {
+        return this._topRelPos;
+    }
+    set topRelPos(value) {
+        this._topRelPos = value;
+        this.translateToUI(this._topRelPos, this.leftRelPos, this.element);
+    }
+    get leftRelPos() {
+        return this._leftRelPos;
+    }
+    set leftRelPos(value) {
+        this._leftRelPos = value;
+        this.translateToUI(this._topRelPos, this.leftRelPos, this.element);
+    }
+    constructor(element, area) {
+        this.element = element;
+        this.area = area;
+        this.active = false;
+        this.updateElBorderSize();
+        this.updateAreaBorderSize();
+        this.updateTopLeftRelPos();
+    }
+    updateTopLeftRelPos() {
+        this._topRelPos =
+            this.element.getBoundingClientRect().top - this.element.parentElement.getBoundingClientRect().top - this.getBorderSize() - 1;
+        this._leftRelPos =
+            this.element.getBoundingClientRect().left - this.element.parentElement.getBoundingClientRect().left - this.getBorderSize() - 1;
+    }
+    getBorderSize() {
+        let elStyle = window.getComputedStyle(this.element);
+        let regex = /([0-9]*)px[a-zA-Z0-9_ ]*/;
+        let str = elStyle.getPropertyValue("border"); //gets rid of "px" in border CSS property
+        return Number(regex.exec(str)[1]);
+    }
+    updateElBorderSize() {
+        let elStyle = window.getComputedStyle(this.element);
+        let regex = /([0-9]*)px[a-zA-Z0-9_ ]*/;
+        let str = elStyle.getPropertyValue("border"); //gets rid of "px" in border CSS property
+        this._elBorderSize = Number(regex.exec(str)[1]);
+    }
+    updateAreaBorderSize() {
+        let elStyle = window.getComputedStyle(this.element);
+        let regex = /([0-9]*)px[a-zA-Z0-9_ ]*/;
+        let str = elStyle.getPropertyValue("border"); //gets rid of "px" in border CSS property
+        this._areaBorderSize = Number(regex.exec(str)[1]);
+    }
+    translateToUI(xPos, yPos, el) {
+        el.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
+    }
+}
+exports.MovObj = MovObj;
+
+},{}],8:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const movInfo_1 = require("./movInfo");
 const movInfo_2 = require("./movInfo");
 const movInfo_3 = require("./movInfo");
@@ -540,7 +663,7 @@ function touchingOnlyRightPoints(e, element, area) {
         e.touches[0].target === area && e.touches[1].target === element;
 }
 
-},{"./movInfo":6}],8:[function(require,module,exports){
+},{"./movInfo":6}],9:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /*slider initialization*/
@@ -549,14 +672,13 @@ const lasers_1 = require("./UIparts/lasers");
 const numpad_1 = require("./UIparts/numpad");
 /*parameters initialization*/
 const scanParameteres_1 = require("./UIparts/scanParameteres");
-/*drag capabilties*/
-const drag_1 = require("./drag-pinch-joystick/drag");
 /*pinch capabilties*/
 const pinch_1 = require("./drag-pinch-joystick/pinch");
 /*joystick capabilties*/
 const joystick_1 = require("./drag-pinch-joystick/joystick");
 /*z slider sensitivity */
 const movInfo_1 = require("./drag-pinch-joystick/movInfo");
+const dragObj_1 = require("./drag-pinch-joystick/dragObj");
 /*last item in focus*/
 let lastFocus = undefined;
 /*start btn  initialization */
@@ -624,12 +746,13 @@ numpad_1.numPad.forEach((numBtn, i) => {
     });
 });
 scanParameteres_1.UIparameters.forEach(param => param.addEventListener("change", () => alert("cambiato")));
+//problem
 /*add dot to last focus element when dot button pressed */
 numpad_1.dotBtn.addEventListener("click", () => {
     if (lastFocus !== null && lastFocus.value.slice(-1) !== "." && lastFocus.value.length != 0) {
         lastFocus.classList.add("highlighted");
         lastFocus.value += ".";
-        scanParameteres_1.sendParamChange(lastFocus);
+        //  sendParamChange(lastFocus);
     }
 });
 /*delete number to last focus element when delete button pressed */
@@ -641,14 +764,16 @@ numpad_1.delBtn.addEventListener("click", () => {
     }
 });
 /*add dragable capabilities*/
-drag_1.dragInfos.forEach(info => {
-    info.area.addEventListener("touchstart", drag_1.dragStart);
-    info.area.addEventListener("touchmove", drag_1.drag);
-    info.area.addEventListener("touchend", drag_1.dragEnd);
-    info.area.addEventListener("mousedown", drag_1.dragStart);
-    info.area.addEventListener("mousemove", drag_1.drag);
-    info.area.addEventListener("mouseup", drag_1.dragEnd);
+/*
+dragInfos.forEach(info => {
+  info.area.addEventListener("touchstart", dragStart);
+  info.area.addEventListener("touchmove", drag);
+  info.area.addEventListener("touchend", dragEnd);
+  info.area.addEventListener("mousedown", dragStart);
+  info.area.addEventListener("mousemove", drag);
+  info.area.addEventListener("mouseup", dragEnd);
 });
+*/
 /*add pinchable capabilities*/
 pinch_1.pinchInfos.forEach(info => {
     info.pinchArea.addEventListener("touchstart", pinch_1.pinchStart);
@@ -691,5 +816,6 @@ function sendLaserData(targetWaveLength) {
         body: JSON.stringify({})
     });
 }
+let tempDragObj = new dragObj_1.DragObj(movInfo_1.inspectArea, movInfo_1.sampleArea);
 
-},{"./UIparts/lasers":1,"./UIparts/numpad":2,"./UIparts/scanParameteres":3,"./drag-pinch-joystick/drag":4,"./drag-pinch-joystick/joystick":5,"./drag-pinch-joystick/movInfo":6,"./drag-pinch-joystick/pinch":7}]},{},[8]);
+},{"./UIparts/lasers":1,"./UIparts/numpad":2,"./UIparts/scanParameteres":3,"./drag-pinch-joystick/dragObj":4,"./drag-pinch-joystick/joystick":5,"./drag-pinch-joystick/movInfo":6,"./drag-pinch-joystick/pinch":8}]},{},[9]);

@@ -6,14 +6,13 @@ const lasers_1 = require("./UIparts/lasers");
 const numpad_1 = require("./UIparts/numpad");
 /*parameters initialization*/
 const scanParameteres_1 = require("./UIparts/scanParameteres");
-/*drag capabilties*/
-const drag_1 = require("./drag-pinch-joystick/drag");
 /*pinch capabilties*/
 const pinch_1 = require("./drag-pinch-joystick/pinch");
 /*joystick capabilties*/
 const joystick_1 = require("./drag-pinch-joystick/joystick");
 /*z slider sensitivity */
 const movInfo_1 = require("./drag-pinch-joystick/movInfo");
+const dragObj_1 = require("./drag-pinch-joystick/dragObj");
 /*last item in focus*/
 let lastFocus = undefined;
 /*start btn  initialization */
@@ -81,12 +80,13 @@ numpad_1.numPad.forEach((numBtn, i) => {
     });
 });
 scanParameteres_1.UIparameters.forEach(param => param.addEventListener("change", () => alert("cambiato")));
+//problem
 /*add dot to last focus element when dot button pressed */
 numpad_1.dotBtn.addEventListener("click", () => {
     if (lastFocus !== null && lastFocus.value.slice(-1) !== "." && lastFocus.value.length != 0) {
         lastFocus.classList.add("highlighted");
         lastFocus.value += ".";
-        scanParameteres_1.sendParamChange(lastFocus);
+        //  sendParamChange(lastFocus);
     }
 });
 /*delete number to last focus element when delete button pressed */
@@ -98,14 +98,16 @@ numpad_1.delBtn.addEventListener("click", () => {
     }
 });
 /*add dragable capabilities*/
-drag_1.dragInfos.forEach(info => {
-    info.area.addEventListener("touchstart", drag_1.dragStart);
-    info.area.addEventListener("touchmove", drag_1.drag);
-    info.area.addEventListener("touchend", drag_1.dragEnd);
-    info.area.addEventListener("mousedown", drag_1.dragStart);
-    info.area.addEventListener("mousemove", drag_1.drag);
-    info.area.addEventListener("mouseup", drag_1.dragEnd);
+/*
+dragInfos.forEach(info => {
+  info.area.addEventListener("touchstart", dragStart);
+  info.area.addEventListener("touchmove", drag);
+  info.area.addEventListener("touchend", dragEnd);
+  info.area.addEventListener("mousedown", dragStart);
+  info.area.addEventListener("mousemove", drag);
+  info.area.addEventListener("mouseup", dragEnd);
 });
+*/
 /*add pinchable capabilities*/
 pinch_1.pinchInfos.forEach(info => {
     info.pinchArea.addEventListener("touchstart", pinch_1.pinchStart);
@@ -148,4 +150,5 @@ function sendLaserData(targetWaveLength) {
         body: JSON.stringify({})
     });
 }
+let tempDragObj = new dragObj_1.DragObj(movInfo_1.inspectArea, movInfo_1.sampleArea);
 //# sourceMappingURL=mainUI.js.map
