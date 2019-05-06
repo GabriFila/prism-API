@@ -8,12 +8,13 @@ const numpad_1 = require("./UIparts/numpad");
 const scanParameteres_1 = require("./UIparts/scanParameteres");
 /*drag capabilties*/
 /*pinch capabilties*/
-const pinch_1 = require("./drag-pinch-joystick/pinch");
 /*joystick capabilties*/
 /*z slider sensitivity */
-const movInfo_1 = require("./drag-pinch-joystick/movInfo");
+//import { zSensBtn, zSenses, inspectArea, sampleArea, joyThumb, joyPad, zThumb, zSlider } from "./drag-pinch-joystick/movInfo";
 const dragObj_1 = require("./drag-pinch-joystick/dragObj");
 const joystickObj_1 = require("./drag-pinch-joystick/joystickObj");
+const movObj_1 = require("./drag-pinch-joystick/movObj");
+const pinchObj_1 = require("./drag-pinch-joystick/pinchObj");
 /*last item in focus*/
 let lastFocus = undefined;
 /*start btn  initialization */
@@ -99,27 +100,12 @@ numpad_1.delBtn.addEventListener("click", () => {
     }
 });
 /*add dragable capabilities*/
-let dragObj = new dragObj_1.DragObj(movInfo_1.inspectArea, movInfo_1.sampleArea);
-let xyMotor = new joystickObj_1.JoystickObj(movInfo_1.joyThumb, movInfo_1.joyPad);
-let zMotor = new joystickObj_1.JoystickObj(movInfo_1.zThumb, movInfo_1.zSlider);
-/*add pinchable capabilities*/
-pinch_1.pinchInfos.forEach(info => {
-    info.pinchArea.addEventListener("touchstart", pinch_1.pinchStart);
-    info.pinchArea.addEventListener("touchmove", pinch_1.pinch);
-    info.pinchArea.addEventListener("touchend", pinch_1.pinchEnd);
-});
-/*
-joystickInfos.forEach(info => {
-  info.area.addEventListener("touchstart", joyStart);
-  info.area.addEventListener("touchmove", joyMove);
-  info.area.addEventListener("touchend", joyEnd);
-  info.area.addEventListener("mousedown", joyStart);
-  info.area.addEventListener("mousemove", joyMove);
-  info.area.addEventListener("mouseup", joyEnd);
-});
-*/
-movInfo_1.zSensBtn.addEventListener("click", () => {
-    movInfo_1.zSensBtn.innerHTML = movInfo_1.zSenses[(movInfo_1.zSenses.indexOf(movInfo_1.zSensBtn.innerHTML) + 1) % movInfo_1.zSenses.length];
+let dragObj = new dragObj_1.DragObj(movObj_1.inspectArea, movObj_1.sampleArea);
+let pinchObj = new pinchObj_1.PinchObj(movObj_1.inspectArea, movObj_1.sampleArea, 20);
+let xyMotor = new joystickObj_1.JoystickObj(movObj_1.joyThumb, movObj_1.joyPad);
+let zMotor = new joystickObj_1.JoystickObj(movObj_1.zThumb, movObj_1.zSlider);
+movObj_1.zSensBtn.addEventListener("click", () => {
+    movObj_1.zSensBtn.innerHTML = movObj_1.zSenses[(movObj_1.zSenses.indexOf(movObj_1.zSensBtn.innerHTML) + 1) % movObj_1.zSenses.length];
 });
 function removeHighlithBoder() {
     scanParameteres_1.UIparameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));

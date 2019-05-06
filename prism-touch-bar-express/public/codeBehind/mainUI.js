@@ -293,7 +293,7 @@ class DragObj extends movObj_1.MovObj {
 }
 exports.DragObj = DragObj;
 
-},{"./movObj":7}],5:[function(require,module,exports){
+},{"./movObj":6}],5:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const movObj_1 = require("./movObj");
@@ -450,89 +450,7 @@ export function joyEnd(e: TouchEvent | MouseEvent) {
 }
 */
 
-},{"./movObj":7}],6:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class RelPosInfo {
-    constructor(top, right, bottom, left) {
-        this.left = left;
-        this.right = right;
-        this.bottom = bottom;
-        this.top = top;
-    }
-}
-class MovInfo {
-    constructor(element, area) {
-        this.element = element;
-        this.area = area;
-        this.active = false;
-        this.getBorderSize();
-        this.getRelPos();
-    }
-    get borderSize() {
-        this.getBorderSize();
-        return this._borderSize;
-    }
-    get relPos() {
-        this.getRelPos();
-        return this._relPos;
-    }
-    setRelPosTop(top) {
-        this._relPos.top = top;
-        translateToUI(this._relPos.left, top, this.element);
-    }
-    setRelPosLeft(left) {
-        this._relPos.left = left;
-        translateToUI(left, this._relPos.top, this.element);
-    }
-    getBorderSize() {
-        let elStyle = window.getComputedStyle(this.element);
-        let regex = /([0-9]*)px[a-zA-Z0-9_ ]*/;
-        let str = elStyle.getPropertyValue("border"); //gets rid of "px" in border CSS property
-        this._borderSize = Number(regex.exec(str)[1]);
-    }
-    getRelPos() {
-        this._relPos = new RelPosInfo(this.element.getBoundingClientRect().top -
-            this.element.parentElement.getBoundingClientRect().top -
-            getBorderSize(this.element) -
-            1, this.element.getBoundingClientRect().right -
-            this.element.parentElement.getBoundingClientRect().right -
-            getBorderSize(this.element) -
-            1, this.element.getBoundingClientRect().bottom -
-            this.element.parentElement.getBoundingClientRect().bottom -
-            getBorderSize(this.element) -
-            1, this.element.getBoundingClientRect().left -
-            this.element.parentElement.getBoundingClientRect().left -
-            getBorderSize(this.element) -
-            1);
-    }
-}
-exports.MovInfo = MovInfo;
-exports.inspectArea = document.querySelector("#inspect-area-0");
-exports.sampleArea = document.querySelector("#sample-area");
-exports.joyPad = document.querySelector("#joystick-pad");
-exports.joyThumb = document.querySelector("#joystick-thumb");
-exports.zThumb = document.querySelector("#z-thumb");
-exports.zSlider = document.querySelector("#z-slider");
-exports.zSensBtn = document.querySelector("#z-sens-btn");
-exports.zSenses = ["0.1x", "0.5x", "1x"];
-function getBorderSize(el) {
-    let elStyle = window.getComputedStyle(el);
-    let regex = /([0-9]*)px[a-zA-Z0-9_ ]*/;
-    let str = elStyle.getPropertyValue("border"); //gets rid of "px" in height CSS property
-    return Number(regex.exec(str)[1]);
-}
-exports.getBorderSize = getBorderSize;
-function getRelPos(el) {
-    return new RelPosInfo(el.getBoundingClientRect().top - el.parentElement.getBoundingClientRect().top - getBorderSize(el) - 1, el.getBoundingClientRect().right - el.parentElement.getBoundingClientRect().right - getBorderSize(el) - 1, el.getBoundingClientRect().bottom - el.parentElement.getBoundingClientRect().bottom - getBorderSize(el) - 1, el.getBoundingClientRect().left - el.parentElement.getBoundingClientRect().left - getBorderSize(el) - 1);
-}
-exports.getRelPos = getRelPos;
-function translateToUI(xPos, yPos, el) {
-    el.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
-}
-exports.translateToUI = translateToUI;
-
-},{}],7:[function(require,module,exports){
+},{"./movObj":6}],6:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class MovObj {
@@ -593,78 +511,132 @@ class MovObj {
     }
 }
 exports.MovObj = MovObj;
+exports.inspectArea = document.querySelector("#inspect-area-0");
+exports.zThumb = document.querySelector("#z-thumb");
+exports.sampleArea = document.querySelector("#sample-area");
+exports.zSlider = document.querySelector("#z-slider");
+exports.joyPad = document.querySelector("#joystick-pad");
+exports.joyThumb = document.querySelector("#joystick-thumb");
+exports.zSensBtn = document.querySelector("#z-sens-btn");
+exports.zSenses = ["0.1x", "0.5x", "1x"];
 
-},{}],8:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const movInfo_1 = require("./movInfo");
-const movInfo_2 = require("./movInfo");
-const movInfo_3 = require("./movInfo");
-class PinchInfo {
-    constructor(pinchElement, pinchArea, elMinDim) {
-        this.pinchELement = pinchElement;
-        this.pinchArea = pinchArea;
-        this.pinchActive = false;
-        this.elMinDim = elMinDim;
-    }
-}
-exports.pinchInfos = [new PinchInfo(movInfo_3.inspectArea, movInfo_2.sampleArea, 40)];
-function pinchStart(e) {
-    exports.pinchInfos.forEach(info => {
-        if (e.touches.length === 2) {
-            if (e.touches[0].target === info.pinchArea && e.touches[1].target === info.pinchArea ||
-                e.touches) {
-                if (touchingOnlyRightPoints(e, info.pinchELement, info.pinchArea)) {
-                    info.pinchActive = true;
-                    info.initialPinchDistance = Math.sqrt(Math.pow((e).touches[0].clientX - (e).touches[1].clientX, 2)
-                        + Math.pow((e).touches[0].clientY - (e).touches[1].clientY, 2));
-                    info.areaMaxDim = Math.min(info.pinchArea.getBoundingClientRect().width - 2 * movInfo_1.getBorderSize(info.pinchArea), info.pinchArea.getBoundingClientRect().height - 2 * movInfo_1.getBorderSize(info.pinchArea));
+const movObj_1 = require("./movObj");
+class PinchObj extends movObj_1.MovObj {
+    constructor(element, area, elMinDim) {
+        super(element, area);
+        this.pinchStart = (e) => {
+            if (e.touches.length === 2) {
+                if ((e.touches[0].target === this.area && e.touches[1].target === this.area) || e.touches) {
+                    if (this.touchingOnlyRightPoints(e, this.element, this.area)) {
+                        this.active = true;
+                        this.initialPinchDistance = Math.sqrt(Math.pow(e.touches[0].clientX - e.touches[1].clientX, 2) + Math.pow(e.touches[0].clientY - e.touches[1].clientY, 2));
+                        this.areaMaxDim = Math.min(this.area.getBoundingClientRect().width - 2 * this.areaBorderSize, this.area.getBoundingClientRect().height - 2 * this.areaBorderSize);
+                    }
                 }
             }
-        }
-    });
-}
-exports.pinchStart = pinchStart;
-function pinch(e) {
-    exports.pinchInfos.forEach((info, index) => {
-        if (info.pinchActive) {
-            e.preventDefault();
-            if (e.touches.length === 2) {
-                info.pinchFactor = Math.sqrt(Math.pow((e).touches[0].clientX - (e).touches[1].clientX, 2)
-                    + Math.pow((e).touches[0].clientY - (e).touches[1].clientY, 2))
-                    / info.initialPinchDistance;
-                //limitPinchFactor(info.pinchFactor);
-                info.pinchFactor = Math.pow(info.pinchFactor, 1 / 8);
-                let newWidth = info.pinchELement.getBoundingClientRect().width * info.pinchFactor;
-                let newHeight = info.pinchELement.getBoundingClientRect().height * info.pinchFactor;
-                if (newWidth > info.areaMaxDim)
-                    newWidth = info.areaMaxDim;
-                if (newHeight > info.areaMaxDim)
-                    newHeight = info.areaMaxDim;
-                if (newWidth < info.elMinDim)
-                    newWidth = info.elMinDim;
-                if (newHeight < info.elMinDim)
-                    newHeight = info.elMinDim;
-                info.pinchELement.style.width = String(newWidth) + "px";
-                info.pinchELement.style.height = String(newHeight) + "px";
+        };
+        this.pinch = (e) => {
+            if (this.active) {
+                e.preventDefault();
+                if (e.touches.length === 2) {
+                    this.pinchFactor =
+                        Math.sqrt(Math.pow(e.touches[0].clientX - e.touches[1].clientX, 2) + Math.pow(e.touches[0].clientY - e.touches[1].clientY, 2)) /
+                            this.initialPinchDistance;
+                    //limitPinchFactor(this.pinchFactor);
+                    this.pinchFactor = Math.pow(this.pinchFactor, 1 / 12);
+                    let newWidth = this.element.getBoundingClientRect().width * this.pinchFactor;
+                    let newHeight = this.element.getBoundingClientRect().height * this.pinchFactor;
+                    if (newWidth > this.areaMaxDim)
+                        newWidth = this.areaMaxDim;
+                    if (newHeight > this.areaMaxDim)
+                        newHeight = this.areaMaxDim;
+                    if (newWidth < this.elMinDim)
+                        newWidth = this.elMinDim;
+                    if (newHeight < this.elMinDim)
+                        newHeight = this.elMinDim;
+                    this.element.style.width = String(newWidth) + "px";
+                    this.element.style.height = String(newHeight) + "px";
+                }
             }
+        };
+        this.pinchEnd = () => {
+            this.active = false;
+        };
+        this.elMinDim = elMinDim;
+        this.area.addEventListener("touchstart", this.pinchStart);
+        this.area.addEventListener("touchmove", this.pinch);
+        this.area.addEventListener("touchend", this.pinchEnd);
+    }
+    touchingOnlyRightPoints(e, element, area) {
+        return ((e.touches[0].target === area && e.touches[1].target === area) ||
+            (e.touches[0].target === element && e.touches[1].target === element) ||
+            (e.touches[0].target === element && e.touches[1].target === area) ||
+            (e.touches[0].target === area && e.touches[1].target === element));
+    }
+}
+exports.PinchObj = PinchObj;
+/*
+export function pinchStart(e: TouchEvent) {
+  pinchInfos.forEach(info => {
+    if (e.touches.length === 2) {
+      if ((e.touches[0].target === info.area && e.touches[1].target === info.area) || e.touches) {
+        if (touchingOnlyRightPoints(e, info.element, info.area)) {
+          info.active = true;
+          info.initialPinchDistance = Math.sqrt(
+            Math.pow(e.touches[0].clientX - e.touches[1].clientX, 2) + Math.pow(e.touches[0].clientY - e.touches[1].clientY, 2)
+          );
+          info.areaMaxDim = Math.min(
+            info.area.getBoundingClientRect().width - 2 * getBorderSize(info.area),
+            info.area.getBoundingClientRect().height - 2 * getBorderSize(info.area)
+          );
         }
-    });
-}
-exports.pinch = pinch;
-function pinchEnd() {
-    exports.pinchInfos.forEach(info => { info.pinchActive = false; });
-}
-exports.pinchEnd = pinchEnd;
-//Checks if user is only touching the element to pinch and/or the area where to pinch it
-function touchingOnlyRightPoints(e, element, area) {
-    return e.touches[0].target === area && e.touches[1].target === area ||
-        e.touches[0].target === element && e.touches[1].target === element ||
-        e.touches[0].target === element && e.touches[1].target === area ||
-        e.touches[0].target === area && e.touches[1].target === element;
+      }
+    }
+  });
 }
 
-},{"./movInfo":6}],9:[function(require,module,exports){
+export function pinch(e: TouchEvent) {
+  pinchInfos.forEach((info, index) => {
+    if (info.active) {
+      e.preventDefault();
+
+      if (e.touches.length === 2) {
+        info.pinchFactor =
+          Math.sqrt(Math.pow(e.touches[0].clientX - e.touches[1].clientX, 2) + Math.pow(e.touches[0].clientY - e.touches[1].clientY, 2)) /
+          info.initialPinchDistance;
+
+        //limitPinchFactor(info.pinchFactor);
+        info.pinchFactor = Math.pow(info.pinchFactor, 1 / 8);
+
+        let newWidth: number = info.element.getBoundingClientRect().width * info.pinchFactor;
+        let newHeight: number = info.element.getBoundingClientRect().height * info.pinchFactor;
+
+        if (newWidth > info.areaMaxDim) newWidth = info.areaMaxDim;
+        if (newHeight > info.areaMaxDim) newHeight = info.areaMaxDim;
+
+        if (newWidth < info.elMinDim) newWidth = info.elMinDim;
+        if (newHeight < info.elMinDim) newHeight = info.elMinDim;
+
+        info.element.style.width = String(newWidth) + "px";
+        info.element.style.height = String(newHeight) + "px";
+      }
+    }
+  });
+}
+
+
+export function pinchEnd() {
+  pinchInfos.forEach(info => {
+    info.active = false;
+  });
+}
+*/
+//Checks if user is only touching the element to pinch and/or the area where to pinch it
+
+},{"./movObj":6}],8:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /*slider initialization*/
@@ -675,12 +647,13 @@ const numpad_1 = require("./UIparts/numpad");
 const scanParameteres_1 = require("./UIparts/scanParameteres");
 /*drag capabilties*/
 /*pinch capabilties*/
-const pinch_1 = require("./drag-pinch-joystick/pinch");
 /*joystick capabilties*/
 /*z slider sensitivity */
-const movInfo_1 = require("./drag-pinch-joystick/movInfo");
+//import { zSensBtn, zSenses, inspectArea, sampleArea, joyThumb, joyPad, zThumb, zSlider } from "./drag-pinch-joystick/movInfo";
 const dragObj_1 = require("./drag-pinch-joystick/dragObj");
 const joystickObj_1 = require("./drag-pinch-joystick/joystickObj");
+const movObj_1 = require("./drag-pinch-joystick/movObj");
+const pinchObj_1 = require("./drag-pinch-joystick/pinchObj");
 /*last item in focus*/
 let lastFocus = undefined;
 /*start btn  initialization */
@@ -766,27 +739,12 @@ numpad_1.delBtn.addEventListener("click", () => {
     }
 });
 /*add dragable capabilities*/
-let dragObj = new dragObj_1.DragObj(movInfo_1.inspectArea, movInfo_1.sampleArea);
-let xyMotor = new joystickObj_1.JoystickObj(movInfo_1.joyThumb, movInfo_1.joyPad);
-let zMotor = new joystickObj_1.JoystickObj(movInfo_1.zThumb, movInfo_1.zSlider);
-/*add pinchable capabilities*/
-pinch_1.pinchInfos.forEach(info => {
-    info.pinchArea.addEventListener("touchstart", pinch_1.pinchStart);
-    info.pinchArea.addEventListener("touchmove", pinch_1.pinch);
-    info.pinchArea.addEventListener("touchend", pinch_1.pinchEnd);
-});
-/*
-joystickInfos.forEach(info => {
-  info.area.addEventListener("touchstart", joyStart);
-  info.area.addEventListener("touchmove", joyMove);
-  info.area.addEventListener("touchend", joyEnd);
-  info.area.addEventListener("mousedown", joyStart);
-  info.area.addEventListener("mousemove", joyMove);
-  info.area.addEventListener("mouseup", joyEnd);
-});
-*/
-movInfo_1.zSensBtn.addEventListener("click", () => {
-    movInfo_1.zSensBtn.innerHTML = movInfo_1.zSenses[(movInfo_1.zSenses.indexOf(movInfo_1.zSensBtn.innerHTML) + 1) % movInfo_1.zSenses.length];
+let dragObj = new dragObj_1.DragObj(movObj_1.inspectArea, movObj_1.sampleArea);
+let pinchObj = new pinchObj_1.PinchObj(movObj_1.inspectArea, movObj_1.sampleArea, 20);
+let xyMotor = new joystickObj_1.JoystickObj(movObj_1.joyThumb, movObj_1.joyPad);
+let zMotor = new joystickObj_1.JoystickObj(movObj_1.zThumb, movObj_1.zSlider);
+movObj_1.zSensBtn.addEventListener("click", () => {
+    movObj_1.zSensBtn.innerHTML = movObj_1.zSenses[(movObj_1.zSenses.indexOf(movObj_1.zSensBtn.innerHTML) + 1) % movObj_1.zSenses.length];
 });
 function removeHighlithBoder() {
     scanParameteres_1.UIparameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));
@@ -814,4 +772,4 @@ function sendLaserData(targetWaveLength) {
     });
 }
 
-},{"./UIparts/lasers":1,"./UIparts/numpad":2,"./UIparts/scanParameteres":3,"./drag-pinch-joystick/dragObj":4,"./drag-pinch-joystick/joystickObj":5,"./drag-pinch-joystick/movInfo":6,"./drag-pinch-joystick/pinch":8}]},{},[9]);
+},{"./UIparts/lasers":1,"./UIparts/numpad":2,"./UIparts/scanParameteres":3,"./drag-pinch-joystick/dragObj":4,"./drag-pinch-joystick/joystickObj":5,"./drag-pinch-joystick/movObj":6,"./drag-pinch-joystick/pinchObj":7}]},{},[8]);

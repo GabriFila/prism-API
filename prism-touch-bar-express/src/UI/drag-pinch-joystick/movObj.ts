@@ -70,3 +70,13 @@ export class MovObj {
     el.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
   }
 }
+
+export const inspectArea: HTMLDivElement = document.querySelector("#inspect-area-0");
+export const zThumb: HTMLDivElement = document.querySelector("#z-thumb");
+export const sampleArea: HTMLDivElement = document.querySelector("#sample-area");
+export const zSlider: HTMLDivElement = document.querySelector("#z-slider");
+export const joyPad: HTMLDivElement = document.querySelector("#joystick-pad");
+export const joyThumb: HTMLDivElement = document.querySelector("#joystick-thumb");
+export const zSensBtn: HTMLButtonElement = document.querySelector("#z-sens-btn");
+
+export const zSenses: string[] = ["0.1x", "0.5x", "1x"];

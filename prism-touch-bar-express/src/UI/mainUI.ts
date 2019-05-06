@@ -13,13 +13,13 @@ import {
   limits
 } from "./UIparts/scanParameteres";
 /*drag capabilties*/
-/*pinch capabilties*/
-import { pinchStart, pinch, pinchEnd, pinchInfos } from "./drag-pinch-joystick/pinch";
-/*joystick capabilties*/
-/*z slider sensitivity */
-import { zSensBtn, zSenses, inspectArea, sampleArea, joyThumb, joyPad, zThumb, zSlider } from "./drag-pinch-joystick/movInfo";
 import { DragObj } from "./drag-pinch-joystick/dragObj";
+/*joystick capabilties*/
 import { JoystickObj } from "./drag-pinch-joystick/joystickObj";
+/*pinch capabilties*/
+import { PinchObj } from "./drag-pinch-joystick/pinchObj";
+/*z slider sensitivity */
+import { zSensBtn, zSenses, zThumb, zSlider, joyThumb, inspectArea, sampleArea, joyPad } from "./drag-pinch-joystick/movObj";
 
 /*last item in focus*/
 let lastFocus: HTMLInputElement = undefined;
@@ -116,25 +116,11 @@ delBtn.addEventListener("click", () => {
 
 /*add dragable capabilities*/
 let dragObj = new DragObj(inspectArea, sampleArea);
+let pinchObj = new PinchObj(inspectArea, sampleArea, 20);
 
 let xyMotor = new JoystickObj(joyThumb, joyPad);
 let zMotor = new JoystickObj(zThumb, zSlider);
-/*add pinchable capabilities*/
-pinchInfos.forEach(info => {
-  info.pinchArea.addEventListener("touchstart", pinchStart);
-  info.pinchArea.addEventListener("touchmove", pinch);
-  info.pinchArea.addEventListener("touchend", pinchEnd);
-});
-/*
-joystickInfos.forEach(info => {
-  info.area.addEventListener("touchstart", joyStart);
-  info.area.addEventListener("touchmove", joyMove);
-  info.area.addEventListener("touchend", joyEnd);
-  info.area.addEventListener("mousedown", joyStart);
-  info.area.addEventListener("mousemove", joyMove);
-  info.area.addEventListener("mouseup", joyEnd);
-});
-*/
+
 zSensBtn.addEventListener("click", () => {
   zSensBtn.innerHTML = zSenses[(zSenses.indexOf(zSensBtn.innerHTML) + 1) % zSenses.length];
 });

@@ -12,15 +12,12 @@ export class DragObj extends MovObj {
     this.area.addEventListener("touchmove", this.drag);
     this.area.addEventListener("mouseup", this.dragEnd);
     this.area.addEventListener("touchend", this.dragEnd);
-    
   }
 
   private dragStart = (e: TouchEvent | MouseEvent) => {
-  
-    console.log("dragstart inital: " + this.initialX);    
-    console.log("dragstart element: " + this.element.id);    
+    console.log("dragstart inital: " + this.initialX);
+    console.log("dragstart element: " + this.element.id);
     if (e.target === this.element) {
-      
       this.active = true;
       //set start position
       if (e.type === "touchstart") {
@@ -69,9 +66,9 @@ export class DragObj extends MovObj {
       this.leftRelPos = currentX;
       this.topRelPos = currentY;
     }
-  }
+  };
 
   private dragEnd = (e: TouchEvent | MouseEvent) => {
     this.active = false;
-  }
+  };
 }

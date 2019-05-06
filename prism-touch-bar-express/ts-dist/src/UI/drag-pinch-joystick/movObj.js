@@ -58,4 +58,12 @@ class MovObj {
     }
 }
 exports.MovObj = MovObj;
+exports.inspectArea = document.querySelector("#inspect-area-0");
+exports.zThumb = document.querySelector("#z-thumb");
+exports.sampleArea = document.querySelector("#sample-area");
+exports.zSlider = document.querySelector("#z-slider");
+exports.joyPad = document.querySelector("#joystick-pad");
+exports.joyThumb = document.querySelector("#joystick-thumb");
+exports.zSensBtn = document.querySelector("#z-sens-btn");
+exports.zSenses = ["0.1x", "0.5x", "1x"];
 //# sourceMappingURL=movObj.js.map
