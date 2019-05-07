@@ -1,5 +1,5 @@
 /*slider initialization*/
-import { laserUIBoxes, grayOutLaserBox, lightUpLaserBox, updateUILasers } from "./UIparts/lasers";
+import { laserUIBoxes, grayOutLaserBox, lightUpLaserBox, updateUILasers, sendLaserData } from "./UIparts/lasers";
 /*numpad initialization*/
 import { numPad, delBtn, dotBtn } from "./UIparts/numpad";
 /*parameters initialization*/
@@ -20,6 +20,7 @@ import { JoystickObj } from "./drag-pinch-joystick/joystickObj";
 import { PinchObj } from "./drag-pinch-joystick/pinchObj";
 /*z slider sensitivity */
 import { zSensBtn, zSenses, zThumb, zSlider, joyThumb, inspectArea, sampleArea, joyPad } from "./drag-pinch-joystick/movObj";
+import { State } from "./UIparts/classes";
 
 /*last item in focus*/
 let lastFocus: HTMLInputElement = undefined;
@@ -57,6 +58,7 @@ laserUIBoxes.forEach(laserUIBox => {
     laserUIBox.isOn = !laserUIBox.isOn;
     if (laserUIBox.isOn) grayOutLaserBox(laserUIBox);
     else lightUpLaserBox(laserUIBox);
+    sendLaserData(laserUIBox);
   });
 });
 
@@ -128,7 +130,7 @@ function removeHighlithBoder() {
   UIparameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));
 }
 
-setInterval(getCurrentState, 200);
+//setInterval(getCurrentState, 200);
 
 function getCurrentState() {
   fetch("/prismState/")
@@ -143,13 +145,12 @@ function getCurrentState() {
 
 function updateUIPads() {}
 
-//incomplete
-function sendLaserData(targetWaveLength: number) {
-  fetch(`prismState/lasers/${targetWaveLength}`, {
-    method: "PUT",
-    headers: {
-      "Content-type": "application/json"
-    },
-    body: JSON.stringify({})
-  });
-}
+const source = new EventSource("/stream");
+
+source.addEventListener("state-updated", (event: any) => {
+  let newState : State= JSON.parse(event.data);
+  
+  updateLimits(newState);
+  updateUILasers(newState);
+  updateUIParameters(newState);
+});

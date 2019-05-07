@@ -70,6 +70,21 @@ function updateUILasers(state) {
     });
 }
 exports.updateUILasers = updateUILasers;
+function sendLaserData(laserBox) {
+    fetch(`prismState/lasers/${Number(laserBox.waveLengthLabel.innerHTML.slice(0, -1).slice(0, -1))}`, {
+        method: "PUT",
+        headers: {
+            "Content-type": "application/json"
+        },
+        body: JSON.stringify({
+            newPower: Number(laserBox.powerLabel.innerHTML.slice(0, -1)),
+            isOn: laserBox.isOn
+        })
+    })
+        .then(res => res.json())
+        .then(res => console.log(res.body));
+}
+exports.sendLaserData = sendLaserData;
 
 },{}],2:[function(require,module,exports){
 "use strict";
@@ -274,7 +289,6 @@ class DragObj extends movObj_1.MovObj {
                     currentY = areaHeight - dragElHeight - 2 * dragAreaBorderSize;
                 if (currentY < 0)
                     currentY = 0;
-                console.log(dragAreaBorderSize);
                 /*
                 if (currentX + this.elWidth + this.areaBorderSize > this.areaHeight) currentX = this.areaWidth - this.elWidth - this.areaBorderSize;
                 if (currentX < 0) currentX = 0;
@@ -656,6 +670,7 @@ lasers_1.laserUIBoxes.forEach(laserUIBox => {
             lasers_1.grayOutLaserBox(laserUIBox);
         else
             lasers_1.lightUpLaserBox(laserUIBox);
+        lasers_1.sendLaserData(laserUIBox);
     });
 });
 /*store last parameters input in focus*/
@@ -715,7 +730,7 @@ movObj_1.zSensBtn.addEventListener("click", () => {
 function removeHighlithBoder() {
     scanParameteres_1.UIparameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));
 }
-setInterval(getCurrentState, 200);
+//setInterval(getCurrentState, 200);
 function getCurrentState() {
     fetch("/prismState/")
         .then(res => res.json())
@@ -727,15 +742,12 @@ function getCurrentState() {
     });
 }
 function updateUIPads() { }
-//incomplete
-function sendLaserData(targetWaveLength) {
-    fetch(`prismState/lasers/${targetWaveLength}`, {
-        method: "PUT",
-        headers: {
-            "Content-type": "application/json"
-        },
-        body: JSON.stringify({})
-    });
-}
+const source = new EventSource("/stream");
+source.addEventListener("state-updated", (event) => {
+    let newState = JSON.parse(event.data);
+    scanParameteres_1.updateLimits(newState);
+    lasers_1.updateUILasers(newState);
+    scanParameteres_1.updateUIParameters(newState);
+});
 
 },{"./UIparts/lasers":1,"./UIparts/numpad":2,"./UIparts/scanParameteres":3,"./drag-pinch-joystick/dragObj":4,"./drag-pinch-joystick/joystickObj":5,"./drag-pinch-joystick/movObj":6,"./drag-pinch-joystick/pinchObj":7}]},{},[8]);

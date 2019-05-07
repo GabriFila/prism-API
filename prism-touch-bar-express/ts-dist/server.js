@@ -5,6 +5,7 @@ const path = require("path");
 const bodyParser = require("body-parser");
 const api_classes_1 = require("./api-classes");
 const api_classes_2 = require("./api-classes");
+const events_1 = require("events");
 const server = express();
 exports.state = new api_classes_1.State();
 exports.motors = new api_classes_2.Motors();
@@ -14,12 +15,35 @@ getStateFromMicroscope();
 server.use(bodyParser.json());
 //static file to render UI on client
 server.use("/public", express.static(path.join(__dirname + "/../public")));
+exports.sender = new events_1.EventEmitter();
+server.use(function (req, res, next) {
+    if (req.method == "PUT") {
+        exports.sender.emit("state-updated");
+    }
+    next();
+});
 //routes
 server.use("/prismState", require("./routes/prismState"));
 server.use("/prismMotors", require("./routes/prismMotors"));
 //send web app UI
 server.get("/", (req, res) => {
     res.sendFile(path.join(__dirname + "/../public/views/mainUI.html"));
+});
+server.get("/stream", (req, res) => {
+    res.writeHead(200, {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        Connection: "keep-alive"
+    });
+    exports.sender.on("state-updated", () => {
+        //res.write(SSEdata(obj, "info"));
+        SSEwrite(exports.state, "state-updated");
+    });
+    function SSEwrite(input, event) {
+        res.write(`data: ${JSON.stringify(input)} \n`);
+        res.write(`event: ${event}\n`);
+        res.write(`\n`);
+    }
 });
 //Start server
 let port = process.env.PORT || 5000;

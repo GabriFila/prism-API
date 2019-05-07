@@ -24,7 +24,7 @@ lasers.put("/:waveLength", (req, res) => {
             errors.push("no isOn field present");
         if ("newPower" in req.body) {
             newPower = req.body.newPower;
-            if (newPower > 0 && newPower < 100)
+            if (newPower >= 0 && newPower <= 100)
                 server_1.state.lasers.find(laser => laser.waveLength == targetWaveLength).power = newPower;
             else
                 errors.push(`newPower value ${newPower} is invalid`);

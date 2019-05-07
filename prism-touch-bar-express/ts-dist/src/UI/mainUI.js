@@ -49,6 +49,7 @@ lasers_1.laserUIBoxes.forEach(laserUIBox => {
             lasers_1.grayOutLaserBox(laserUIBox);
         else
             lasers_1.lightUpLaserBox(laserUIBox);
+        lasers_1.sendLaserData(laserUIBox);
     });
 });
 /*store last parameters input in focus*/
@@ -108,7 +109,7 @@ movObj_1.zSensBtn.addEventListener("click", () => {
 function removeHighlithBoder() {
     scanParameteres_1.UIparameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));
 }
-setInterval(getCurrentState, 200);
+//setInterval(getCurrentState, 200);
 function getCurrentState() {
     fetch("/prismState/")
         .then(res => res.json())
@@ -120,14 +121,11 @@ function getCurrentState() {
     });
 }
 function updateUIPads() { }
-//incomplete
-function sendLaserData(targetWaveLength) {
-    fetch(`prismState/lasers/${targetWaveLength}`, {
-        method: "PUT",
-        headers: {
-            "Content-type": "application/json"
-        },
-        body: JSON.stringify({})
-    });
-}
+const source = new EventSource("/stream");
+source.addEventListener("state-updated", (event) => {
+    let newState = JSON.parse(event.data);
+    scanParameteres_1.updateLimits(newState);
+    lasers_1.updateUILasers(newState);
+    scanParameteres_1.updateUIParameters(newState);
+});
 //# sourceMappingURL=mainUI.js.map

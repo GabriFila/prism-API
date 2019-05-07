@@ -76,7 +76,7 @@ export function lightUpLaserBox(laserBox: LaserUIBox) {
   laserBox.btn.classList.add("laser-btn-on");
 }
 
-export function updateUILasers(state : State) {
+export function updateUILasers(state: State) {
   laserUIBoxes.forEach((laserUIBox, i) => {
     //hide empty lasers
     if (i >= state.lasers.length) laserUIBoxes[i].visible = false;
@@ -88,4 +88,19 @@ export function updateUILasers(state : State) {
       else grayOutLaserBox(laserUIBoxes[i]);
     }
   });
+}
+
+export function sendLaserData(laserBox: LaserUIBox) {
+  fetch(`prismState/lasers/${Number(laserBox.waveLengthLabel.innerHTML.slice(0, -1).slice(0, -1))}`, {
+    method: "PUT",
+    headers: {
+      "Content-type": "application/json"
+    },
+    body: JSON.stringify({
+      newPower: Number(laserBox.powerLabel.innerHTML.slice(0, -1)),
+      isOn: laserBox.isOn
+    })
+  })
+    .then(res => res.json())
+    .then(res => console.log(res.body));
 }

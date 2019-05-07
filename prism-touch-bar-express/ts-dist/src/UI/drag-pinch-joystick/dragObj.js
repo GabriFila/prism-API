@@ -53,7 +53,6 @@ class DragObj extends movObj_1.MovObj {
                     currentY = areaHeight - dragElHeight - 2 * dragAreaBorderSize;
                 if (currentY < 0)
                     currentY = 0;
-                console.log(dragAreaBorderSize);
                 /*
                 if (currentX + this.elWidth + this.areaBorderSize > this.areaHeight) currentX = this.areaWidth - this.elWidth - this.areaBorderSize;
                 if (currentX < 0) currentX = 0;

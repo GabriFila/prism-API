@@ -69,4 +69,19 @@ function updateUILasers(state) {
     });
 }
 exports.updateUILasers = updateUILasers;
+function sendLaserData(laserBox) {
+    fetch(`prismState/lasers/${Number(laserBox.waveLengthLabel.innerHTML.slice(0, -1).slice(0, -1))}`, {
+        method: "PUT",
+        headers: {
+            "Content-type": "application/json"
+        },
+        body: JSON.stringify({
+            newPower: Number(laserBox.powerLabel.innerHTML.slice(0, -1)),
+            isOn: laserBox.isOn
+        })
+    })
+        .then(res => res.json())
+        .then(res => console.log(res.body));
+}
+exports.sendLaserData = sendLaserData;
 //# sourceMappingURL=lasers.js.map
