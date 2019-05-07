@@ -60,12 +60,6 @@ class CurrMaxMin {
     return this._current;
   }
   public set current(value: number) {
-    if (value > this.max) console.log("value greater than max");
-    //throw new Error(        "bella"`Current Value:${this._current} exceeded Max value:${this.max}`      );
-    else if (value < this.min) console.log("value lower than min");
-
-    //throw new Error(        "bella"`Current Value:${this._current} exceeded Min value:${this.min}`      );
-
     this._current = value;
   }
   max: number;

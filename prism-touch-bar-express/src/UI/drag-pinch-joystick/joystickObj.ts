@@ -24,8 +24,6 @@ export class JoystickObj extends MovObj {
   setDefaultXY() {
     this.defaultX = this.area.getBoundingClientRect().width / 2 - this.element.getBoundingClientRect().width / 2 - this.areaBorderSize;
     this.defaultY = this.area.getBoundingClientRect().height / 2 - this.element.getBoundingClientRect().height / 2 - this.areaBorderSize;
-    console.log(`X: ${this.defaultX}`);
-    console.log(`Y: ${this.defaultY}`);
   }
 
   moveToDefaultXY() {

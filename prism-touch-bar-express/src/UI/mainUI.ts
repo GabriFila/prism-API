@@ -77,7 +77,6 @@ numPad.forEach((numBtn, i) => {
     if (lastFocus != null) {
       lastFocus.classList.add("highlighted");
       let lastFocusParamIndex = UIparameters.indexOf(lastFocus);
-      console.log(limits[lastFocusParamIndex].max);
 
       if (
         Number(UIparameters[lastFocusParamIndex].value + i) > limits[lastFocusParamIndex].max ||

@@ -5,8 +5,6 @@ class DragObj extends movObj_1.MovObj {
     constructor(element, area) {
         super(element, area);
         this.dragStart = (e) => {
-            console.log("dragstart inital: " + this.initialX);
-            console.log("dragstart element: " + this.element.id);
             if (e.target === this.element) {
                 this.active = true;
                 //set start position
@@ -55,6 +53,14 @@ class DragObj extends movObj_1.MovObj {
                     currentY = areaHeight - dragElHeight - 2 * dragAreaBorderSize;
                 if (currentY < 0)
                     currentY = 0;
+                console.log(dragAreaBorderSize);
+                /*
+                if (currentX + this.elWidth + this.areaBorderSize > this.areaHeight) currentX = this.areaWidth - this.elWidth - this.areaBorderSize;
+                if (currentX < 0) currentX = 0;
+                if (currentY + this.elHeight + this.areaBorderSize > this.areaHeight)
+                  currentY = this.areaHeight - this.elHeight - this.areaBorderSize;
+                if (currentY < 0) currentY = 0;
+          */
                 this.leftRelPos = currentX;
                 this.topRelPos = currentY;
             }

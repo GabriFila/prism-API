@@ -7,7 +7,6 @@ scanParam.get("/", (req, res) => {
     res.json(server_1.state.scanParams);
 });
 scanParam.put("/:dim/:axis", (req, res) => {
-    console.log("accesed scanparams");
     let errors = [];
     let dim = req.params.dim;
     let axis = req.params.axis.toLowerCase();

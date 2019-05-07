@@ -38,9 +38,7 @@ lasers.put("/:waveLength", (req, res) => {
     if (errors.length > 0)
         res.status(400).json({ errors });
     else
-        res
-            .status(200)
-            .json({
+        res.status(200).json({
             newPower: server_1.state.lasers.find(laser => laser.waveLength == targetWaveLength).power,
             targetWaveLength,
             isOn: server_1.state.lasers.find(laser => laser.waveLength == targetWaveLength).isOn

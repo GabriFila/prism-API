@@ -7,14 +7,13 @@ const numpad_1 = require("./UIparts/numpad");
 /*parameters initialization*/
 const scanParameteres_1 = require("./UIparts/scanParameteres");
 /*drag capabilties*/
-/*pinch capabilties*/
-/*joystick capabilties*/
-/*z slider sensitivity */
-//import { zSensBtn, zSenses, inspectArea, sampleArea, joyThumb, joyPad, zThumb, zSlider } from "./drag-pinch-joystick/movInfo";
 const dragObj_1 = require("./drag-pinch-joystick/dragObj");
+/*joystick capabilties*/
 const joystickObj_1 = require("./drag-pinch-joystick/joystickObj");
-const movObj_1 = require("./drag-pinch-joystick/movObj");
+/*pinch capabilties*/
 const pinchObj_1 = require("./drag-pinch-joystick/pinchObj");
+/*z slider sensitivity */
+const movObj_1 = require("./drag-pinch-joystick/movObj");
 /*last item in focus*/
 let lastFocus = undefined;
 /*start btn  initialization */
@@ -68,7 +67,6 @@ numpad_1.numPad.forEach((numBtn, i) => {
         if (lastFocus != null) {
             lastFocus.classList.add("highlighted");
             let lastFocusParamIndex = scanParameteres_1.UIparameters.indexOf(lastFocus);
-            console.log(scanParameteres_1.limits[lastFocusParamIndex].max);
             if (Number(scanParameteres_1.UIparameters[lastFocusParamIndex].value + i) > scanParameteres_1.limits[lastFocusParamIndex].max ||
                 Number(scanParameteres_1.UIparameters[lastFocusParamIndex].value + i) < scanParameteres_1.limits[lastFocusParamIndex].min) {
                 lastFocus.classList.add("limit");

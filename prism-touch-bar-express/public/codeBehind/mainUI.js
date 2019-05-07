@@ -226,8 +226,6 @@ class DragObj extends movObj_1.MovObj {
     constructor(element, area) {
         super(element, area);
         this.dragStart = (e) => {
-            console.log("dragstart inital: " + this.initialX);
-            console.log("dragstart element: " + this.element.id);
             if (e.target === this.element) {
                 this.active = true;
                 //set start position
@@ -276,6 +274,14 @@ class DragObj extends movObj_1.MovObj {
                     currentY = areaHeight - dragElHeight - 2 * dragAreaBorderSize;
                 if (currentY < 0)
                     currentY = 0;
+                console.log(dragAreaBorderSize);
+                /*
+                if (currentX + this.elWidth + this.areaBorderSize > this.areaHeight) currentX = this.areaWidth - this.elWidth - this.areaBorderSize;
+                if (currentX < 0) currentX = 0;
+                if (currentY + this.elHeight + this.areaBorderSize > this.areaHeight)
+                  currentY = this.areaHeight - this.elHeight - this.areaBorderSize;
+                if (currentY < 0) currentY = 0;
+          */
                 this.leftRelPos = currentX;
                 this.topRelPos = currentY;
             }
@@ -372,8 +378,6 @@ class JoystickObj extends movObj_1.MovObj {
     setDefaultXY() {
         this.defaultX = this.area.getBoundingClientRect().width / 2 - this.element.getBoundingClientRect().width / 2 - this.areaBorderSize;
         this.defaultY = this.area.getBoundingClientRect().height / 2 - this.element.getBoundingClientRect().height / 2 - this.areaBorderSize;
-        console.log(`X: ${this.defaultX}`);
-        console.log(`Y: ${this.defaultY}`);
     }
     moveToDefaultXY() {
         this.topRelPos = this.defaultY;
@@ -454,6 +458,26 @@ export function joyEnd(e: TouchEvent | MouseEvent) {
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class MovObj {
+    get elWidth() {
+        return this._elWidth;
+    }
+    set elWidth(value) {
+        this.element.style.width = String(value) + "px";
+        this._elWidth = value;
+    }
+    get elHeight() {
+        return this._elHeight;
+    }
+    set elHeight(value) {
+        this.element.style.height = String(value) + "px";
+        this._elHeight = value;
+    }
+    get areaWidth() {
+        return this._areaWidth;
+    }
+    get areaHeight() {
+        return this._areaHeight;
+    }
     get elBorderSize() {
         return this._elBorderSize;
     }
@@ -480,19 +504,20 @@ class MovObj {
         this.active = false;
         this.updateElBorderSize();
         this.updateAreaBorderSize();
+        this.updateWidthHeight();
         this.updateTopLeftRelPos();
     }
     updateTopLeftRelPos() {
         this._topRelPos =
-            this.element.getBoundingClientRect().top - this.element.parentElement.getBoundingClientRect().top - this.getBorderSize() - 1;
+            this.element.getBoundingClientRect().top - this.element.parentElement.getBoundingClientRect().top - this.elBorderSize - 1;
         this._leftRelPos =
-            this.element.getBoundingClientRect().left - this.element.parentElement.getBoundingClientRect().left - this.getBorderSize() - 1;
+            this.element.getBoundingClientRect().left - this.element.parentElement.getBoundingClientRect().left - this.elBorderSize - 1;
     }
-    getBorderSize() {
-        let elStyle = window.getComputedStyle(this.element);
-        let regex = /([0-9]*)px[a-zA-Z0-9_ ]*/;
-        let str = elStyle.getPropertyValue("border"); //gets rid of "px" in border CSS property
-        return Number(regex.exec(str)[1]);
+    updateWidthHeight() {
+        this._elWidth = this.element.getBoundingClientRect().width;
+        this._elHeight = this.element.getBoundingClientRect().height;
+        this._areaWidth = this.area.getBoundingClientRect().width;
+        this._areaHeight = this.area.getBoundingClientRect().height;
     }
     updateElBorderSize() {
         let elStyle = window.getComputedStyle(this.element);
@@ -578,63 +603,6 @@ class PinchObj extends movObj_1.MovObj {
     }
 }
 exports.PinchObj = PinchObj;
-/*
-export function pinchStart(e: TouchEvent) {
-  pinchInfos.forEach(info => {
-    if (e.touches.length === 2) {
-      if ((e.touches[0].target === info.area && e.touches[1].target === info.area) || e.touches) {
-        if (touchingOnlyRightPoints(e, info.element, info.area)) {
-          info.active = true;
-          info.initialPinchDistance = Math.sqrt(
-            Math.pow(e.touches[0].clientX - e.touches[1].clientX, 2) + Math.pow(e.touches[0].clientY - e.touches[1].clientY, 2)
-          );
-          info.areaMaxDim = Math.min(
-            info.area.getBoundingClientRect().width - 2 * getBorderSize(info.area),
-            info.area.getBoundingClientRect().height - 2 * getBorderSize(info.area)
-          );
-        }
-      }
-    }
-  });
-}
-
-export function pinch(e: TouchEvent) {
-  pinchInfos.forEach((info, index) => {
-    if (info.active) {
-      e.preventDefault();
-
-      if (e.touches.length === 2) {
-        info.pinchFactor =
-          Math.sqrt(Math.pow(e.touches[0].clientX - e.touches[1].clientX, 2) + Math.pow(e.touches[0].clientY - e.touches[1].clientY, 2)) /
-          info.initialPinchDistance;
-
-        //limitPinchFactor(info.pinchFactor);
-        info.pinchFactor = Math.pow(info.pinchFactor, 1 / 8);
-
-        let newWidth: number = info.element.getBoundingClientRect().width * info.pinchFactor;
-        let newHeight: number = info.element.getBoundingClientRect().height * info.pinchFactor;
-
-        if (newWidth > info.areaMaxDim) newWidth = info.areaMaxDim;
-        if (newHeight > info.areaMaxDim) newHeight = info.areaMaxDim;
-
-        if (newWidth < info.elMinDim) newWidth = info.elMinDim;
-        if (newHeight < info.elMinDim) newHeight = info.elMinDim;
-
-        info.element.style.width = String(newWidth) + "px";
-        info.element.style.height = String(newHeight) + "px";
-      }
-    }
-  });
-}
-
-
-export function pinchEnd() {
-  pinchInfos.forEach(info => {
-    info.active = false;
-  });
-}
-*/
-//Checks if user is only touching the element to pinch and/or the area where to pinch it
 
 },{"./movObj":6}],8:[function(require,module,exports){
 "use strict";
@@ -646,14 +614,13 @@ const numpad_1 = require("./UIparts/numpad");
 /*parameters initialization*/
 const scanParameteres_1 = require("./UIparts/scanParameteres");
 /*drag capabilties*/
-/*pinch capabilties*/
-/*joystick capabilties*/
-/*z slider sensitivity */
-//import { zSensBtn, zSenses, inspectArea, sampleArea, joyThumb, joyPad, zThumb, zSlider } from "./drag-pinch-joystick/movInfo";
 const dragObj_1 = require("./drag-pinch-joystick/dragObj");
+/*joystick capabilties*/
 const joystickObj_1 = require("./drag-pinch-joystick/joystickObj");
-const movObj_1 = require("./drag-pinch-joystick/movObj");
+/*pinch capabilties*/
 const pinchObj_1 = require("./drag-pinch-joystick/pinchObj");
+/*z slider sensitivity */
+const movObj_1 = require("./drag-pinch-joystick/movObj");
 /*last item in focus*/
 let lastFocus = undefined;
 /*start btn  initialization */
@@ -707,7 +674,6 @@ numpad_1.numPad.forEach((numBtn, i) => {
         if (lastFocus != null) {
             lastFocus.classList.add("highlighted");
             let lastFocusParamIndex = scanParameteres_1.UIparameters.indexOf(lastFocus);
-            console.log(scanParameteres_1.limits[lastFocusParamIndex].max);
             if (Number(scanParameteres_1.UIparameters[lastFocusParamIndex].value + i) > scanParameteres_1.limits[lastFocusParamIndex].max ||
                 Number(scanParameteres_1.UIparameters[lastFocusParamIndex].value + i) < scanParameteres_1.limits[lastFocusParamIndex].min) {
                 lastFocus.classList.add("limit");

@@ -8,8 +8,6 @@ scanParam.get("/", (req, res) => {
 });
 
 scanParam.put("/:dim/:axis", (req, res) => {
-  console.log("accesed scanparams");
-  
   let errors: string[] = [];
   let dim = (req.params.dim as string);
   let axis = (req.params.axis as string).toLowerCase();

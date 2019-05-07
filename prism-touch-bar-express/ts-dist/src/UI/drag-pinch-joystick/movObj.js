@@ -1,6 +1,26 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class MovObj {
+    get elWidth() {
+        return this._elWidth;
+    }
+    set elWidth(value) {
+        this.element.style.width = String(value) + "px";
+        this._elWidth = value;
+    }
+    get elHeight() {
+        return this._elHeight;
+    }
+    set elHeight(value) {
+        this.element.style.height = String(value) + "px";
+        this._elHeight = value;
+    }
+    get areaWidth() {
+        return this._areaWidth;
+    }
+    get areaHeight() {
+        return this._areaHeight;
+    }
     get elBorderSize() {
         return this._elBorderSize;
     }
@@ -27,19 +47,20 @@ class MovObj {
         this.active = false;
         this.updateElBorderSize();
         this.updateAreaBorderSize();
+        this.updateWidthHeight();
         this.updateTopLeftRelPos();
     }
     updateTopLeftRelPos() {
         this._topRelPos =
-            this.element.getBoundingClientRect().top - this.element.parentElement.getBoundingClientRect().top - this.getBorderSize() - 1;
+            this.element.getBoundingClientRect().top - this.element.parentElement.getBoundingClientRect().top - this.elBorderSize - 1;
         this._leftRelPos =
-            this.element.getBoundingClientRect().left - this.element.parentElement.getBoundingClientRect().left - this.getBorderSize() - 1;
+            this.element.getBoundingClientRect().left - this.element.parentElement.getBoundingClientRect().left - this.elBorderSize - 1;
     }
-    getBorderSize() {
-        let elStyle = window.getComputedStyle(this.element);
-        let regex = /([0-9]*)px[a-zA-Z0-9_ ]*/;
-        let str = elStyle.getPropertyValue("border"); //gets rid of "px" in border CSS property
-        return Number(regex.exec(str)[1]);
+    updateWidthHeight() {
+        this._elWidth = this.element.getBoundingClientRect().width;
+        this._elHeight = this.element.getBoundingClientRect().height;
+        this._areaWidth = this.area.getBoundingClientRect().width;
+        this._areaHeight = this.area.getBoundingClientRect().height;
     }
     updateElBorderSize() {
         let elStyle = window.getComputedStyle(this.element);
