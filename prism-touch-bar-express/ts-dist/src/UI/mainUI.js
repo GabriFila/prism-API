@@ -42,6 +42,7 @@ lasers_1.laserUIBoxes.forEach(laserUIBox => {
     laserUIBox.slider.oninput = () => {
         let tempValue = laserUIBox.slider.value;
         laserUIBox.powerLabel.innerHTML = tempValue + "%";
+        lasers_1.sendLaserData(laserUIBox);
     };
     laserUIBox.btn.addEventListener("click", () => {
         laserUIBox.isOn = !laserUIBox.isOn;
@@ -110,6 +111,7 @@ function removeHighlithBoder() {
     scanParameteres_1.UIparameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));
 }
 //setInterval(getCurrentState, 200);
+getCurrentState();
 function getCurrentState() {
     fetch("/prismState/")
         .then(res => res.json())

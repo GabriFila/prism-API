@@ -10,6 +10,8 @@ lasers.get("/", (req, res) => {
 
 //request has to have both power and status
 lasers.put("/:waveLength", (req, res) => {
+  console.log(req.body);
+
   let errors: string[] = [];
   let targetWaveLength: number = req.params.waveLength;
 
@@ -37,7 +39,8 @@ lasers.put("/:waveLength", (req, res) => {
       targetWaveLength,
       isOn: state.lasers.find(laser => laser.waveLength == targetWaveLength).isOn
     });
-});
 
+  sender.emit("state-updated");
+});
 
 module.exports = lasers;

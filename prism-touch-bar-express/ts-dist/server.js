@@ -16,12 +16,6 @@ server.use(bodyParser.json());
 //static file to render UI on client
 server.use("/public", express.static(path.join(__dirname + "/../public")));
 exports.sender = new events_1.EventEmitter();
-server.use(function (req, res, next) {
-    if (req.method == "PUT") {
-        exports.sender.emit("state-updated");
-    }
-    next();
-});
 //routes
 server.use("/prismState", require("./routes/prismState"));
 server.use("/prismMotors", require("./routes/prismMotors"));

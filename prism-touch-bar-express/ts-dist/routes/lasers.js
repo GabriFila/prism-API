@@ -9,6 +9,7 @@ lasers.get("/", (req, res) => {
 });
 //request has to have both power and status
 lasers.put("/:waveLength", (req, res) => {
+    console.log(req.body);
     let errors = [];
     let targetWaveLength = req.params.waveLength;
     let newPower;
@@ -43,6 +44,7 @@ lasers.put("/:waveLength", (req, res) => {
             targetWaveLength,
             isOn: server_1.state.lasers.find(laser => laser.waveLength == targetWaveLength).isOn
         });
+    server_1.sender.emit("state-updated");
 });
 module.exports = lasers;
 //# sourceMappingURL=lasers.js.map

@@ -53,16 +53,19 @@ function lightUpLaserBox(laserBox) {
     laserBox.btn.classList.add("laser-btn-on");
 }
 exports.lightUpLaserBox = lightUpLaserBox;
-function updateUILasers(state) {
+function updateUILasers(newState) {
     exports.laserUIBoxes.forEach((laserUIBox, i) => {
         //hide empty lasers
-        if (i >= state.lasers.length)
+        if (i >= newState.lasers.length)
             exports.laserUIBoxes[i].visible = false;
         else {
-            exports.laserUIBoxes[i].powerLabel.innerHTML = state.lasers[i].power.toString() + "%";
-            exports.laserUIBoxes[i].slider.value = state.lasers[i].power.toString();
-            exports.laserUIBoxes[i].waveLengthLabel.innerHTML = state.lasers[i].waveLength.toString() + "nm";
-            if (state.lasers[i].isOn)
+            exports.laserUIBoxes[i].powerLabel.innerHTML = newState.lasers[i].power.toString() + "%";
+            exports.laserUIBoxes[i].slider.value = newState.lasers[i].power.toString();
+            console.log(newState.lasers[i].power.toString());
+            console.log(exports.laserUIBoxes[i].slider.value);
+            exports.laserUIBoxes[i].waveLengthLabel.innerHTML = newState.lasers[i].waveLength.toString() + "nm";
+            exports.laserUIBoxes[i].isOn = newState.lasers[i].isOn;
+            if (newState.lasers[i].isOn)
                 lightUpLaserBox(exports.laserUIBoxes[i]);
             else
                 grayOutLaserBox(exports.laserUIBoxes[i]);
@@ -71,6 +74,7 @@ function updateUILasers(state) {
 }
 exports.updateUILasers = updateUILasers;
 function sendLaserData(laserBox) {
+    exports.laserUIBoxes.forEach(laserBox => console.log("mandato " + laserBox.isOn));
     fetch(`prismState/lasers/${Number(laserBox.waveLengthLabel.innerHTML.slice(0, -1).slice(0, -1))}`, {
         method: "PUT",
         headers: {
@@ -82,7 +86,7 @@ function sendLaserData(laserBox) {
         })
     })
         .then(res => res.json())
-        .then(res => console.log(res.body));
+        .then(body => console.log(body));
 }
 exports.sendLaserData = sendLaserData;
 
@@ -663,6 +667,7 @@ lasers_1.laserUIBoxes.forEach(laserUIBox => {
     laserUIBox.slider.oninput = () => {
         let tempValue = laserUIBox.slider.value;
         laserUIBox.powerLabel.innerHTML = tempValue + "%";
+        lasers_1.sendLaserData(laserUIBox);
     };
     laserUIBox.btn.addEventListener("click", () => {
         laserUIBox.isOn = !laserUIBox.isOn;
@@ -731,6 +736,7 @@ function removeHighlithBoder() {
     scanParameteres_1.UIparameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));
 }
 //setInterval(getCurrentState, 200);
+getCurrentState();
 function getCurrentState() {
     fetch("/prismState/")
         .then(res => res.json())

@@ -20,13 +20,6 @@ server.use(bodyParser.json());
 server.use("/public", express.static(path.join(__dirname + "/../public")));
 export const sender = new EventEmitter();
 
-server.use(function(req, res, next) {
-  if (req.method == "PUT") {
-    sender.emit("state-updated");
-  }
-  next();
-});
-
 //routes
 server.use("/prismState", require("./routes/prismState"));
 server.use("/prismMotors", require("./routes/prismMotors"));

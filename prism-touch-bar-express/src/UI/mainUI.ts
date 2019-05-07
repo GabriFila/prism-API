@@ -53,6 +53,7 @@ laserUIBoxes.forEach(laserUIBox => {
   laserUIBox.slider.oninput = () => {
     let tempValue = laserUIBox.slider.value;
     laserUIBox.powerLabel.innerHTML = tempValue + "%";
+    sendLaserData(laserUIBox);
   };
   laserUIBox.btn.addEventListener("click", () => {
     laserUIBox.isOn = !laserUIBox.isOn;
@@ -131,6 +132,7 @@ function removeHighlithBoder() {
 }
 
 //setInterval(getCurrentState, 200);
+getCurrentState();
 
 function getCurrentState() {
   fetch("/prismState/")
@@ -148,8 +150,8 @@ function updateUIPads() {}
 const source = new EventSource("/stream");
 
 source.addEventListener("state-updated", (event: any) => {
-  let newState : State= JSON.parse(event.data);
-  
+  let newState: State = JSON.parse(event.data);
+
   updateLimits(newState);
   updateUILasers(newState);
   updateUIParameters(newState);
