@@ -21,8 +21,8 @@ server.use("/public", express.static(path.join(__dirname + "/../public")));
 export const sender = new EventEmitter();
 
 //routes
-server.use("/prismState", require("./routes/prismState"));
-server.use("/prismMotors", require("./routes/prismMotors"));
+server.use("/prismState", require("./routes/prismState-route"));
+server.use("/prismMotors", require("./routes/prismMotors-route"));
 
 //send web app UI
 server.get("/", (req, res) => {

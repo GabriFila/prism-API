@@ -17,8 +17,8 @@ server.use(bodyParser.json());
 server.use("/public", express.static(path.join(__dirname + "/../public")));
 exports.sender = new events_1.EventEmitter();
 //routes
-server.use("/prismState", require("./routes/prismState"));
-server.use("/prismMotors", require("./routes/prismMotors"));
+server.use("/prismState", require("./routes/prismState-route"));
+server.use("/prismMotors", require("./routes/prismMotors-route"));
 //send web app UI
 server.get("/", (req, res) => {
     res.sendFile(path.join(__dirname + "/../public/views/mainUI.html"));

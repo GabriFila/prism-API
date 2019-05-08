@@ -4,7 +4,7 @@ import { State } from "api-classes";
 
 const prismState = express.Router();
 const lasers = require("./lasers");
-const scanParams = require("./scanParams");
+const scanParams = require("./scanParams-route");
 
 prismState.get("/", (req, res) => {
   res.json(state);
