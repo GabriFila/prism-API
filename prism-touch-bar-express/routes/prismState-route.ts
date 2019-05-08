@@ -1,44 +1,47 @@
 import * as express from "express";
-import { state } from "../server";
-import { State } from "api-classes";
+import { microState, updateSender } from "../server";
 
 const prismState = express.Router();
-const lasers = require("./lasers");
+const lasers = require("./lasers-route");
 const scanParams = require("./scanParams-route");
 
 prismState.get("/", (req, res) => {
-  res.json(state);
+  res.json(microState);
 });
 
 //to improve
 prismState.put("/", (req, res) => {
   let errors: string[] = [];
-    
-  if ("state" in req.body) {
 
+  if ("state" in req.body) {
   } else errors.push("missing state field in request");
 
   if (errors.length > 0) res.status(400).json(errors);
-  else res.status(200).json({ newState: state });
+  else {
+    res.status(200).json({ newState: microState });
+    updateSender.emit("state-updated");
+  }
 });
 
 prismState.get("/mode", (req, res) => {
-  res.json({ mode: state.mode });
+  res.json({ mode: microState.mode });
 });
 
 prismState.put("/mode", (req, res) => {
-  
   let errors: string[] = [];
   let newMode: string;
   if (req.body.newMode) {
     newMode = req.body.newMode;
     if (newMode === "live" || newMode === "capture" || newMode === "stack" || newMode === "none") {
-      state.mode = newMode;
+      microState.mode = newMode;
     } else errors.push(`${newMode} mode is invalid`);
   } else errors.push(`no newMode field in request`);
 
   if (errors.length > 0) res.status(400).json({ errors });
-  else res.status(200).json({ newMode: state.mode });
+  else {
+    res.status(200).json({ newMode: microState.mode });
+    updateSender.emit("state-updated");
+  }
 });
 
 prismState.use("/lasers", lasers);

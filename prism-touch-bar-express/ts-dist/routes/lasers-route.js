@@ -5,18 +5,17 @@ const server_1 = require("../server");
 const util_1 = require("util");
 const lasers = express.Router();
 lasers.get("/", (req, res) => {
-    res.json(server_1.state.lasers);
+    res.json(server_1.microState.lasers);
 });
 //request has to have both power and status
 lasers.put("/:waveLength", (req, res) => {
-    console.log(req.body);
     let errors = [];
     let targetWaveLength = req.params.waveLength;
     let newPower;
-    if (server_1.state.lasers.find(laser => laser.waveLength == targetWaveLength)) {
+    if (server_1.microState.lasers.find(laser => laser.waveLength == targetWaveLength)) {
         if ("isOn" in req.body) {
             if (util_1.isBoolean(req.body.isOn)) {
-                server_1.state.lasers.find(laser => laser.waveLength == targetWaveLength).isOn = req.body.isOn;
+                server_1.microState.lasers.find(laser => laser.waveLength == targetWaveLength).isOn = req.body.isOn;
             }
             else
                 errors.push(`isOn value ${req.body.isOn} is invalid`);
@@ -26,7 +25,7 @@ lasers.put("/:waveLength", (req, res) => {
         if ("newPower" in req.body) {
             newPower = req.body.newPower;
             if (newPower >= 0 && newPower <= 100)
-                server_1.state.lasers.find(laser => laser.waveLength == targetWaveLength).power = newPower;
+                server_1.microState.lasers.find(laser => laser.waveLength == targetWaveLength).power = newPower;
             else
                 errors.push(`newPower value ${newPower} is invalid`);
         }
@@ -40,11 +39,11 @@ lasers.put("/:waveLength", (req, res) => {
         res.status(400).json({ errors });
     else
         res.status(200).json({
-            newPower: server_1.state.lasers.find(laser => laser.waveLength == targetWaveLength).power,
             targetWaveLength,
-            isOn: server_1.state.lasers.find(laser => laser.waveLength == targetWaveLength).isOn
+            newPower: server_1.microState.lasers.find(laser => laser.waveLength == targetWaveLength).power,
+            isOn: server_1.microState.lasers.find(laser => laser.waveLength == targetWaveLength).isOn
         });
-    server_1.sender.emit("state-updated");
+    server_1.updateSender.emit("state-updated");
 });
 module.exports = lasers;
 //# sourceMappingURL=lasers-route.js.map

@@ -4,7 +4,7 @@ const express = require("express");
 const server_1 = require("../server");
 const scanParam = express.Router();
 scanParam.get("/", (req, res) => {
-    res.json(server_1.state.scanParams);
+    res.json(server_1.microState.scanParams);
 });
 scanParam.put("/:dim/:axis", (req, res) => {
     let errors = [];
@@ -15,15 +15,15 @@ scanParam.put("/:dim/:axis", (req, res) => {
         if (axis == "x" || axis == "y" || axis == "z") {
             if ("newValue" in req.body) {
                 newValue = req.body.newValue;
-                if (newValue >= server_1.state.scanParams[dim][axis].min) {
-                    if (newValue <= server_1.state.scanParams[dim][axis].max) {
-                        server_1.state.scanParams[dim][axis].current = newValue;
+                if (newValue >= server_1.microState.scanParams[dim][axis].min) {
+                    if (newValue <= server_1.microState.scanParams[dim][axis].max) {
+                        server_1.microState.scanParams[dim][axis].current = newValue;
                     }
                     else
-                        errors.push(`${newValue} is higher than max value(${server_1.state.scanParams[dim][axis].max})`);
+                        errors.push(`${newValue} is higher than max value(${server_1.microState.scanParams[dim][axis].max})`);
                 }
                 else
-                    errors.push(`${newValue} is lower than min value (${server_1.state.scanParams[dim][axis].min})`);
+                    errors.push(`${newValue} is lower than min value (${server_1.microState.scanParams[dim][axis].min})`);
             }
             else
                 errors.push(`newValue field not specified`);
@@ -35,15 +35,17 @@ scanParam.put("/:dim/:axis", (req, res) => {
         errors.push(`${dim} is not a valid dimension`);
     if (errors.length > 0)
         res.status(400).json({ errors });
-    else
-        res.status(200).json({ dim, axis, newValue, state: server_1.state });
+    else {
+        res.status(200).json({ dim, axis, newValue, state: server_1.microState });
+        server_1.updateSender.emit("state-updated");
+    }
 });
 scanParam.put("/:dim", (req, res) => {
     let errors = [];
     if (req.params.dim == "dwellTime") {
         if (req.body.newValue) {
             if (req.body.newValue > 0)
-                server_1.state.scanParams.dwellTime = req.body.newValue;
+                server_1.microState.scanParams.dwellTime = req.body.newValue;
             else
                 errors.push("time value must be positive");
         }
@@ -54,8 +56,10 @@ scanParam.put("/:dim", (req, res) => {
         errors.push(`${req.params.dim} is an invalid resource`);
     if (errors.length > 0)
         res.status(400).json({ errors });
-    else
+    else {
         res.status(200).send({ newValue: req.body.newValue });
+        server_1.updateSender.emit("state-updated");
+    }
 });
 module.exports = scanParam;
 //# sourceMappingURL=scanParams-route.js.map

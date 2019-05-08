@@ -60,8 +60,6 @@ function updateUILasers(newState) {
         else {
             exports.laserUIBoxes[i].powerLabel.innerHTML = newState.lasers[i].power.toString() + "%";
             exports.laserUIBoxes[i].slider.value = newState.lasers[i].power.toString();
-            console.log(newState.lasers[i].power.toString());
-            console.log(exports.laserUIBoxes[i].slider.value);
             exports.laserUIBoxes[i].waveLengthLabel.innerHTML = newState.lasers[i].waveLength.toString() + "nm";
             exports.laserUIBoxes[i].isOn = newState.lasers[i].isOn;
             if (newState.lasers[i].isOn)
@@ -73,7 +71,6 @@ function updateUILasers(newState) {
 }
 exports.updateUILasers = updateUILasers;
 function sendLaserData(laserBox) {
-    exports.laserUIBoxes.forEach(laserBox => console.log("mandato " + laserBox.isOn));
     fetch(`prismState/lasers/${Number(laserBox.waveLengthLabel.innerHTML.slice(0, -1).slice(0, -1))}`, {
         method: "PUT",
         headers: {

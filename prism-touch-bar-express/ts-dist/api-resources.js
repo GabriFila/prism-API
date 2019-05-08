@@ -42,4 +42,4 @@ class CurrMaxMin {
         this.min = Number.NEGATIVE_INFINITY;
     }
 }
-//# sourceMappingURL=api-classes.js.map
+//# sourceMappingURL=api-resources.js.map
