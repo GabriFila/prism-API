@@ -6,7 +6,7 @@ class JoystickObj extends movObj_1.MovObj {
         super(element, area);
         this.joyStart = (e) => {
             if (e.target === this.element) {
-                this.active = true;
+                this.joyActive = true;
                 //set start position
                 if (e.type === "touchstart") {
                     let eTouch = e;
@@ -25,7 +25,7 @@ class JoystickObj extends movObj_1.MovObj {
         };
         this.joyMove = (e) => {
             //if user is touching
-            if (this.active) {
+            if (this.joyActive) {
                 let xOffset;
                 let yOffset;
                 e.preventDefault();
@@ -61,7 +61,7 @@ class JoystickObj extends movObj_1.MovObj {
         };
         this.joyEnd = (e) => {
             this.moveToDefaultXY();
-            this.active = false;
+            this.joyActive = false;
             this.element.classList.add("smooth-transition");
         };
         this.setDefaultXY();
@@ -72,6 +72,10 @@ class JoystickObj extends movObj_1.MovObj {
         this.area.addEventListener("mousemove", this.joyMove);
         this.area.addEventListener("touchend", this.joyEnd);
         this.area.addEventListener("mouseup", this.joyEnd);
+        window.addEventListener("resize", () => {
+            this.setDefaultXY();
+            this.moveToDefaultXY();
+        });
     }
     setDefaultXY() {
         this.defaultX = this.area.getBoundingClientRect().width / 2 - this.element.getBoundingClientRect().width / 2 - this.areaBorderSize;

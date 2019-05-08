@@ -23,7 +23,7 @@ server.use("/prismMotors", require("./routes/prismMotors-route"));
 server.get("/", (req, res) => {
     res.sendFile(path.join(__dirname + "/../public/views/mainUI.html"));
 });
-server.get("/stream", (req, res) => {
+server.get("/updates", (req, res) => {
     res.writeHead(200, {
         "Content-Type": "text/event-stream",
         "Cache-Control": "no-cache",
@@ -44,13 +44,13 @@ let port = process.env.PORT || 5000;
 server.listen(5000, () => console.log(`Listening from ${port}`));
 function getStateFromMicroscope() {
     exports.microState.scanParams.dwellTime = 50;
-    exports.microState.scanParams.offset.x.current = 200;
+    exports.microState.scanParams.offset.x.current = 0;
     exports.microState.scanParams.offset.x.max = 1000;
     exports.microState.scanParams.offset.x.min = 0;
-    exports.microState.scanParams.offset.y.current = 500;
+    exports.microState.scanParams.offset.y.current = 0;
     exports.microState.scanParams.offset.y.max = 1000;
     exports.microState.scanParams.offset.y.min = 0;
-    exports.microState.scanParams.offset.z.current = 500;
+    exports.microState.scanParams.offset.z.current = 0;
     exports.microState.scanParams.offset.z.max = 1000;
     exports.microState.scanParams.offset.z.min = 0;
     exports.microState.scanParams.pixelNumber.x.current = 500;

@@ -44,7 +44,10 @@ class MovObj {
     constructor(element, area) {
         this.element = element;
         this.area = area;
-        this.active = false;
+        this.updateInfos();
+        window.addEventListener("resize", () => this.updateInfos());
+    }
+    updateInfos() {
         this.updateElBorderSize();
         this.updateAreaBorderSize();
         this.updateWidthHeight();

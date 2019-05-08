@@ -3,6 +3,7 @@ import { MovObj } from "./movObj";
 export class DragObj extends MovObj {
   initialX: number;
   initialY: number;
+  dragActive : boolean;
 
   constructor(element: HTMLDivElement, area: HTMLDivElement) {
     super(element, area);
@@ -16,13 +17,14 @@ export class DragObj extends MovObj {
 
   private dragStart = (e: TouchEvent | MouseEvent) => {
     if (e.target === this.element) {
-      this.active = true;
+      this.dragActive = true;
       //set start position
       if (e.type === "touchstart") {
         let eTouch = e as TouchEvent;
         if (eTouch.touches.length === 1) {
           this.initialX = eTouch.touches[0].clientX - this.leftRelPos;
           this.initialY = eTouch.touches[0].clientY - this.topRelPos;
+
         }
       } else {
         this.initialX = (e as MouseEvent).clientX - this.leftRelPos;
@@ -33,7 +35,7 @@ export class DragObj extends MovObj {
 
   private drag = (e: TouchEvent | MouseEvent) => {
     //if user is touching
-    if (this.active) {
+    if (this.dragActive) {
       e.preventDefault();
       let currentX;
       let currentY;
@@ -41,8 +43,10 @@ export class DragObj extends MovObj {
       if (e.type === "touchmove") {
         let eTouch = e as TouchEvent;
         if (eTouch.touches.length === 1) {
+
           currentX = eTouch.touches[0].clientX - this.initialX;
           currentY = eTouch.touches[0].clientY - this.initialY;
+
         }
       } else {
         currentX = (e as MouseEvent).clientX - this.initialX;
@@ -63,6 +67,6 @@ export class DragObj extends MovObj {
   };
 
   private dragEnd = (e: TouchEvent | MouseEvent) => {
-    this.active = false;
+    this.dragActive = false;
   };
 }

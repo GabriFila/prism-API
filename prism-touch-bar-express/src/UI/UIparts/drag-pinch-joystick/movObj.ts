@@ -1,7 +1,6 @@
 export abstract class MovObj {
   public element: HTMLDivElement;
   public area: HTMLDivElement;
-  active: boolean;
 
   private _elWidth: number;
   public get elWidth(): number {
@@ -61,13 +60,15 @@ export abstract class MovObj {
   constructor(element: HTMLDivElement, area: HTMLDivElement) {
     this.element = element;
     this.area = area;
-    this.active = false;
+    this.updateInfos();
+    window.addEventListener("resize", () => this.updateInfos());
+  }
+  private updateInfos() {
     this.updateElBorderSize();
     this.updateAreaBorderSize();
     this.updateWidthHeight();
     this.updateTopLeftRelPos();
   }
-
   private updateTopLeftRelPos() {
     this._topRelPos =
       this.element.getBoundingClientRect().top - this.element.parentElement.getBoundingClientRect().top - this.elBorderSize - 1;

@@ -1,14 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const movObj_1 = require("./movObj");
-class PinchObj extends movObj_1.MovObj {
+const dragObj_1 = require("./dragObj");
+class PinchObj extends dragObj_1.DragObj {
     constructor(element, area, elMinDim) {
         super(element, area);
         this.pinchStart = (e) => {
             if (e.touches.length === 2) {
                 if ((e.touches[0].target === this.area && e.touches[1].target === this.area) || e.touches) {
                     if (this.touchingOnlyRightPoints(e, this.element, this.area)) {
-                        this.active = true;
+                        this.dragActive = false;
+                        this.pincActive = true;
                         this.initialPinchDistance = Math.sqrt(Math.pow(e.touches[0].clientX - e.touches[1].clientX, 2) + Math.pow(e.touches[0].clientY - e.touches[1].clientY, 2));
                         this.areaMaxDim = Math.min(this.area.getBoundingClientRect().width - 2 * this.areaBorderSize, this.area.getBoundingClientRect().height - 2 * this.areaBorderSize);
                     }
@@ -16,7 +17,7 @@ class PinchObj extends movObj_1.MovObj {
             }
         };
         this.pinch = (e) => {
-            if (this.active) {
+            if (this.pincActive) {
                 e.preventDefault();
                 if (e.touches.length === 2) {
                     this.pinchFactor =
@@ -24,8 +25,9 @@ class PinchObj extends movObj_1.MovObj {
                             this.initialPinchDistance;
                     //limitPinchFactor(this.pinchFactor);
                     this.pinchFactor = Math.pow(this.pinchFactor, 1 / 12);
-                    let newWidth = this.element.getBoundingClientRect().width * this.pinchFactor;
-                    let newHeight = this.element.getBoundingClientRect().height * this.pinchFactor;
+                    let aspectRatio = this.elWidth / this.elHeight;
+                    let newWidth = this.elWidth * this.pinchFactor;
+                    let newHeight = this.elHeight * this.pinchFactor;
                     if (newWidth > this.areaMaxDim)
                         newWidth = this.areaMaxDim;
                     if (newHeight > this.areaMaxDim)
@@ -34,13 +36,25 @@ class PinchObj extends movObj_1.MovObj {
                         newWidth = this.elMinDim;
                     if (newHeight < this.elMinDim)
                         newHeight = this.elMinDim;
-                    this.element.style.width = String(newWidth) + "px";
-                    this.element.style.height = String(newHeight) + "px";
+                    if (this.pinchFactor > 1) {
+                        if (this.leftRelPos + newWidth + 2 * this.areaBorderSize > this.areaWidth) {
+                            newWidth = this.areaWidth - this.leftRelPos;
+                            newHeight = newWidth / aspectRatio;
+                        }
+                        if (this.topRelPos + newHeight + 2 * this.areaBorderSize > this.areaHeight) {
+                            newHeight = this.areaHeight - this.topRelPos;
+                            newWidth = newHeight * aspectRatio;
+                        }
+                    }
+                    this.leftRelPos = this.leftRelPos - (newWidth - this.elWidth) / 2;
+                    this.topRelPos = this.topRelPos - (newHeight - this.elHeight) / 2;
+                    this.elWidth = newWidth;
+                    this.elHeight = newHeight;
                 }
             }
         };
         this.pinchEnd = () => {
-            this.active = false;
+            this.pincActive = false;
         };
         this.elMinDim = elMinDim;
         this.area.addEventListener("touchstart", this.pinchStart);

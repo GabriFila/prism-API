@@ -1,10 +1,12 @@
+import { DragObj } from "./dragObj";
 import { MovObj } from "./movObj";
 
-export class PinchObj extends MovObj {
+export class PinchObj extends DragObj {
   pinchFactor: number;
   initialPinchDistance: number;
   areaMaxDim: number;
   elMinDim: number;
+  pincActive: boolean;
 
   constructor(element: HTMLDivElement, area: HTMLDivElement, elMinDim: number) {
     super(element, area);
@@ -18,7 +20,8 @@ export class PinchObj extends MovObj {
     if (e.touches.length === 2) {
       if ((e.touches[0].target === this.area && e.touches[1].target === this.area) || e.touches) {
         if (this.touchingOnlyRightPoints(e, this.element, this.area)) {
-          this.active = true;
+          this.dragActive = false;
+          this.pincActive = true;
           this.initialPinchDistance = Math.sqrt(
             Math.pow(e.touches[0].clientX - e.touches[1].clientX, 2) + Math.pow(e.touches[0].clientY - e.touches[1].clientY, 2)
           );
@@ -32,7 +35,7 @@ export class PinchObj extends MovObj {
   };
 
   private pinch = (e: TouchEvent) => {
-    if (this.active) {
+    if (this.pincActive) {
       e.preventDefault();
 
       if (e.touches.length === 2) {
@@ -40,11 +43,13 @@ export class PinchObj extends MovObj {
           Math.sqrt(Math.pow(e.touches[0].clientX - e.touches[1].clientX, 2) + Math.pow(e.touches[0].clientY - e.touches[1].clientY, 2)) /
           this.initialPinchDistance;
 
+ 
         //limitPinchFactor(this.pinchFactor);
         this.pinchFactor = Math.pow(this.pinchFactor, 1 / 12);
 
-        let newWidth: number = this.element.getBoundingClientRect().width * this.pinchFactor;
-        let newHeight: number = this.element.getBoundingClientRect().height * this.pinchFactor;
+        let aspectRatio = this.elWidth / this.elHeight;
+        let newWidth: number = this.elWidth * this.pinchFactor;
+        let newHeight: number = this.elHeight * this.pinchFactor;
 
         if (newWidth > this.areaMaxDim) newWidth = this.areaMaxDim;
         if (newHeight > this.areaMaxDim) newHeight = this.areaMaxDim;
@@ -52,14 +57,28 @@ export class PinchObj extends MovObj {
         if (newWidth < this.elMinDim) newWidth = this.elMinDim;
         if (newHeight < this.elMinDim) newHeight = this.elMinDim;
 
-        this.element.style.width = String(newWidth) + "px";
-        this.element.style.height = String(newHeight) + "px";
+        if (this.pinchFactor > 1) {
+          if (this.leftRelPos + newWidth + 2 * this.areaBorderSize > this.areaWidth) {
+            newWidth = this.areaWidth - this.leftRelPos;
+            newHeight = newWidth / aspectRatio;
+          }
+          if (this.topRelPos + newHeight + 2 * this.areaBorderSize > this.areaHeight) {
+            newHeight = this.areaHeight - this.topRelPos;
+            newWidth = newHeight * aspectRatio;
+          }
+        }
+
+        this.leftRelPos = this.leftRelPos - (newWidth - this.elWidth)/2;
+        this.topRelPos = this.topRelPos - (newHeight- this.elHeight)/2;
+        this.elWidth = newWidth;
+        this.elHeight = newHeight;
+
       }
     }
   };
 
   private pinchEnd = () => {
-    this.active = false;
+    this.pincActive = false;
   };
 
   private touchingOnlyRightPoints(e: TouchEvent, element: HTMLDivElement, area: HTMLDivElement): boolean {

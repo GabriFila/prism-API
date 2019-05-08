@@ -3,7 +3,7 @@ import { MovObj } from "./movObj";
 export class JoystickObj extends MovObj {
   element: HTMLDivElement;
   area: HTMLDivElement;
-  active: boolean;
+  joyActive: boolean;
   initialX: number;
   initialY: number;
   defaultX: number;
@@ -19,6 +19,10 @@ export class JoystickObj extends MovObj {
     this.area.addEventListener("mousemove", this.joyMove);
     this.area.addEventListener("touchend", this.joyEnd);
     this.area.addEventListener("mouseup", this.joyEnd);
+    window.addEventListener("resize",() => {
+      this.setDefaultXY();
+      this.moveToDefaultXY();
+    })
   }
 
   setDefaultXY() {
@@ -33,7 +37,7 @@ export class JoystickObj extends MovObj {
 
   private joyStart = (e: TouchEvent | MouseEvent) => {
     if (e.target === this.element) {
-      this.active = true;
+      this.joyActive = true;
       //set start position
       if (e.type === "touchstart") {
         let eTouch = e as TouchEvent;
@@ -52,7 +56,7 @@ export class JoystickObj extends MovObj {
 
   private joyMove = (e: TouchEvent | MouseEvent) => {
     //if user is touching
-    if (this.active) {
+    if (this.joyActive) {
       let xOffset;
       let yOffset;
       e.preventDefault();
@@ -87,7 +91,7 @@ export class JoystickObj extends MovObj {
 
   private joyEnd = (e: TouchEvent | MouseEvent) => {
     this.moveToDefaultXY();
-    this.active = false;
+    this.joyActive = false;
     this.element.classList.add("smooth-transition");
   };
 }

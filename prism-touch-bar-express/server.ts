@@ -29,7 +29,7 @@ server.get("/", (req, res) => {
   res.sendFile(path.join(__dirname + "/../public/views/mainUI.html"));
 });
 
-server.get("/stream", (req, res) => {
+server.get("/updates", (req, res) => {
   res.writeHead(200, {
     "Content-Type": "text/event-stream",
     "Cache-Control": "no-cache",
@@ -56,15 +56,15 @@ server.listen(5000, () => console.log(`Listening from ${port}`));
 function getStateFromMicroscope() {
   microState.scanParams.dwellTime = 50;
 
-  microState.scanParams.offset.x.current = 200;
+  microState.scanParams.offset.x.current = 0;
   microState.scanParams.offset.x.max = 1000;
   microState.scanParams.offset.x.min = 0;
 
-  microState.scanParams.offset.y.current = 500;
+  microState.scanParams.offset.y.current = 0;
   microState.scanParams.offset.y.max = 1000;
   microState.scanParams.offset.y.min = 0;
 
-  microState.scanParams.offset.z.current = 500;
+  microState.scanParams.offset.z.current = 0;
   microState.scanParams.offset.z.max = 1000;
   microState.scanParams.offset.z.min = 0;
 

@@ -6,7 +6,7 @@ class DragObj extends movObj_1.MovObj {
         super(element, area);
         this.dragStart = (e) => {
             if (e.target === this.element) {
-                this.active = true;
+                this.dragActive = true;
                 //set start position
                 if (e.type === "touchstart") {
                     let eTouch = e;
@@ -23,7 +23,7 @@ class DragObj extends movObj_1.MovObj {
         };
         this.drag = (e) => {
             //if user is touching
-            if (this.active) {
+            if (this.dragActive) {
                 e.preventDefault();
                 let currentX;
                 let currentY;
@@ -39,20 +39,7 @@ class DragObj extends movObj_1.MovObj {
                     currentX = e.clientX - this.initialX;
                     currentY = e.clientY - this.initialY;
                 }
-                //stops movable element from going outside the draggable area when dragging it
-                let areaWidth = this.area.getBoundingClientRect().width;
-                let elWidth = this.element.getBoundingClientRect().width;
-                let areaHeight = this.area.getBoundingClientRect().height;
-                let elHeight = this.element.getBoundingClientRect().height;
-                let areaBorderSize = this.areaBorderSize;
-                /*
-                if (currentX + elWidth + 2 * areaBorderSize > areaWidth)
-                currentX = areaWidth - elWidth - 2 * areaBorderSize;
-                if (currentX < 0) currentX = 0;
-                if (currentY + elHeight + 2 * areaBorderSize > areaHeight) currentY = areaHeight - elHeight - 2 * areaBorderSize;
-                if (currentY < 0) currentY = 0;
-          
-                */
+                //stops draggable element from going outside the draggable area when dragging it
                 if (currentX + this.elWidth + 2 * this.areaBorderSize > this.areaHeight)
                     currentX = this.areaWidth - this.elWidth - 2 * this.areaBorderSize;
                 if (currentX < 0)
@@ -66,7 +53,7 @@ class DragObj extends movObj_1.MovObj {
             }
         };
         this.dragEnd = (e) => {
-            this.active = false;
+            this.dragActive = false;
         };
         this.area.addEventListener("mousedown", this.dragStart);
         this.area.addEventListener("touchstart", this.dragStart);

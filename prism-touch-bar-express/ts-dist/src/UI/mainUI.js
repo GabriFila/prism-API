@@ -6,10 +6,10 @@ const lasers_1 = require("./UIparts/lasers");
 const numpad_1 = require("./UIparts/numpad");
 /*parameters initialization*/
 const scanParameteres_1 = require("./UIparts/scanParameteres");
-/*drag capabilties*/
-const dragObj_1 = require("./UIparts/drag-pinch-joystick/dragObj");
 /*joystick capabilties*/
 const joystickObj_1 = require("./UIparts/drag-pinch-joystick/joystickObj");
+/*pinch capabilties*/
+const pinchObj_1 = require("./UIparts/drag-pinch-joystick/pinchObj");
 /*z slider sensitivity */
 const movObj_1 = require("./UIparts/drag-pinch-joystick/movObj");
 /*last item in focus*/
@@ -20,20 +20,16 @@ const captureBtn = document.querySelector("#capture-btn");
 const stackBtn = document.querySelector("#stack-btn");
 document.body.addEventListener("click", function (e) {
     //remove highlight border only when touching something excluding numpad and selectred parameter
-    if (numpad_1.numPad.filter(numBtn => numBtn === e.target).length == 0) {
-        if (e.target !== numpad_1.delBtn && e.target !== numpad_1.dotBtn)
-            if (scanParameteres_1.UIparameters.filter(param => param === e.target).length == 0) {
-                removeHighlithBoder();
-                lastFocus = null;
-            }
+    if (lastFocus != null) {
+        if (numpad_1.numPad.filter(numBtn => numBtn === e.target).length == 0) {
+            if (e.target !== numpad_1.delBtn && e.target !== numpad_1.dotBtn)
+                if (scanParameteres_1.UIparameters.filter(param => param === e.target).length == 0) {
+                    removeHighlithBoder();
+                    scanParameteres_1.sendParamChange(lastFocus);
+                    lastFocus = null;
+                }
+        }
     }
-    //set UI parameter value to 0 when empty
-    scanParameteres_1.UIparameters.forEach(param => {
-        if (param != lastFocus)
-            if (param.value == "") {
-                param.value = "0";
-            }
-    });
 });
 //adds event to slider box for slider movement and on/off button
 lasers_1.laserUIBoxes.forEach(laserUIBox => {
@@ -53,12 +49,12 @@ lasers_1.laserUIBoxes.forEach(laserUIBox => {
 });
 /*store last parameters input in focus*/
 scanParameteres_1.UIparameters.forEach(param => {
-    param.addEventListener("click", () => {
+    param.addEventListener("touchstart", () => {
         removeHighlithBoder();
         lastFocus = param;
         param.value = "";
         param.classList.add("highlighted");
-        scanParameteres_1.sendParamChange(param);
+        //sendParamChange(param);
     });
 });
 /*add touched num in last focus element*/
@@ -86,7 +82,6 @@ numpad_1.dotBtn.addEventListener("click", () => {
     if (lastFocus !== null && lastFocus.value.slice(-1) !== "." && lastFocus.value.length != 0) {
         lastFocus.classList.add("highlighted");
         lastFocus.value += ".";
-        //  sendParamChange(lastFocus);
     }
 });
 /*delete number to last focus element when delete button pressed */
@@ -98,8 +93,9 @@ numpad_1.delBtn.addEventListener("click", () => {
     }
 });
 /*add dragable capabilities*/
-let dragObj = new dragObj_1.DragObj(movObj_1.inspectArea, movObj_1.sampleArea);
-//let pinchObj = new PinchObj(inspectArea, sampleArea, 20);
+//let lookSurface = new DragObj(inspectArea, sampleArea);
+let lookSurface = new pinchObj_1.PinchObj(movObj_1.inspectArea, movObj_1.sampleArea, 20);
+/*add joystick capabilities*/
 let xyMotor = new joystickObj_1.JoystickObj(movObj_1.joyThumb, movObj_1.joyPad);
 let zMotor = new joystickObj_1.JoystickObj(movObj_1.zThumb, movObj_1.zSlider);
 movObj_1.zSensBtn.addEventListener("click", () => {
@@ -118,14 +114,41 @@ function getCurrentState() {
         scanParameteres_1.updateLimits(newState);
         lasers_1.updateUILasers(newState);
         scanParameteres_1.updateUIParameters(newState);
+        // updateUIPads(newState);
     });
 }
-function updateUIPads() { }
-const source = new EventSource("/stream");
+function updateUIPads(newState) {
+    lookSurface.leftRelPos = newState.scanParams.offset.x.current;
+    lookSurface.topRelPos = newState.scanParams.offset.y.current;
+}
+const source = new EventSource("/updates");
 source.addEventListener("state-updated", (event) => {
     let newState = JSON.parse(event.data);
     scanParameteres_1.updateLimits(newState);
     lasers_1.updateUILasers(newState);
     scanParameteres_1.updateUIParameters(newState);
+    // updateUIPads(newState);
 });
+/*
+lookSurface.area.addEventListener("touchmove", () => {
+  fetch("/prismState/scanParams/offset/x", {
+    method: "PUT",
+    body: JSON.stringify({
+      newValue: Number(lookSurface.leftRelPos)
+    }),
+    headers: new Headers({
+      "Content-Type": "application/json"
+    })
+  });
+  fetch("/prismState/scanParams/offset/y", {
+    method: "PUT",
+    body: JSON.stringify({
+      newValue: Number(lookSurface.topRelPos)
+    }),
+    headers: new Headers({
+      "Content-Type": "application/json"
+    })
+  });
+})
+*/ 
 //# sourceMappingURL=mainUI.js.map

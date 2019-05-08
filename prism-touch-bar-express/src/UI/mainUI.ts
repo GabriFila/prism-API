@@ -24,20 +24,16 @@ const stackBtn: HTMLButtonElement = document.querySelector("#stack-btn");
 
 document.body.addEventListener("click", function(e) {
   //remove highlight border only when touching something excluding numpad and selectred parameter
-  if (numPad.filter(numBtn => numBtn === e.target).length == 0) {
-    if (e.target !== delBtn && e.target !== dotBtn)
-      if (UIparameters.filter(param => param === e.target).length == 0) {
-        removeHighlithBoder();
-        lastFocus = null;
-      }
+  if (lastFocus != null) {
+    if (numPad.filter(numBtn => numBtn === e.target).length == 0) {
+      if (e.target !== delBtn && e.target !== dotBtn)
+        if (UIparameters.filter(param => param === e.target).length == 0) {
+          removeHighlithBoder();
+          sendParamChange(lastFocus);
+          lastFocus = null;
+        }
+    }
   }
-  //set UI parameter value to 0 when empty
-  UIparameters.forEach(param => {
-    if (param != lastFocus)
-      if (param.value == "") {
-        param.value = "0";
-      }
-  });
 });
 
 //adds event to slider box for slider movement and on/off button
@@ -57,12 +53,12 @@ laserUIBoxes.forEach(laserUIBox => {
 
 /*store last parameters input in focus*/
 UIparameters.forEach(param => {
-  param.addEventListener("click", () => {
+  param.addEventListener("touchstart", () => {
     removeHighlithBoder();
     lastFocus = param;
     param.value = "";
     param.classList.add("highlighted");
-    sendParamChange(param);
+    //sendParamChange(param);
   });
 });
 
@@ -95,7 +91,6 @@ dotBtn.addEventListener("click", () => {
   if (lastFocus !== null && lastFocus.value.slice(-1) !== "." && lastFocus.value.length != 0) {
     lastFocus.classList.add("highlighted");
     lastFocus.value += ".";
-    //  sendParamChange(lastFocus);
   }
 });
 
@@ -109,9 +104,10 @@ delBtn.addEventListener("click", () => {
 });
 
 /*add dragable capabilities*/
-let dragObj = new DragObj(inspectArea, sampleArea);
-//let pinchObj = new PinchObj(inspectArea, sampleArea, 20);
+//let lookSurface = new DragObj(inspectArea, sampleArea);
+let lookSurface = new PinchObj(inspectArea, sampleArea, 20);
 
+/*add joystick capabilities*/
 let xyMotor = new JoystickObj(joyThumb, joyPad);
 let zMotor = new JoystickObj(zThumb, zSlider);
 
@@ -134,12 +130,16 @@ function getCurrentState() {
       updateLimits(newState);
       updateUILasers(newState);
       updateUIParameters(newState);
+     // updateUIPads(newState);
     });
 }
 
-function updateUIPads() {}
+function updateUIPads(newState : State) {
+  lookSurface.leftRelPos = newState.scanParams.offset.x.current;
+  lookSurface.topRelPos = newState.scanParams.offset.y.current;
+}
 
-const source = new EventSource("/stream");
+const source = new EventSource("/updates");
 
 source.addEventListener("state-updated", (event: any) => {
   let newState: State = JSON.parse(event.data);
@@ -147,4 +147,27 @@ source.addEventListener("state-updated", (event: any) => {
   updateLimits(newState);
   updateUILasers(newState);
   updateUIParameters(newState);
+ // updateUIPads(newState);
 });
+/*
+lookSurface.area.addEventListener("touchmove", () => {
+  fetch("/prismState/scanParams/offset/x", {
+    method: "PUT",
+    body: JSON.stringify({
+      newValue: Number(lookSurface.leftRelPos)
+    }),
+    headers: new Headers({
+      "Content-Type": "application/json"
+    })
+  });
+  fetch("/prismState/scanParams/offset/y", {
+    method: "PUT",
+    body: JSON.stringify({
+      newValue: Number(lookSurface.topRelPos)
+    }),
+    headers: new Headers({
+      "Content-Type": "application/json"
+    })
+  });
+})
+*/
