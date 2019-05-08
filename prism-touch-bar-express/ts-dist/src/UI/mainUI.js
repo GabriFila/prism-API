@@ -7,13 +7,11 @@ const numpad_1 = require("./UIparts/numpad");
 /*parameters initialization*/
 const scanParameteres_1 = require("./UIparts/scanParameteres");
 /*drag capabilties*/
-const dragObj_1 = require("./drag-pinch-joystick/dragObj");
+const dragObj_1 = require("./UIparts/drag-pinch-joystick/dragObj");
 /*joystick capabilties*/
-const joystickObj_1 = require("./drag-pinch-joystick/joystickObj");
-/*pinch capabilties*/
-const pinchObj_1 = require("./drag-pinch-joystick/pinchObj");
+const joystickObj_1 = require("./UIparts/drag-pinch-joystick/joystickObj");
 /*z slider sensitivity */
-const movObj_1 = require("./drag-pinch-joystick/movObj");
+const movObj_1 = require("./UIparts/drag-pinch-joystick/movObj");
 /*last item in focus*/
 let lastFocus = undefined;
 /*start btn  initialization */
@@ -101,7 +99,7 @@ numpad_1.delBtn.addEventListener("click", () => {
 });
 /*add dragable capabilities*/
 let dragObj = new dragObj_1.DragObj(movObj_1.inspectArea, movObj_1.sampleArea);
-let pinchObj = new pinchObj_1.PinchObj(movObj_1.inspectArea, movObj_1.sampleArea, 20);
+//let pinchObj = new PinchObj(inspectArea, sampleArea, 20);
 let xyMotor = new joystickObj_1.JoystickObj(movObj_1.joyThumb, movObj_1.joyPad);
 let zMotor = new joystickObj_1.JoystickObj(movObj_1.zThumb, movObj_1.zSlider);
 movObj_1.zSensBtn.addEventListener("click", () => {

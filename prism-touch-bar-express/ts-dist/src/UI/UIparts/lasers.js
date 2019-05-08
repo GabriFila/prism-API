@@ -80,9 +80,7 @@ function sendLaserData(laserBox) {
             newPower: Number(laserBox.powerLabel.innerHTML.slice(0, -1)),
             isOn: laserBox.isOn
         })
-    })
-        .then(res => res.json())
-        .then(body => console.log(body));
+    }).then(res => res.json());
 }
 exports.sendLaserData = sendLaserData;
 //# sourceMappingURL=lasers.js.map

@@ -3,23 +3,15 @@ import { laserUIBoxes, grayOutLaserBox, lightUpLaserBox, updateUILasers, sendLas
 /*numpad initialization*/
 import { numPad, delBtn, dotBtn } from "./UIparts/numpad";
 /*parameters initialization*/
-import {
-  UIparameters,
-  presetSelector,
-  addPresetBtn,
-  /*presets, Preset,*/ sendParamChange,
-  updateUIParameters,
-  updateLimits,
-  limits
-} from "./UIparts/scanParameteres";
+import { UIparameters, sendParamChange, updateUIParameters, updateLimits, limits } from "./UIparts/scanParameteres";
 /*drag capabilties*/
-import { DragObj } from "./drag-pinch-joystick/dragObj";
+import { DragObj } from "./UIparts/drag-pinch-joystick/dragObj";
 /*joystick capabilties*/
-import { JoystickObj } from "./drag-pinch-joystick/joystickObj";
+import { JoystickObj } from "./UIparts/drag-pinch-joystick/joystickObj";
 /*pinch capabilties*/
-import { PinchObj } from "./drag-pinch-joystick/pinchObj";
+import { PinchObj } from "./UIparts/drag-pinch-joystick/pinchObj";
 /*z slider sensitivity */
-import { zSensBtn, zSenses, zThumb, zSlider, joyThumb, inspectArea, sampleArea, joyPad } from "./drag-pinch-joystick/movObj";
+import { zSensBtn, zSenses, zThumb, zSlider, joyThumb, inspectArea, sampleArea, joyPad } from "./UIparts/drag-pinch-joystick/movObj";
 import { State } from "./UIparts/classes";
 
 /*last item in focus*/
@@ -118,7 +110,7 @@ delBtn.addEventListener("click", () => {
 
 /*add dragable capabilities*/
 let dragObj = new DragObj(inspectArea, sampleArea);
-let pinchObj = new PinchObj(inspectArea, sampleArea, 20);
+//let pinchObj = new PinchObj(inspectArea, sampleArea, 20);
 
 let xyMotor = new JoystickObj(joyThumb, joyPad);
 let zMotor = new JoystickObj(zThumb, zSlider);

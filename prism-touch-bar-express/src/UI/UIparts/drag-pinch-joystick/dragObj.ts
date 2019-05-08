@@ -49,25 +49,13 @@ export class DragObj extends MovObj {
         currentY = (e as MouseEvent).clientY - this.initialY;
       }
 
-      //stops movable element from going outside the draggable area when dragging it
-      let areaWidth: number = this.area.getBoundingClientRect().width;
-      let dragElWidth: number = this.element.getBoundingClientRect().width;
-      let areaHeight: number = this.area.getBoundingClientRect().height;
-      let dragElHeight: number = this.element.getBoundingClientRect().height;
-      let dragAreaBorderSize: number = this.areaBorderSize;
-
-      if (currentX + dragElWidth + 2 * dragAreaBorderSize > areaWidth) currentX = areaWidth - dragElWidth - 2 * dragAreaBorderSize;
+      //stops draggable element from going outside the draggable area when dragging it
+      if (currentX + this.elWidth + 2 * this.areaBorderSize > this.areaHeight)
+        currentX = this.areaWidth - this.elWidth - 2 * this.areaBorderSize;
       if (currentX < 0) currentX = 0;
-      if (currentY + dragElHeight + 2 * dragAreaBorderSize > areaHeight) currentY = areaHeight - dragElHeight - 2 * dragAreaBorderSize;
+      if (currentY + this.elHeight + 2 * this.areaBorderSize > this.areaHeight)
+        currentY = this.areaHeight - this.elHeight - 2 * this.areaBorderSize;
       if (currentY < 0) currentY = 0;
-
-      /*
-      if (currentX + this.elWidth + this.areaBorderSize > this.areaHeight) currentX = this.areaWidth - this.elWidth - this.areaBorderSize;
-      if (currentX < 0) currentX = 0;
-      if (currentY + this.elHeight + this.areaBorderSize > this.areaHeight)
-        currentY = this.areaHeight - this.elHeight - this.areaBorderSize;
-      if (currentY < 0) currentY = 0;
-*/
 
       this.leftRelPos = currentX;
       this.topRelPos = currentY;

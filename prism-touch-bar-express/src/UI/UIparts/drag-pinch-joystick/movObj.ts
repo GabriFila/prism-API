@@ -89,7 +89,7 @@ export abstract class MovObj {
     this._elBorderSize = Number(regex.exec(str)[1]);
   }
   private updateAreaBorderSize() {
-    let elStyle = window.getComputedStyle(this.element);
+    let elStyle = window.getComputedStyle(this.area);
     let regex = /([0-9]*)px[a-zA-Z0-9_ ]*/;
     let str = elStyle.getPropertyValue("border"); //gets rid of "px" in border CSS property
     this._areaBorderSize = Number(regex.exec(str)[1]);
