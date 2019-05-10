@@ -712,7 +712,6 @@ function setUpUpdater() {
         scanParameteres_1.UIparameters[9].value = JSON.parse(event.data).newValue;
     });
     source.addEventListener("lasers-updated", (event) => {
-        console.log(JSON.parse(event.data));
         lasers_1.updateUILasersFromLasers(JSON.parse(event.data));
     });
 }
