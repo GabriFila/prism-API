@@ -32,7 +32,7 @@ prismState.put("/mode", (req, res) => {
   let newMode: string;
   if (req.body.newMode) {
     newMode = req.body.newMode;
-    if (newMode === "live" || newMode === "capture" || newMode === "stack" || newMode === "none") {
+    if (newMode === "live" || newMode === "capture" || newMode === "stack" || newMode === "stand-by") {
       microState.mode = newMode;
     } else errors.push(`${newMode} mode is invalid`);
   } else errors.push(`no newMode field in request`);

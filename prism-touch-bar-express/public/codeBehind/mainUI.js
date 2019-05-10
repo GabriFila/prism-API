@@ -738,6 +738,9 @@ function setUpUpdater() {
     source.addEventListener("lasers-updated", (event) => {
         lasers_1.updateUILasersFromLasers(JSON.parse(event.data));
     });
+    source.addEventListener("mode-updated", (event) => {
+        mainUI_1.updateMode(JSON.parse(event.data).mode);
+    });
 }
 exports.setUpUpdater = setUpUpdater;
 function getCurrentState() {
@@ -758,6 +761,16 @@ function updateUIPads(newState) {
     mainUI_1.lookSurface.elWidth = (newState.scanParams.range.x.current * mainUI_1.lookSurface.areaWidth) / scanParameteres_1.limits[6].max;
     mainUI_1.lookSurface.elHeight = (newState.scanParams.range.y.current * mainUI_1.lookSurface.areaHeight) / scanParameteres_1.limits[7].max;
 }
+function sendMode(newMode) {
+    fetch("/prismState/mode", {
+        method: "PUT",
+        body: JSON.stringify({ newMode }),
+        headers: {
+            "Content-type": "application/json"
+        }
+    });
+}
+exports.sendMode = sendMode;
 
 },{"./UIparts/lasers":6,"./UIparts/scanParameteres":8,"./mainUI":10}],10:[function(require,module,exports){
 "use strict";
@@ -809,10 +822,35 @@ document.body.addEventListener("click", function (e) {
 function removeHighlithBoder() {
     scanParameteres_1.UIparameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));
 }
+let currentMode;
+function updateMode(newMode) {
+    console.log(newMode);
+    currentMode = newMode;
+}
+exports.updateMode = updateMode;
+setInterval(() => console.log("current mode: " + currentMode), 1000);
 /*mode btns  initialization */
 const liveBtn = document.querySelector("#live-btn");
 const captureBtn = document.querySelector("#capture-btn");
 const stackBtn = document.querySelector("#stack-btn");
+liveBtn.addEventListener("click", () => {
+    if (currentMode === "live")
+        UIupdater_1.sendMode("stand-by");
+    else
+        UIupdater_1.sendMode("live");
+});
+captureBtn.addEventListener("click", () => {
+    if (currentMode === "capture")
+        UIupdater_1.sendMode("stand-by");
+    else
+        UIupdater_1.sendMode("capture");
+});
+stackBtn.addEventListener("click", () => {
+    if (currentMode === "stack")
+        UIupdater_1.sendMode("stand-by");
+    else
+        UIupdater_1.sendMode("stack");
+});
 /*adds event to slider box for slider movement and on/off button*/
 lasers_1.laserUIBoxes.forEach(laserUIBox => {
     laserUIBox.slider.oninput = () => {

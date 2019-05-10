@@ -13,7 +13,7 @@ import { PinchObj } from "./UIparts/drag-pinch-joystick/pinchObj";
 /*circular joystick class*/
 import { CircJoystickObj } from "./UIparts/drag-pinch-joystick/circJoystick";
 /*UI SSE updater*/
-import { setUpUpdater, getCurrentState } from "./UIupdater";
+import { setUpUpdater, getCurrentState, sendMode } from "./UIupdater";
 
 /*get microscope state on UI start-up */
 getCurrentState();
@@ -52,10 +52,29 @@ function removeHighlithBoder() {
   UIparameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));
 }
 
+let currentMode: string;
+
+export function updateMode(newMode: string) {  
+  currentMode = newMode;
+}
+
 /*mode btns  initialization */
 const liveBtn: HTMLButtonElement = document.querySelector("#live-btn");
 const captureBtn: HTMLButtonElement = document.querySelector("#capture-btn");
 const stackBtn: HTMLButtonElement = document.querySelector("#stack-btn");
+
+liveBtn.addEventListener("click", () => {
+  if (currentMode === "live") sendMode("stand-by");
+  else sendMode("live");
+});
+captureBtn.addEventListener("click", () => {
+  if (currentMode === "capture") sendMode("stand-by");
+  else sendMode("capture");
+});
+stackBtn.addEventListener("click", () => {
+  if (currentMode === "stack") sendMode("stand-by");
+  else sendMode("stack");
+});
 
 /*adds event to slider box for slider movement and on/off button*/
 laserUIBoxes.forEach(laserUIBox => {

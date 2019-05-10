@@ -47,6 +47,9 @@ function setUpUpdater() {
     source.addEventListener("lasers-updated", (event) => {
         lasers_1.updateUILasersFromLasers(JSON.parse(event.data));
     });
+    source.addEventListener("mode-updated", (event) => {
+        mainUI_1.updateMode(JSON.parse(event.data).mode);
+    });
 }
 exports.setUpUpdater = setUpUpdater;
 function getCurrentState() {
@@ -67,4 +70,14 @@ function updateUIPads(newState) {
     mainUI_1.lookSurface.elWidth = (newState.scanParams.range.x.current * mainUI_1.lookSurface.areaWidth) / scanParameteres_1.limits[6].max;
     mainUI_1.lookSurface.elHeight = (newState.scanParams.range.y.current * mainUI_1.lookSurface.areaHeight) / scanParameteres_1.limits[7].max;
 }
+function sendMode(newMode) {
+    fetch("/prismState/mode", {
+        method: "PUT",
+        body: JSON.stringify({ newMode }),
+        headers: {
+            "Content-type": "application/json"
+        }
+    });
+}
+exports.sendMode = sendMode;
 //# sourceMappingURL=UIupdater.js.map

@@ -47,10 +47,35 @@ document.body.addEventListener("click", function (e) {
 function removeHighlithBoder() {
     scanParameteres_1.UIparameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));
 }
+let currentMode;
+function updateMode(newMode) {
+    console.log(newMode);
+    currentMode = newMode;
+}
+exports.updateMode = updateMode;
+setInterval(() => console.log("current mode: " + currentMode), 1000);
 /*mode btns  initialization */
 const liveBtn = document.querySelector("#live-btn");
 const captureBtn = document.querySelector("#capture-btn");
 const stackBtn = document.querySelector("#stack-btn");
+liveBtn.addEventListener("click", () => {
+    if (currentMode === "live")
+        UIupdater_1.sendMode("stand-by");
+    else
+        UIupdater_1.sendMode("live");
+});
+captureBtn.addEventListener("click", () => {
+    if (currentMode === "capture")
+        UIupdater_1.sendMode("stand-by");
+    else
+        UIupdater_1.sendMode("capture");
+});
+stackBtn.addEventListener("click", () => {
+    if (currentMode === "stack")
+        UIupdater_1.sendMode("stand-by");
+    else
+        UIupdater_1.sendMode("stack");
+});
 /*adds event to slider box for slider movement and on/off button*/
 lasers_1.laserUIBoxes.forEach(laserUIBox => {
     laserUIBox.slider.oninput = () => {

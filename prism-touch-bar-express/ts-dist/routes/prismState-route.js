@@ -30,7 +30,7 @@ prismState.put("/mode", (req, res) => {
     let newMode;
     if (req.body.newMode) {
         newMode = req.body.newMode;
-        if (newMode === "live" || newMode === "capture" || newMode === "stack" || newMode === "none") {
+        if (newMode === "live" || newMode === "capture" || newMode === "stack" || newMode === "stand-by") {
             server_1.microState.mode = newMode;
         }
         else
@@ -43,6 +43,7 @@ prismState.put("/mode", (req, res) => {
     else {
         res.status(200).json({ newMode: server_1.microState.mode });
         server_1.updateEmitter.emit("mode-updated");
+        console.log(`mode: ${server_1.microState.mode}`);
     }
 });
 prismState.use("/lasers", lasers);

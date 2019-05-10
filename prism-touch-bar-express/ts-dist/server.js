@@ -71,6 +71,4 @@ function getStateFromMicroscope() {
 }
 function sendStateToPrism() { }
 exports.updateEmitter = new events_1.EventEmitter();
-setInterval(() => exports.updateEmitter.emit("limits-updated"), 1000);
-setTimeout(() => (exports.microState.scanParams.offset.x.max = 4000), 4000);
 //# sourceMappingURL=server.js.map
