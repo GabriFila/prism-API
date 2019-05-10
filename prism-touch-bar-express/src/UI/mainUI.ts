@@ -1,30 +1,41 @@
-/*slider initialization*/
+/*laser elements*/
 import { laserUIBoxes, grayOutLaserBox, lightUpLaserBox, sendLaserData } from "./UIparts/lasers";
-/*numpad initialization*/
+/*numpad element*/
 import { numPad, delBtn, dotBtn } from "./UIparts/numpad";
-/*parameters initialization*/
+/*parameters elements and methods*/
 import { UIparameters, sendParamChange, limits, sendParamChangeSingle } from "./UIparts/scanParameteres";
+/*UI pads,joysticks objects */
+import { zSensBtn, zSenses, zThumb, zSlider, joyThumb, inspectArea, sampleArea, joyPad } from "./UIparts/drag-pinch-joystick/movObj";
 /*joystick capabilties*/
 import { SliderJoystickObj } from "./UIparts/drag-pinch-joystick/joystickObj";
-/*pinch capabilties*/
+/*pinch class*/
 import { PinchObj } from "./UIparts/drag-pinch-joystick/pinchObj";
-/*z slider sensitivity */
-import { zSensBtn, zSenses, zThumb, zSlider, joyThumb, inspectArea, sampleArea, joyPad } from "./UIparts/drag-pinch-joystick/movObj";
+/*circular joystick class*/
 import { CircJoystickObj } from "./UIparts/drag-pinch-joystick/circJoystick";
+/*UI SSE updater*/
 import { setUpUpdater, getCurrentState } from "./UIupdater";
+
+/*get microscope state on UI start-up */
+getCurrentState();
 
 setUpUpdater();
 
 /*last item in focus*/
 let lastFocus: HTMLInputElement = undefined;
 
-/*start btn  initialization */
-const liveBtn: HTMLButtonElement = document.querySelector("#live-btn");
-const captureBtn: HTMLButtonElement = document.querySelector("#capture-btn");
-const stackBtn: HTMLButtonElement = document.querySelector("#stack-btn");
+/*store last parameters input in focus*/
+UIparameters.forEach(param => {
+  param.addEventListener("touchstart", () => {
+    removeHighlithBoder();
+    lastFocus = param;
+    param.value = "";
+    param.classList.add("highlighted");
+    //sendParamChange(param);
+  });
+});
 
+/*remove highlight border only when touching something excluding numpad and selectred parameter*/
 document.body.addEventListener("click", function(e) {
-  //remove highlight border only when touching something excluding numpad and selectred parameter
   if (lastFocus != null) {
     if (numPad.filter(numBtn => numBtn === e.target).length == 0) {
       if (e.target !== delBtn && e.target !== dotBtn)
@@ -37,7 +48,16 @@ document.body.addEventListener("click", function(e) {
   }
 });
 
-//adds event to slider box for slider movement and on/off button
+function removeHighlithBoder() {
+  UIparameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));
+}
+
+/*mode btns  initialization */
+const liveBtn: HTMLButtonElement = document.querySelector("#live-btn");
+const captureBtn: HTMLButtonElement = document.querySelector("#capture-btn");
+const stackBtn: HTMLButtonElement = document.querySelector("#stack-btn");
+
+/*adds event to slider box for slider movement and on/off button*/
 laserUIBoxes.forEach(laserUIBox => {
   laserUIBox.slider.oninput = () => {
     let tempValue = laserUIBox.slider.value;
@@ -49,17 +69,6 @@ laserUIBoxes.forEach(laserUIBox => {
     if (laserUIBox.isOn) grayOutLaserBox(laserUIBox);
     else lightUpLaserBox(laserUIBox);
     sendLaserData(laserUIBox);
-  });
-});
-
-/*store last parameters input in focus*/
-UIparameters.forEach(param => {
-  param.addEventListener("touchstart", () => {
-    removeHighlithBoder();
-    lastFocus = param;
-    param.value = "";
-    param.classList.add("highlighted");
-    //sendParamChange(param);
   });
 });
 
@@ -101,24 +110,10 @@ delBtn.addEventListener("click", () => {
   }
 });
 
-/*add dragable capabilities*/
+/*pads initializations*/
 export const lookSurface = new PinchObj(inspectArea, sampleArea, 20);
 
-/*add joystick capabilities*/
-let zMotor = new SliderJoystickObj(zThumb, zSlider);
-let xyMotor = new CircJoystickObj(joyThumb, joyPad);
-
-zSensBtn.addEventListener("click", () => {
-  zSensBtn.innerHTML = zSenses[(zSenses.indexOf(zSensBtn.innerHTML) + 1) % zSenses.length];
-});
-
-function removeHighlithBoder() {
-  UIparameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));
-}
-
-//setInterval(getCurrentState, 200);
-getCurrentState();
-
+/*update own UI parameters*/
 lookSurface.area.addEventListener("touchmove", () => {
   UIparameters[0].value = String((lookSurface.leftRelPos * limits[0].max) / lookSurface.areaWidth);
   UIparameters[1].value = String((lookSurface.topRelPos * limits[1].max) / lookSurface.areaHeight);
@@ -126,9 +121,19 @@ lookSurface.area.addEventListener("touchmove", () => {
   UIparameters[7].value = String((lookSurface.elHeight * limits[7].max) / lookSurface.areaHeight);
 });
 
+/*send parameter change when untouched*/
 lookSurface.area.addEventListener("touchend", () => {
   sendParamChangeSingle("offset/x", Number(UIparameters[0].value));
   sendParamChangeSingle("offset/y", Number(UIparameters[1].value));
   sendParamChangeSingle("range/x", Number(UIparameters[6].value));
   sendParamChangeSingle("range/y", Number(UIparameters[7].value));
+});
+
+/*joystick initializations*/
+let zMotor = new SliderJoystickObj(zThumb, zSlider);
+let xyMotor = new CircJoystickObj(joyThumb, joyPad);
+
+/*change z joystick sensibility when touched */
+zSensBtn.addEventListener("click", () => {
+  zSensBtn.innerHTML = zSenses[(zSenses.indexOf(zSensBtn.innerHTML) + 1) % zSenses.length];
 });
