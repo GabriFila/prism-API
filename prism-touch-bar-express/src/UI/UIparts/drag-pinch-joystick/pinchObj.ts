@@ -43,7 +43,6 @@ export class PinchObj extends DragObj {
           Math.sqrt(Math.pow(e.touches[0].clientX - e.touches[1].clientX, 2) + Math.pow(e.touches[0].clientY - e.touches[1].clientY, 2)) /
           this.initialPinchDistance;
 
- 
         //limitPinchFactor(this.pinchFactor);
         this.pinchFactor = Math.pow(this.pinchFactor, 1 / 12);
 
@@ -68,11 +67,15 @@ export class PinchObj extends DragObj {
           }
         }
 
-        this.leftRelPos = this.leftRelPos - (newWidth - this.elWidth)/2;
-        this.topRelPos = this.topRelPos - (newHeight- this.elHeight)/2;
+        let newLeftPos = this.leftRelPos - (newWidth - this.elWidth) / 2;
+        let newTopPos = this.topRelPos - (newHeight - this.elHeight) / 2;
+
+        if (newLeftPos > 0 && newTopPos > 0) {
+          this.leftRelPos = newLeftPos;
+          this.topRelPos = newTopPos;
+        }
         this.elWidth = newWidth;
         this.elHeight = newHeight;
-
       }
     }
   };

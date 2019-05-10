@@ -398,8 +398,12 @@ class PinchObj extends dragObj_1.DragObj {
                             newWidth = newHeight * aspectRatio;
                         }
                     }
-                    this.leftRelPos = this.leftRelPos - (newWidth - this.elWidth) / 2;
-                    this.topRelPos = this.topRelPos - (newHeight - this.elHeight) / 2;
+                    let newLeftPos = this.leftRelPos - (newWidth - this.elWidth) / 2;
+                    let newTopPos = this.topRelPos - (newHeight - this.elHeight) / 2;
+                    if (newLeftPos > 0 && newTopPos > 0) {
+                        this.leftRelPos = newLeftPos;
+                        this.topRelPos = newTopPos;
+                    }
                     this.elWidth = newWidth;
                     this.elHeight = newHeight;
                 }
@@ -639,6 +643,16 @@ function sendParamChange(param) {
     });
 }
 exports.sendParamChange = sendParamChange;
+function sendParamChangeSingle(resource, newValue) {
+    fetch(`/prismState/scanParams/${resource}`, {
+        method: "PUT",
+        body: JSON.stringify({ newValue }),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+}
+exports.sendParamChangeSingle = sendParamChangeSingle;
 function updateUIParameters(state) {
     exports.UIparameters[0].value = state.scanParams.offset.x.current.toString();
     exports.UIparameters[1].value = state.scanParams.offset.y.current.toString();
@@ -679,13 +693,16 @@ exports.updateLimits = updateLimits;
 Object.defineProperty(exports, "__esModule", { value: true });
 const scanParameteres_1 = require("./UIparts/scanParameteres");
 const lasers_1 = require("./UIparts/lasers");
+const mainUI_1 = require("./mainUI");
 const source = new EventSource("/updates");
 function setUpUpdater() {
     source.addEventListener("offset-x-updated", (event) => {
         scanParameteres_1.UIparameters[0].value = JSON.parse(event.data).newValue;
+        mainUI_1.lookSurface.leftRelPos = (Number(scanParameteres_1.UIparameters[0].value) * mainUI_1.lookSurface.areaWidth) / scanParameteres_1.limits[0].max;
     });
     source.addEventListener("offset-y-updated", (event) => {
         scanParameteres_1.UIparameters[1].value = JSON.parse(event.data).newValue;
+        mainUI_1.lookSurface.topRelPos = (Number(scanParameteres_1.UIparameters[1].value) * mainUI_1.lookSurface.areaHeight) / scanParameteres_1.limits[1].max;
     });
     source.addEventListener("offset-z-updated", (event) => {
         scanParameteres_1.UIparameters[2].value = JSON.parse(event.data).newValue;
@@ -701,9 +718,11 @@ function setUpUpdater() {
     });
     source.addEventListener("range-x-updated", (event) => {
         scanParameteres_1.UIparameters[6].value = JSON.parse(event.data).newValue;
+        mainUI_1.lookSurface.elWidth = (Number(scanParameteres_1.UIparameters[6].value) * mainUI_1.lookSurface.areaWidth) / scanParameteres_1.limits[6].max;
     });
     source.addEventListener("range-y-updated", (event) => {
         scanParameteres_1.UIparameters[7].value = JSON.parse(event.data).newValue;
+        mainUI_1.lookSurface.elHeight = (Number(scanParameteres_1.UIparameters[7].value) * mainUI_1.lookSurface.areaHeight) / scanParameteres_1.limits[7].max;
     });
     source.addEventListener("range-z-updated", (event) => {
         scanParameteres_1.UIparameters[8].value = JSON.parse(event.data).newValue;
@@ -716,8 +735,29 @@ function setUpUpdater() {
     });
 }
 exports.setUpUpdater = setUpUpdater;
+function getCurrentState() {
+    fetch("/prismState/")
+        .then(res => res.json())
+        .then(newState => {
+        newState;
+        scanParameteres_1.updateLimits(newState);
+        lasers_1.updateUILasersFromState(newState);
+        scanParameteres_1.updateUIParameters(newState);
+        updateUIPads(newState);
+    });
+}
+exports.getCurrentState = getCurrentState;
+function updateUIPads(newState) {
+    console.log(`Before ${mainUI_1.lookSurface.leftRelPos}`);
+    mainUI_1.lookSurface.leftRelPos = (newState.scanParams.offset.x.current * mainUI_1.lookSurface.areaWidth) / scanParameteres_1.limits[0].max;
+    console.log(`After ${mainUI_1.lookSurface.leftRelPos}`);
+    console.log("   ");
+    mainUI_1.lookSurface.topRelPos = (newState.scanParams.offset.y.current * mainUI_1.lookSurface.areaHeight) / scanParameteres_1.limits[1].max;
+    mainUI_1.lookSurface.elWidth = (newState.scanParams.range.x.current * mainUI_1.lookSurface.areaWidth) / scanParameteres_1.limits[6].max;
+    mainUI_1.lookSurface.elHeight = (newState.scanParams.range.y.current * mainUI_1.lookSurface.areaHeight) / scanParameteres_1.limits[7].max;
+}
 
-},{"./UIparts/lasers":6,"./UIparts/scanParameteres":8}],10:[function(require,module,exports){
+},{"./UIparts/lasers":6,"./UIparts/scanParameteres":8,"./mainUI":10}],10:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /*slider initialization*/
@@ -798,7 +838,6 @@ numpad_1.numPad.forEach((numBtn, i) => {
         }
     });
 });
-scanParameteres_1.UIparameters.forEach(param => param.addEventListener("change", () => alert("cambiato")));
 //problem
 /*add dot to last focus element when dot button pressed */
 numpad_1.dotBtn.addEventListener("click", () => {
@@ -816,7 +855,7 @@ numpad_1.delBtn.addEventListener("click", () => {
     }
 });
 /*add dragable capabilities*/
-let lookSurface = new pinchObj_1.PinchObj(movObj_1.inspectArea, movObj_1.sampleArea, 20);
+exports.lookSurface = new pinchObj_1.PinchObj(movObj_1.inspectArea, movObj_1.sampleArea, 20);
 /*add joystick capabilities*/
 let zMotor = new joystickObj_1.SliderJoystickObj(movObj_1.zThumb, movObj_1.zSlider);
 let xyMotor = new circJoystick_1.CircJoystickObj(movObj_1.joyThumb, movObj_1.joyPad);
@@ -827,43 +866,18 @@ function removeHighlithBoder() {
     scanParameteres_1.UIparameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));
 }
 //setInterval(getCurrentState, 200);
-getCurrentState();
-function getCurrentState() {
-    fetch("/prismState/")
-        .then(res => res.json())
-        .then(newState => {
-        newState;
-        scanParameteres_1.updateLimits(newState);
-        lasers_1.updateUILasersFromState(newState);
-        scanParameteres_1.updateUIParameters(newState);
-        // updateUIPads(newState);
-    });
-}
-function updateUIPads(newState) {
-    lookSurface.leftRelPos = newState.scanParams.offset.x.current;
-    lookSurface.topRelPos = newState.scanParams.offset.y.current;
-}
-/*
-lookSurface.area.addEventListener("touchmove", () => {
-  fetch("/prismState/scanParams/offset/x", {
-    method: "PUT",
-    body: JSON.stringify({
-      newValue: Number(lookSurface.leftRelPos)
-    }),
-    headers: new Headers({
-      "Content-Type": "application/json"
-    })
-  });
-  fetch("/prismState/scanParams/offset/y", {
-    method: "PUT",
-    body: JSON.stringify({
-      newValue: Number(lookSurface.topRelPos)
-    }),
-    headers: new Headers({
-      "Content-Type": "application/json"
-    })
-  });
-})
-*/
+UIupdater_1.getCurrentState();
+exports.lookSurface.area.addEventListener("touchmove", () => {
+    scanParameteres_1.UIparameters[0].value = String((exports.lookSurface.leftRelPos * scanParameteres_1.limits[0].max) / exports.lookSurface.areaWidth);
+    scanParameteres_1.UIparameters[1].value = String((exports.lookSurface.topRelPos * scanParameteres_1.limits[1].max) / exports.lookSurface.areaHeight);
+    scanParameteres_1.UIparameters[6].value = String((exports.lookSurface.elWidth * scanParameteres_1.limits[6].max) / exports.lookSurface.areaWidth);
+    scanParameteres_1.UIparameters[7].value = String((exports.lookSurface.elHeight * scanParameteres_1.limits[7].max) / exports.lookSurface.areaHeight);
+});
+exports.lookSurface.area.addEventListener("touchend", () => {
+    scanParameteres_1.sendParamChangeSingle("offset/x", Number(scanParameteres_1.UIparameters[0].value));
+    scanParameteres_1.sendParamChangeSingle("offset/y", Number(scanParameteres_1.UIparameters[1].value));
+    scanParameteres_1.sendParamChangeSingle("range/x", Number(scanParameteres_1.UIparameters[6].value));
+    scanParameteres_1.sendParamChangeSingle("range/y", Number(scanParameteres_1.UIparameters[7].value));
+});
 
 },{"./UIparts/drag-pinch-joystick/circJoystick":1,"./UIparts/drag-pinch-joystick/joystickObj":3,"./UIparts/drag-pinch-joystick/movObj":4,"./UIparts/drag-pinch-joystick/pinchObj":5,"./UIparts/lasers":6,"./UIparts/numpad":7,"./UIparts/scanParameteres":8,"./UIupdater":9}]},{},[10]);

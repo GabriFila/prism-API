@@ -55,7 +55,6 @@ export const limits: MaxMin[] = [];
 UIparameters.forEach(() => limits.push(new MaxMin()));
 
 export function sendParamChange(param: HTMLInputElement) {
-  
   let target: string = param.id;
   let resource: string;
   let dim = "offset";
@@ -101,6 +100,16 @@ export function sendParamChange(param: HTMLInputElement) {
       "Content-Type": "application/json"
     })
   });
+}
+
+export function sendParamChangeSingle(resource: string, newValue: number) {
+  fetch(`/prismState/scanParams/${resource}`, {
+    method: "PUT",
+    body: JSON.stringify({ newValue }),
+    headers: {
+      "Content-Type": "application/json"
+    }
+  })
 }
 
 export function updateUIParameters(state: State) {

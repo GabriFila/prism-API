@@ -92,6 +92,16 @@ function sendParamChange(param) {
     });
 }
 exports.sendParamChange = sendParamChange;
+function sendParamChangeSingle(resource, newValue) {
+    fetch(`/prismState/scanParams/${resource}`, {
+        method: "PUT",
+        body: JSON.stringify({ newValue }),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+}
+exports.sendParamChangeSingle = sendParamChangeSingle;
 function updateUIParameters(state) {
     exports.UIparameters[0].value = state.scanParams.offset.x.current.toString();
     exports.UIparameters[1].value = state.scanParams.offset.y.current.toString();

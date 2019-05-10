@@ -78,7 +78,6 @@ numpad_1.numPad.forEach((numBtn, i) => {
         }
     });
 });
-scanParameteres_1.UIparameters.forEach(param => param.addEventListener("change", () => alert("cambiato")));
 //problem
 /*add dot to last focus element when dot button pressed */
 numpad_1.dotBtn.addEventListener("click", () => {
@@ -96,7 +95,7 @@ numpad_1.delBtn.addEventListener("click", () => {
     }
 });
 /*add dragable capabilities*/
-let lookSurface = new pinchObj_1.PinchObj(movObj_1.inspectArea, movObj_1.sampleArea, 20);
+exports.lookSurface = new pinchObj_1.PinchObj(movObj_1.inspectArea, movObj_1.sampleArea, 20);
 /*add joystick capabilities*/
 let zMotor = new joystickObj_1.SliderJoystickObj(movObj_1.zThumb, movObj_1.zSlider);
 let xyMotor = new circJoystick_1.CircJoystickObj(movObj_1.joyThumb, movObj_1.joyPad);
@@ -107,42 +106,17 @@ function removeHighlithBoder() {
     scanParameteres_1.UIparameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));
 }
 //setInterval(getCurrentState, 200);
-getCurrentState();
-function getCurrentState() {
-    fetch("/prismState/")
-        .then(res => res.json())
-        .then(newState => {
-        newState;
-        scanParameteres_1.updateLimits(newState);
-        lasers_1.updateUILasersFromState(newState);
-        scanParameteres_1.updateUIParameters(newState);
-        // updateUIPads(newState);
-    });
-}
-function updateUIPads(newState) {
-    lookSurface.leftRelPos = newState.scanParams.offset.x.current;
-    lookSurface.topRelPos = newState.scanParams.offset.y.current;
-}
-/*
-lookSurface.area.addEventListener("touchmove", () => {
-  fetch("/prismState/scanParams/offset/x", {
-    method: "PUT",
-    body: JSON.stringify({
-      newValue: Number(lookSurface.leftRelPos)
-    }),
-    headers: new Headers({
-      "Content-Type": "application/json"
-    })
-  });
-  fetch("/prismState/scanParams/offset/y", {
-    method: "PUT",
-    body: JSON.stringify({
-      newValue: Number(lookSurface.topRelPos)
-    }),
-    headers: new Headers({
-      "Content-Type": "application/json"
-    })
-  });
-})
-*/
+UIupdater_1.getCurrentState();
+exports.lookSurface.area.addEventListener("touchmove", () => {
+    scanParameteres_1.UIparameters[0].value = String((exports.lookSurface.leftRelPos * scanParameteres_1.limits[0].max) / exports.lookSurface.areaWidth);
+    scanParameteres_1.UIparameters[1].value = String((exports.lookSurface.topRelPos * scanParameteres_1.limits[1].max) / exports.lookSurface.areaHeight);
+    scanParameteres_1.UIparameters[6].value = String((exports.lookSurface.elWidth * scanParameteres_1.limits[6].max) / exports.lookSurface.areaWidth);
+    scanParameteres_1.UIparameters[7].value = String((exports.lookSurface.elHeight * scanParameteres_1.limits[7].max) / exports.lookSurface.areaHeight);
+});
+exports.lookSurface.area.addEventListener("touchend", () => {
+    scanParameteres_1.sendParamChangeSingle("offset/x", Number(scanParameteres_1.UIparameters[0].value));
+    scanParameteres_1.sendParamChangeSingle("offset/y", Number(scanParameteres_1.UIparameters[1].value));
+    scanParameteres_1.sendParamChangeSingle("range/x", Number(scanParameteres_1.UIparameters[6].value));
+    scanParameteres_1.sendParamChangeSingle("range/y", Number(scanParameteres_1.UIparameters[7].value));
+});
 //# sourceMappingURL=mainUI.js.map

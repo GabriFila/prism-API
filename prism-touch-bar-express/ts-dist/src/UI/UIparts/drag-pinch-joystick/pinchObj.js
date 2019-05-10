@@ -46,8 +46,12 @@ class PinchObj extends dragObj_1.DragObj {
                             newWidth = newHeight * aspectRatio;
                         }
                     }
-                    this.leftRelPos = this.leftRelPos - (newWidth - this.elWidth) / 2;
-                    this.topRelPos = this.topRelPos - (newHeight - this.elHeight) / 2;
+                    let newLeftPos = this.leftRelPos - (newWidth - this.elWidth) / 2;
+                    let newTopPos = this.topRelPos - (newHeight - this.elHeight) / 2;
+                    if (newLeftPos > 0 && newTopPos > 0) {
+                        this.leftRelPos = newLeftPos;
+                        this.topRelPos = newTopPos;
+                    }
                     this.elWidth = newWidth;
                     this.elHeight = newHeight;
                 }

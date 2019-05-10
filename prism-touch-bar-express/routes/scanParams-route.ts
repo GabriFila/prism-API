@@ -19,8 +19,8 @@ scanParam.put("/:dim/:axis", (req, res) => {
         if (newValue >= microState.scanParams[dim][axis].min) {
           if (newValue <= microState.scanParams[dim][axis].max) {
             microState.scanParams[dim][axis].current = newValue;
-          } else errors.push(`${newValue} is higher than max value(${microState.scanParams[dim][axis].max})`);
-        } else errors.push(`${newValue} is lower than min value (${microState.scanParams[dim][axis].min})`);
+          } else errors.push(`${newValue} for ${dim} ${axis} is higher than max value(${microState.scanParams[dim][axis].max})`);
+        } else errors.push(`${newValue} for ${dim} ${axis} is lower than min value (${microState.scanParams[dim][axis].min})`);
       } else errors.push(`newValue field not specified`);
     } else errors.push(`${axis} is not a valid axis`);
   } else errors.push(`${dim} is not a valid dimension`);
@@ -29,7 +29,6 @@ scanParam.put("/:dim/:axis", (req, res) => {
   else {
     res.status(200).json({ dim, axis, newValue, state: microState });
     updateEmitter.emit(`${dim}-${axis}-updated`);
-    console.log(`emitted ${dim}-${axis}-updated`);
   }
 });
 

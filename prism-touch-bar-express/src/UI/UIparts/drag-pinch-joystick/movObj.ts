@@ -110,3 +110,4 @@ export const joyThumb: HTMLDivElement = document.querySelector("#joystick-thumb"
 export const zSensBtn: HTMLButtonElement = document.querySelector("#z-sens-btn");
 
 export const zSenses: string[] = ["0.1x", "0.5x", "1x"];
+
