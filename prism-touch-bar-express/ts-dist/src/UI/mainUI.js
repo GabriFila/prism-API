@@ -47,7 +47,7 @@ document.body.addEventListener("click", function (e) {
 function removeHighlithBoder() {
     scanParameteres_1.UIparameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));
 }
-/*start btn  initialization */
+/*mode btns  initialization */
 const liveBtn = document.querySelector("#live-btn");
 const captureBtn = document.querySelector("#capture-btn");
 const stackBtn = document.querySelector("#stack-btn");
@@ -100,24 +100,27 @@ numpad_1.delBtn.addEventListener("click", () => {
         scanParameteres_1.sendParamChange(lastFocus);
     }
 });
-/*add draggable capabilities*/
+/*pads initializations*/
 exports.lookSurface = new pinchObj_1.PinchObj(movObj_1.inspectArea, movObj_1.sampleArea, 20);
-/*add joystick capabilities*/
-let zMotor = new joystickObj_1.SliderJoystickObj(movObj_1.zThumb, movObj_1.zSlider);
-let xyMotor = new circJoystick_1.CircJoystickObj(movObj_1.joyThumb, movObj_1.joyPad);
-movObj_1.zSensBtn.addEventListener("click", () => {
-    movObj_1.zSensBtn.innerHTML = movObj_1.zSenses[(movObj_1.zSenses.indexOf(movObj_1.zSensBtn.innerHTML) + 1) % movObj_1.zSenses.length];
-});
+/*update own UI parameters*/
 exports.lookSurface.area.addEventListener("touchmove", () => {
     scanParameteres_1.UIparameters[0].value = String((exports.lookSurface.leftRelPos * scanParameteres_1.limits[0].max) / exports.lookSurface.areaWidth);
     scanParameteres_1.UIparameters[1].value = String((exports.lookSurface.topRelPos * scanParameteres_1.limits[1].max) / exports.lookSurface.areaHeight);
     scanParameteres_1.UIparameters[6].value = String((exports.lookSurface.elWidth * scanParameteres_1.limits[6].max) / exports.lookSurface.areaWidth);
     scanParameteres_1.UIparameters[7].value = String((exports.lookSurface.elHeight * scanParameteres_1.limits[7].max) / exports.lookSurface.areaHeight);
 });
+/*send parameter change when untouched*/
 exports.lookSurface.area.addEventListener("touchend", () => {
     scanParameteres_1.sendParamChangeSingle("offset/x", Number(scanParameteres_1.UIparameters[0].value));
     scanParameteres_1.sendParamChangeSingle("offset/y", Number(scanParameteres_1.UIparameters[1].value));
     scanParameteres_1.sendParamChangeSingle("range/x", Number(scanParameteres_1.UIparameters[6].value));
     scanParameteres_1.sendParamChangeSingle("range/y", Number(scanParameteres_1.UIparameters[7].value));
+});
+/*joystick initializations*/
+let zMotor = new joystickObj_1.SliderJoystickObj(movObj_1.zThumb, movObj_1.zSlider);
+let xyMotor = new circJoystick_1.CircJoystickObj(movObj_1.joyThumb, movObj_1.joyPad);
+/*change z joystick sensibility when touched */
+movObj_1.zSensBtn.addEventListener("click", () => {
+    movObj_1.zSensBtn.innerHTML = movObj_1.zSenses[(movObj_1.zSenses.indexOf(movObj_1.zSensBtn.innerHTML) + 1) % movObj_1.zSenses.length];
 });
 //# sourceMappingURL=mainUI.js.map

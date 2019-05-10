@@ -8,7 +8,7 @@ const api_resources_2 = require("./api-resources");
 const events_1 = require("events");
 const server = express();
 exports.microState = new api_resources_1.State();
-exports.motors = new api_resources_2.Motors();
+exports.motorValues = new api_resources_2.Motors();
 //setInterval(getStateFromMicroscope,5000);
 getStateFromMicroscope();
 //json parser middlware
@@ -18,58 +18,10 @@ server.use("/public", express.static(path.join(__dirname + "/../public")));
 //routes
 server.use("/prismState", require("./routes/prismState-route"));
 server.use("/prismMotors", require("./routes/prismMotors-route"));
+server.use("/updates", require("./routes/updates-route"));
 //send web app UI
 server.get("/", (req, res) => {
     res.sendFile(path.join(__dirname + "/../public/views/mainUI.html"));
-});
-server.get("/updates", (req, res) => {
-    res.writeHead(200, {
-        "Content-Type": "text/event-stream",
-        "Cache-Control": "no-cache",
-        Connection: "keep-alive"
-    });
-    exports.updateEmitter.on("temp2", () => console.log("temp 2 emitted"));
-    exports.updateEmitter.on("offset-x-updated", () => {
-        SSEwrite({ newValue: exports.microState.scanParams.offset.x.current }, "offset-x-updated");
-    });
-    exports.updateEmitter.on("offset-y-updated", () => {
-        SSEwrite({ newValue: exports.microState.scanParams.offset.y.current }, "offset-y-updated");
-    });
-    exports.updateEmitter.on("offset-z-updated", () => {
-        SSEwrite({ newValue: exports.microState.scanParams.offset.z.current }, "offset-z-updated");
-    });
-    exports.updateEmitter.on("pixelNumber-x-updated", () => {
-        SSEwrite({ newValue: exports.microState.scanParams.pixelNumber.x.current }, "pixelNumber-x-updated");
-    });
-    exports.updateEmitter.on("pixelNumber-y-updated", () => {
-        SSEwrite({ newValue: exports.microState.scanParams.pixelNumber.y.current }, "pixelNumber-y-updated");
-    });
-    exports.updateEmitter.on("pixelNumber-z-updated", () => {
-        SSEwrite({ newValue: exports.microState.scanParams.pixelNumber.z.current }, "pixelNumber-z-updated");
-    });
-    exports.updateEmitter.on("range-x-updated", () => {
-        SSEwrite({ newValue: exports.microState.scanParams.range.x.current }, "range-x-updated");
-    });
-    exports.updateEmitter.on("range-y-updated", () => {
-        SSEwrite({ newValue: exports.microState.scanParams.range.y.current }, "range-y-updated");
-    });
-    exports.updateEmitter.on("range-z-updated", () => {
-        SSEwrite({ newValue: exports.microState.scanParams.range.z.current }, "range-z-updated");
-    });
-    exports.updateEmitter.on("dwellTime-updated", () => {
-        SSEwrite({ newValue: exports.microState.scanParams.dwellTime }, "dwellTime-updated");
-    });
-    exports.updateEmitter.on("lasers-updated", () => {
-        SSEwrite(exports.microState.lasers, "lasers-updated");
-    });
-    exports.updateEmitter.on("mode-updated", () => {
-        SSEwrite({ mode: exports.microState.mode }, "mode-updated");
-    });
-    function SSEwrite(input, event) {
-        res.write(`data: ${JSON.stringify(input)} \n`);
-        res.write(`event: ${event}\n`);
-        res.write(`\n`);
-    }
 });
 //Start server
 let port = process.env.PORT || 5000;

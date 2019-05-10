@@ -17,13 +17,13 @@ prismMotors.put("/:axis", (req, res) => {
             newSteps = req.body.steps;
             switch (axis) {
                 case `X`:
-                    server_1.motors.xSteps = newSteps;
+                    server_1.motorValues.xSteps = newSteps;
                     break;
                 case `Y`:
-                    server_1.motors.ySteps = newSteps;
+                    server_1.motorValues.ySteps = newSteps;
                     break;
                 case `Z`:
-                    server_1.motors.zSteps = newSteps;
+                    server_1.motorValues.zSteps = newSteps;
                     break;
                 default:
                     break;

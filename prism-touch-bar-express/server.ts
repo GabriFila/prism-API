@@ -8,7 +8,7 @@ import { EventEmitter } from "events";
 const server = express();
 
 export const microState = new State();
-export const motors = new Motors();
+export const motorValues = new Motors();
 
 //setInterval(getStateFromMicroscope,5000);
 getStateFromMicroscope();
@@ -22,70 +22,12 @@ server.use("/public", express.static(path.join(__dirname + "/../public")));
 //routes
 server.use("/prismState", require("./routes/prismState-route"));
 server.use("/prismMotors", require("./routes/prismMotors-route"));
+server.use("/updates", require("./routes/updates-route"));
 
 //send web app UI
 server.get("/", (req, res) => {
   res.sendFile(path.join(__dirname + "/../public/views/mainUI.html"));
 });
-
-server.get("/updates", (req, res) => {
-  res.writeHead(200, {
-    "Content-Type": "text/event-stream",
-    "Cache-Control": "no-cache",
-    Connection: "keep-alive"
-  });
-  updateEmitter.on("temp2", () => console.log("temp 2 emitted"));
-
-  updateEmitter.on("offset-x-updated", () => {
-    SSEwrite({ newValue: microState.scanParams.offset.x.current }, "offset-x-updated");
-  });
-
-  updateEmitter.on("offset-y-updated", () => {
-    SSEwrite({ newValue: microState.scanParams.offset.y.current }, "offset-y-updated");
-  });
-  updateEmitter.on("offset-z-updated", () => {
-    SSEwrite({ newValue: microState.scanParams.offset.z.current }, "offset-z-updated");
-  });
-
-  updateEmitter.on("pixelNumber-x-updated", () => {
-    SSEwrite({ newValue: microState.scanParams.pixelNumber.x.current }, "pixelNumber-x-updated");
-  });
-  updateEmitter.on("pixelNumber-y-updated", () => {
-    SSEwrite({ newValue: microState.scanParams.pixelNumber.y.current }, "pixelNumber-y-updated");
-  });
-  updateEmitter.on("pixelNumber-z-updated", () => {
-    SSEwrite({ newValue: microState.scanParams.pixelNumber.z.current }, "pixelNumber-z-updated");
-  });
-
-  updateEmitter.on("range-x-updated", () => {
-    SSEwrite({ newValue: microState.scanParams.range.x.current }, "range-x-updated");
-  });
-  updateEmitter.on("range-y-updated", () => {
-    SSEwrite({ newValue: microState.scanParams.range.y.current }, "range-y-updated");
-  });
-  updateEmitter.on("range-z-updated", () => {
-    SSEwrite({ newValue: microState.scanParams.range.z.current }, "range-z-updated");
-  });
-
-  updateEmitter.on("dwellTime-updated", () => {
-    SSEwrite({ newValue: microState.scanParams.dwellTime }, "dwellTime-updated");
-  });
-
-  updateEmitter.on("lasers-updated", () => {
-    SSEwrite(microState.lasers, "lasers-updated");
-  });
-
-  updateEmitter.on("mode-updated", () => {
-    SSEwrite({ mode: microState.mode }, "mode-updated");
-  });
-
-  function SSEwrite(input: object, event: string) {
-    res.write(`data: ${JSON.stringify(input)} \n`);
-    res.write(`event: ${event}\n`);
-    res.write(`\n`);
-  }
-});
-
 //Start server
 let port = process.env.PORT || 5000;
 server.listen(5000, () => console.log(`Listening from ${port}`));

@@ -1,5 +1,5 @@
 import * as express from "express";
-import { motors } from "../server";
+import { motorValues } from "../server";
 
 const prismMotors = express.Router();
 
@@ -16,13 +16,13 @@ prismMotors.put("/:axis", (req, res) => {
       newSteps = req.body.steps;
       switch (axis) {
         case `X`:
-          motors.xSteps = newSteps;
+          motorValues.xSteps = newSteps;
           break;
         case `Y`:
-          motors.ySteps = newSteps;
+          motorValues.ySteps = newSteps;
           break;
         case `Z`:
-          motors.zSteps = newSteps;
+          motorValues.zSteps = newSteps;
           break;
         default:
           break;
