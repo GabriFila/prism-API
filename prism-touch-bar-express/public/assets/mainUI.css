@@ -113,6 +113,11 @@ body {
   flex: 1;
 }
 
+.highlighted-button {
+  background-color: var(--sky-blue);
+  color: var(--white);
+}
+
 /*second sector - parameter box*/
 
 #param-box {

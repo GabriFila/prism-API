@@ -54,26 +54,59 @@ function removeHighlithBoder() {
 
 let currentMode: string;
 
-export function updateMode(newMode: string) {  
+export function updateMode(newMode: string) {
   currentMode = newMode;
+  actionBtns.forEach(btn => btn.classList.remove("highlighted-button"));
+  let higlightBtn: HTMLButtonElement;
+  switch (currentMode) {
+    case "live":
+      higlightBtn = liveBtn;
+      break;
+    case "capture":
+      higlightBtn = captureBtn;
+      break;
+    case "stack":
+      higlightBtn = stackBtn;
+      break;
+    default:
+      higlightBtn = null;
+      break;
+  }
+  if (higlightBtn != null) higlightBtn.classList.add("highlighted-button");
 }
 
 /*mode btns  initialization */
 const liveBtn: HTMLButtonElement = document.querySelector("#live-btn");
 const captureBtn: HTMLButtonElement = document.querySelector("#capture-btn");
 const stackBtn: HTMLButtonElement = document.querySelector("#stack-btn");
+const actionBtns: HTMLButtonElement[] = [liveBtn, captureBtn, stackBtn];
 
 liveBtn.addEventListener("click", () => {
-  if (currentMode === "live") sendMode("stand-by");
-  else sendMode("live");
+  if (currentMode === "live") {
+    liveBtn.classList.remove("highlighted-button");
+    sendMode("stand-by");
+  } else {
+    liveBtn.classList.add("highlighted-button");
+    sendMode("live");
+  }
 });
 captureBtn.addEventListener("click", () => {
-  if (currentMode === "capture") sendMode("stand-by");
-  else sendMode("capture");
+  if (currentMode === "capture") {
+    captureBtn.classList.remove("highlighted-button");
+    sendMode("stand-by");
+  } else {
+    captureBtn.classList.add("highlighted-button");
+    sendMode("capture");
+  }
 });
 stackBtn.addEventListener("click", () => {
-  if (currentMode === "stack") sendMode("stand-by");
-  else sendMode("stack");
+  if (currentMode === "stack") {
+    stackBtn.classList.remove("highlighted-button");
+    sendMode("stand-by");
+  } else {
+    stackBtn.classList.add("highlighted-button");
+    sendMode("stack");
+  }
 });
 
 /*adds event to slider box for slider movement and on/off button*/

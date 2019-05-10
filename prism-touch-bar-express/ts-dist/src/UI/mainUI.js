@@ -49,32 +49,61 @@ function removeHighlithBoder() {
 }
 let currentMode;
 function updateMode(newMode) {
-    console.log(newMode);
     currentMode = newMode;
+    actionBtns.forEach(btn => btn.classList.remove("highlighted-button"));
+    let higlightBtn;
+    switch (currentMode) {
+        case "live":
+            higlightBtn = liveBtn;
+            break;
+        case "capture":
+            higlightBtn = captureBtn;
+            break;
+        case "stack":
+            higlightBtn = stackBtn;
+            break;
+        default:
+            higlightBtn = null;
+            break;
+    }
+    if (higlightBtn != null)
+        higlightBtn.classList.add("highlighted-button");
 }
 exports.updateMode = updateMode;
-setInterval(() => console.log("current mode: " + currentMode), 1000);
 /*mode btns  initialization */
 const liveBtn = document.querySelector("#live-btn");
 const captureBtn = document.querySelector("#capture-btn");
 const stackBtn = document.querySelector("#stack-btn");
+const actionBtns = [liveBtn, captureBtn, stackBtn];
 liveBtn.addEventListener("click", () => {
-    if (currentMode === "live")
+    if (currentMode === "live") {
+        liveBtn.classList.remove("highlighted-button");
         UIupdater_1.sendMode("stand-by");
-    else
+    }
+    else {
+        liveBtn.classList.add("highlighted-button");
         UIupdater_1.sendMode("live");
+    }
 });
 captureBtn.addEventListener("click", () => {
-    if (currentMode === "capture")
+    if (currentMode === "capture") {
+        captureBtn.classList.remove("highlighted-button");
         UIupdater_1.sendMode("stand-by");
-    else
+    }
+    else {
+        captureBtn.classList.add("highlighted-button");
         UIupdater_1.sendMode("capture");
+    }
 });
 stackBtn.addEventListener("click", () => {
-    if (currentMode === "stack")
+    if (currentMode === "stack") {
+        stackBtn.classList.remove("highlighted-button");
         UIupdater_1.sendMode("stand-by");
-    else
+    }
+    else {
+        stackBtn.classList.add("highlighted-button");
         UIupdater_1.sendMode("stack");
+    }
 });
 /*adds event to slider box for slider movement and on/off button*/
 lasers_1.laserUIBoxes.forEach(laserUIBox => {

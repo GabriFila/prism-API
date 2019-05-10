@@ -43,7 +43,6 @@ prismState.put("/mode", (req, res) => {
     else {
         res.status(200).json({ newMode: server_1.microState.mode });
         server_1.updateEmitter.emit("mode-updated");
-        console.log(`mode: ${server_1.microState.mode}`);
     }
 });
 prismState.use("/lasers", lasers);
