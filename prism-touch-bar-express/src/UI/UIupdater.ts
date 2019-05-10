@@ -44,6 +44,12 @@ export function setUpUpdater() {
     UIparameters[9].value = JSON.parse(event.data).newValue;
   });
 
+  source.addEventListener("limits-updated", (event: any) => {
+    let newState = JSON.parse(event.data);
+    updateLimits(newState);
+    updateUIPads(newState);
+  });
+
   source.addEventListener("lasers-updated", (event: any) => {
     updateUILasersFromLasers(JSON.parse(event.data));
   });
@@ -62,11 +68,7 @@ export function getCurrentState() {
 }
 
 function updateUIPads(newState: State) {
-  console.log(`Before ${lookSurface.leftRelPos}`);
   lookSurface.leftRelPos = (newState.scanParams.offset.x.current * lookSurface.areaWidth) / limits[0].max;
-  console.log(`After ${lookSurface.leftRelPos}`);
-  console.log("   ");
-
   lookSurface.topRelPos = (newState.scanParams.offset.y.current * lookSurface.areaHeight) / limits[1].max;
   lookSurface.elWidth = (newState.scanParams.range.x.current * lookSurface.areaWidth) / limits[6].max;
   lookSurface.elHeight = (newState.scanParams.range.y.current * lookSurface.areaHeight) / limits[7].max;

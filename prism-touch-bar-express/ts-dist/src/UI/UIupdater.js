@@ -39,6 +39,11 @@ function setUpUpdater() {
     source.addEventListener("dwellTime-updated", (event) => {
         scanParameteres_1.UIparameters[9].value = JSON.parse(event.data).newValue;
     });
+    source.addEventListener("limits-updated", (event) => {
+        let newState = JSON.parse(event.data);
+        scanParameteres_1.updateLimits(newState);
+        updateUIPads(newState);
+    });
     source.addEventListener("lasers-updated", (event) => {
         lasers_1.updateUILasersFromLasers(JSON.parse(event.data));
     });
@@ -57,10 +62,7 @@ function getCurrentState() {
 }
 exports.getCurrentState = getCurrentState;
 function updateUIPads(newState) {
-    console.log(`Before ${mainUI_1.lookSurface.leftRelPos}`);
     mainUI_1.lookSurface.leftRelPos = (newState.scanParams.offset.x.current * mainUI_1.lookSurface.areaWidth) / scanParameteres_1.limits[0].max;
-    console.log(`After ${mainUI_1.lookSurface.leftRelPos}`);
-    console.log("   ");
     mainUI_1.lookSurface.topRelPos = (newState.scanParams.offset.y.current * mainUI_1.lookSurface.areaHeight) / scanParameteres_1.limits[1].max;
     mainUI_1.lookSurface.elWidth = (newState.scanParams.range.x.current * mainUI_1.lookSurface.areaWidth) / scanParameteres_1.limits[6].max;
     mainUI_1.lookSurface.elHeight = (newState.scanParams.range.y.current * mainUI_1.lookSurface.areaHeight) / scanParameteres_1.limits[7].max;

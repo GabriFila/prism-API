@@ -9,7 +9,6 @@ updates.get("/", (req, res) => {
         "Cache-Control": "no-cache",
         Connection: "keep-alive"
     });
-    server_1.updateEmitter.on("temp2", () => console.log("temp 2 emitted"));
     server_1.updateEmitter.on("offset-x-updated", () => {
         SSEwrite({ newValue: server_1.microState.scanParams.offset.x.current }, "offset-x-updated");
     });
@@ -45,6 +44,9 @@ updates.get("/", (req, res) => {
     });
     server_1.updateEmitter.on("mode-updated", () => {
         SSEwrite({ mode: server_1.microState.mode }, "mode-updated");
+    });
+    server_1.updateEmitter.on("limits-updated", () => {
+        SSEwrite(server_1.microState, "limits-updated");
     });
     function SSEwrite(input, event) {
         res.write(`data: ${JSON.stringify(input)} \n`);

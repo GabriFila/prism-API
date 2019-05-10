@@ -26,6 +26,7 @@ server.get("/", (req, res) => {
 //Start server
 let port = process.env.PORT || 5000;
 server.listen(5000, () => console.log(`Listening from ${port}`));
+/*fake testing state*/
 function getStateFromMicroscope() {
     exports.microState.scanParams.dwellTime = 50;
     exports.microState.scanParams.offset.x.current = 0;
@@ -70,4 +71,6 @@ function getStateFromMicroscope() {
 }
 function sendStateToPrism() { }
 exports.updateEmitter = new events_1.EventEmitter();
+setInterval(() => exports.updateEmitter.emit("limits-updated"), 1000);
+setTimeout(() => (exports.microState.scanParams.offset.x.max = 4000), 4000);
 //# sourceMappingURL=server.js.map

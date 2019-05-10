@@ -32,6 +32,7 @@ server.get("/", (req, res) => {
 let port = process.env.PORT || 5000;
 server.listen(5000, () => console.log(`Listening from ${port}`));
 
+/*fake testing state*/
 function getStateFromMicroscope() {
   microState.scanParams.dwellTime = 50;
 
