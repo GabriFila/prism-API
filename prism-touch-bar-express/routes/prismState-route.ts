@@ -1,5 +1,5 @@
 import * as express from "express";
-import { microState, updateSender } from "../server";
+import { microState, updateEmitter } from "../server";
 
 const prismState = express.Router();
 const lasers = require("./lasers-route");
@@ -19,7 +19,7 @@ prismState.put("/", (req, res) => {
   if (errors.length > 0) res.status(400).json(errors);
   else {
     res.status(200).json({ newState: microState });
-    updateSender.emit("state-updated");
+    updateEmitter.emit("state-updated");
   }
 });
 
@@ -40,7 +40,7 @@ prismState.put("/mode", (req, res) => {
   if (errors.length > 0) res.status(400).json({ errors });
   else {
     res.status(200).json({ newMode: microState.mode });
-    updateSender.emit("state-updated");
+    updateEmitter.emit("mode-updated");
   }
 });
 

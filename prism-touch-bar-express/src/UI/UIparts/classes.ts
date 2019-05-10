@@ -14,7 +14,7 @@ export class State {
   }
 }
 
-class Laser {
+export class Laser {
   power: number;
   waveLength: number;
   isOn: boolean;

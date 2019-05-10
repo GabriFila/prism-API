@@ -2,7 +2,6 @@ import * as express from "express";
 import * as path from "path";
 import bodyParser = require("body-parser");
 import { EventEmitter } from "events";
-import { ServerResponse } from "http";
 
 const server = express();
 
@@ -37,6 +36,8 @@ server.get("/stream", (req, res) => {
 
   sender.on("laser-update", () => {
     //res.write(SSEdata(obj, "info"));
+    console.log("hello");
+    
     SSEwrite(obj, "info");
   });
 

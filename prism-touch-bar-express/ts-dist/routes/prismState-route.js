@@ -19,7 +19,7 @@ prismState.put("/", (req, res) => {
         res.status(400).json(errors);
     else {
         res.status(200).json({ newState: server_1.microState });
-        server_1.updateSender.emit("state-updated");
+        server_1.updateEmitter.emit("state-updated");
     }
 });
 prismState.get("/mode", (req, res) => {
@@ -42,7 +42,7 @@ prismState.put("/mode", (req, res) => {
         res.status(400).json({ errors });
     else {
         res.status(200).json({ newMode: server_1.microState.mode });
-        server_1.updateSender.emit("state-updated");
+        server_1.updateEmitter.emit("mode-updated");
     }
 });
 prismState.use("/lasers", lasers);

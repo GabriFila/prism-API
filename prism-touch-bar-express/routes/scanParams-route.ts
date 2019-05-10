@@ -1,5 +1,5 @@
 import * as express from "express";
-import { microState, updateSender } from "../server";
+import { microState, updateEmitter } from "../server";
 
 const scanParam = express.Router();
 
@@ -28,8 +28,9 @@ scanParam.put("/:dim/:axis", (req, res) => {
   if (errors.length > 0) res.status(400).json({ errors });
   else {
     res.status(200).json({ dim, axis, newValue, state: microState });
-    updateSender.emit("state-updated");
-  }  
+    updateEmitter.emit(`${dim}-${axis}-updated`);
+    console.log(`emitted ${dim}-${axis}-updated`);
+  }
 });
 
 scanParam.put("/:dim", (req, res) => {
@@ -44,9 +45,8 @@ scanParam.put("/:dim", (req, res) => {
   if (errors.length > 0) res.status(400).json({ errors });
   else {
     res.status(200).send({ newValue: req.body.newValue });
-    updateSender.emit("state-updated");
+    updateEmitter.emit(`dwellTime-updated`);
   }
-
 });
 
 module.exports = scanParam;

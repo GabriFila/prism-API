@@ -1,5 +1,5 @@
 import * as express from "express";
-import { microState, updateSender } from "../server";
+import { microState, updateEmitter } from "../server";
 import { isBoolean } from "util";
 
 const lasers = express.Router();
@@ -38,7 +38,7 @@ lasers.put("/:waveLength", (req, res) => {
       isOn: microState.lasers.find(laser => laser.waveLength == targetWaveLength).isOn
     });
 
-  updateSender.emit("state-updated");
+  updateEmitter.emit("lasers-updated");
 });
 
 module.exports = lasers;

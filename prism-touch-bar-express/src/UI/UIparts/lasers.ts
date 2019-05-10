@@ -1,4 +1,4 @@
-import { State } from "./classes";
+import { State, Laser } from "./classes";
 
 class LaserUIBox {
   box: HTMLDivElement;
@@ -76,7 +76,7 @@ export function lightUpLaserBox(laserBox: LaserUIBox) {
   laserBox.btn.classList.add("laser-btn-on");
 }
 
-export function updateUILasers(newState: State) {
+export function updateUILasersFromState(newState: State) {
   laserUIBoxes.forEach((laserUIBox, i) => {
     //hide empty lasers
     if (i >= newState.lasers.length) laserUIBoxes[i].visible = false;
@@ -91,6 +91,23 @@ export function updateUILasers(newState: State) {
     }
   });
 }
+
+export function updateUILasersFromLasers(lasers: Laser[]) {
+  laserUIBoxes.forEach((laserUIBox, i) => {
+    //hide empty lasers
+    if (i >= lasers.length) laserUIBoxes[i].visible = false;
+    else {
+      laserUIBoxes[i].powerLabel.innerHTML = lasers[i].power.toString() + "%";
+      laserUIBoxes[i].slider.value = lasers[i].power.toString();
+
+      laserUIBoxes[i].waveLengthLabel.innerHTML = lasers[i].waveLength.toString() + "nm";
+      laserUIBoxes[i].isOn = lasers[i].isOn;
+      if (lasers[i].isOn) lightUpLaserBox(laserUIBoxes[i]);
+      else grayOutLaserBox(laserUIBoxes[i]);
+    }
+  });
+}
+
 
 export function sendLaserData(laserBox: LaserUIBox) {
   fetch(`prismState/lasers/${Number(laserBox.waveLengthLabel.innerHTML.slice(0, -1).slice(0, -1))}`, {

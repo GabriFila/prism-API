@@ -52,7 +52,7 @@ function lightUpLaserBox(laserBox) {
     laserBox.btn.classList.add("laser-btn-on");
 }
 exports.lightUpLaserBox = lightUpLaserBox;
-function updateUILasers(newState) {
+function updateUILasersFromState(newState) {
     exports.laserUIBoxes.forEach((laserUIBox, i) => {
         //hide empty lasers
         if (i >= newState.lasers.length)
@@ -69,7 +69,25 @@ function updateUILasers(newState) {
         }
     });
 }
-exports.updateUILasers = updateUILasers;
+exports.updateUILasersFromState = updateUILasersFromState;
+function updateUILasersFromLasers(lasers) {
+    exports.laserUIBoxes.forEach((laserUIBox, i) => {
+        //hide empty lasers
+        if (i >= lasers.length)
+            exports.laserUIBoxes[i].visible = false;
+        else {
+            exports.laserUIBoxes[i].powerLabel.innerHTML = lasers[i].power.toString() + "%";
+            exports.laserUIBoxes[i].slider.value = lasers[i].power.toString();
+            exports.laserUIBoxes[i].waveLengthLabel.innerHTML = lasers[i].waveLength.toString() + "nm";
+            exports.laserUIBoxes[i].isOn = lasers[i].isOn;
+            if (lasers[i].isOn)
+                lightUpLaserBox(exports.laserUIBoxes[i]);
+            else
+                grayOutLaserBox(exports.laserUIBoxes[i]);
+        }
+    });
+}
+exports.updateUILasersFromLasers = updateUILasersFromLasers;
 function sendLaserData(laserBox) {
     fetch(`prismState/lasers/${Number(laserBox.waveLengthLabel.innerHTML.slice(0, -1).slice(0, -1))}`, {
         method: "PUT",

@@ -27,8 +27,9 @@ server.get("/stream", (req, res) => {
         Nome: "Gabriele",
         Cognome: "Filaferro"
     };
-    temp.on("laser-update", () => {
+    sender.on("laser-update", () => {
         //res.write(SSEdata(obj, "info"));
+        console.log("hello");
         SSEwrite(obj, "info");
     });
     function SSEwrite(input, event) {
@@ -37,6 +38,6 @@ server.get("/stream", (req, res) => {
         res.write(`\n`);
     }
 });
-let temp = new events_1.EventEmitter();
-setInterval(() => temp.emit("laser-update"), 1000);
+let sender = new events_1.EventEmitter();
+setInterval(() => sender.emit("laser-update"), 1000);
 //# sourceMappingURL=server.js.map

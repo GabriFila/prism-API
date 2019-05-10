@@ -16,6 +16,7 @@ class Laser {
         this.waveLength = null;
     }
 }
+exports.Laser = Laser;
 class ScanParams {
     constructor() {
         this.offset = new XYZ();

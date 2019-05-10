@@ -1,5 +1,5 @@
 /*slider initialization*/
-import { laserUIBoxes, grayOutLaserBox, lightUpLaserBox, updateUILasers, sendLaserData } from "./UIparts/lasers";
+import { laserUIBoxes, grayOutLaserBox, lightUpLaserBox, updateUILasersFromState, sendLaserData } from "./UIparts/lasers";
 /*numpad initialization*/
 import { numPad, delBtn, dotBtn } from "./UIparts/numpad";
 /*parameters initialization*/
@@ -14,7 +14,9 @@ import { PinchObj } from "./UIparts/drag-pinch-joystick/pinchObj";
 import { zSensBtn, zSenses, zThumb, zSlider, joyThumb, inspectArea, sampleArea, joyPad } from "./UIparts/drag-pinch-joystick/movObj";
 import { State } from "./UIparts/classes";
 import { CircJoystickObj } from "./UIparts/drag-pinch-joystick/circJoystick";
+import {setUpUpdater} from "./UIupdater"
 
+setUpUpdater();
 /*last item in focus*/
 let lastFocus: HTMLInputElement = undefined;
 
@@ -128,7 +130,7 @@ function getCurrentState() {
     .then(newState => {
       newState;
       updateLimits(newState);
-      updateUILasers(newState);
+      updateUILasersFromState(newState);
       updateUIParameters(newState);
       // updateUIPads(newState);
     });
@@ -139,16 +141,9 @@ function updateUIPads(newState: State) {
   lookSurface.topRelPos = newState.scanParams.offset.y.current;
 }
 
-const source = new EventSource("/updates");
 
-source.addEventListener("state-updated", (event: any) => {
-  let newState: State = JSON.parse(event.data);
 
-  updateLimits(newState);
-  updateUILasers(newState);
-  updateUIParameters(newState);
-  // updateUIPads(newState);
-});
+
 /*
 lookSurface.area.addEventListener("touchmove", () => {
   fetch("/prismState/scanParams/offset/x", {
@@ -171,3 +166,4 @@ lookSurface.area.addEventListener("touchmove", () => {
   });
 })
 */
+

@@ -13,6 +13,8 @@ const pinchObj_1 = require("./UIparts/drag-pinch-joystick/pinchObj");
 /*z slider sensitivity */
 const movObj_1 = require("./UIparts/drag-pinch-joystick/movObj");
 const circJoystick_1 = require("./UIparts/drag-pinch-joystick/circJoystick");
+const UIupdater_1 = require("./UIupdater");
+UIupdater_1.setUpUpdater();
 /*last item in focus*/
 let lastFocus = undefined;
 /*start btn  initialization */
@@ -94,7 +96,6 @@ numpad_1.delBtn.addEventListener("click", () => {
     }
 });
 /*add dragable capabilities*/
-//let lookSurface = new DragObj(inspectArea, sampleArea);
 let lookSurface = new pinchObj_1.PinchObj(movObj_1.inspectArea, movObj_1.sampleArea, 20);
 /*add joystick capabilities*/
 let zMotor = new joystickObj_1.SliderJoystickObj(movObj_1.zThumb, movObj_1.zSlider);
@@ -113,7 +114,7 @@ function getCurrentState() {
         .then(newState => {
         newState;
         scanParameteres_1.updateLimits(newState);
-        lasers_1.updateUILasers(newState);
+        lasers_1.updateUILasersFromState(newState);
         scanParameteres_1.updateUIParameters(newState);
         // updateUIPads(newState);
     });
@@ -122,14 +123,6 @@ function updateUIPads(newState) {
     lookSurface.leftRelPos = newState.scanParams.offset.x.current;
     lookSurface.topRelPos = newState.scanParams.offset.y.current;
 }
-const source = new EventSource("/updates");
-source.addEventListener("state-updated", (event) => {
-    let newState = JSON.parse(event.data);
-    scanParameteres_1.updateLimits(newState);
-    lasers_1.updateUILasers(newState);
-    scanParameteres_1.updateUIParameters(newState);
-    // updateUIPads(newState);
-});
 /*
 lookSurface.area.addEventListener("touchmove", () => {
   fetch("/prismState/scanParams/offset/x", {

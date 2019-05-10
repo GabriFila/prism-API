@@ -37,7 +37,8 @@ scanParam.put("/:dim/:axis", (req, res) => {
         res.status(400).json({ errors });
     else {
         res.status(200).json({ dim, axis, newValue, state: server_1.microState });
-        server_1.updateSender.emit("state-updated");
+        server_1.updateEmitter.emit(`${dim}-${axis}-updated`);
+        console.log(`emitted ${dim}-${axis}-updated`);
     }
 });
 scanParam.put("/:dim", (req, res) => {
@@ -58,7 +59,7 @@ scanParam.put("/:dim", (req, res) => {
         res.status(400).json({ errors });
     else {
         res.status(200).send({ newValue: req.body.newValue });
-        server_1.updateSender.emit("state-updated");
+        server_1.updateEmitter.emit(`dwellTime-updated`);
     }
 });
 module.exports = scanParam;

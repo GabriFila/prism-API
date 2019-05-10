@@ -43,7 +43,7 @@ lasers.put("/:waveLength", (req, res) => {
             newPower: server_1.microState.lasers.find(laser => laser.waveLength == targetWaveLength).power,
             isOn: server_1.microState.lasers.find(laser => laser.waveLength == targetWaveLength).isOn
         });
-    server_1.updateSender.emit("state-updated");
+    server_1.updateEmitter.emit("lasers-updated");
 });
 module.exports = lasers;
 //# sourceMappingURL=lasers-route.js.map

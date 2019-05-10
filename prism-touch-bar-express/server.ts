@@ -18,7 +18,6 @@ server.use(bodyParser.json());
 
 //static file to render UI on client
 server.use("/public", express.static(path.join(__dirname + "/../public")));
-export const updateSender = new EventEmitter();
 
 //routes
 server.use("/prismState", require("./routes/prismState-route"));
@@ -35,11 +34,49 @@ server.get("/updates", (req, res) => {
     "Cache-Control": "no-cache",
     Connection: "keep-alive"
   });
+  updateEmitter.on("temp2", () => console.log("temp 2 emitted"));
 
-  updateSender.on("state-updated", () => {
-    //res.write(SSEdata(obj, "info"));
+  updateEmitter.on("offset-x-updated", () => {
+    SSEwrite({ newValue: microState.scanParams.offset.x.current }, "offset-x-updated");
+  });
 
-    SSEwrite(microState, "state-updated");
+  updateEmitter.on("offset-y-updated", () => {
+    SSEwrite({ newValue: microState.scanParams.offset.y.current }, "offset-y-updated");
+  });
+  updateEmitter.on("offset-z-updated", () => {
+    SSEwrite({ newValue: microState.scanParams.offset.z.current }, "offset-z-updated");
+  });
+
+  updateEmitter.on("pixelNumber-x-updated", () => {
+    SSEwrite({ newValue: microState.scanParams.pixelNumber.x.current }, "pixelNumber-x-updated");
+  });
+  updateEmitter.on("pixelNumber-y-updated", () => {
+    SSEwrite({ newValue: microState.scanParams.pixelNumber.y.current }, "pixelNumber-y-updated");
+  });
+  updateEmitter.on("pixelNumber-z-updated", () => {
+    SSEwrite({ newValue: microState.scanParams.pixelNumber.z.current }, "pixelNumber-z-updated");
+  });
+
+  updateEmitter.on("range-x-updated", () => {
+    SSEwrite({ newValue: microState.scanParams.range.x.current }, "range-x-updated");
+  });
+  updateEmitter.on("range-y-updated", () => {
+    SSEwrite({ newValue: microState.scanParams.range.y.current }, "range-y-updated");
+  });
+  updateEmitter.on("range-z-updated", () => {
+    SSEwrite({ newValue: microState.scanParams.range.z.current }, "range-z-updated");
+  });
+
+  updateEmitter.on("dwellTime-updated", () => {
+    SSEwrite({ newValue: microState.scanParams.dwellTime }, "dwellTime-updated");
+  });
+
+  updateEmitter.on("lasers-updated", () => {
+    SSEwrite(microState.lasers, "lasers-updated");
+  });
+
+  updateEmitter.on("mode-updated", () => {
+    SSEwrite({ mode: microState.mode }, "mode-updated");
   });
 
   function SSEwrite(input: object, event: string) {
@@ -110,3 +147,5 @@ function getStateFromMicroscope() {
 }
 
 function sendStateToPrism() {}
+
+export let updateEmitter = new EventEmitter();

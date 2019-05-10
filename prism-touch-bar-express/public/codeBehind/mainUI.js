@@ -477,7 +477,7 @@ function lightUpLaserBox(laserBox) {
     laserBox.btn.classList.add("laser-btn-on");
 }
 exports.lightUpLaserBox = lightUpLaserBox;
-function updateUILasers(newState) {
+function updateUILasersFromState(newState) {
     exports.laserUIBoxes.forEach((laserUIBox, i) => {
         //hide empty lasers
         if (i >= newState.lasers.length)
@@ -494,7 +494,25 @@ function updateUILasers(newState) {
         }
     });
 }
-exports.updateUILasers = updateUILasers;
+exports.updateUILasersFromState = updateUILasersFromState;
+function updateUILasersFromLasers(lasers) {
+    exports.laserUIBoxes.forEach((laserUIBox, i) => {
+        //hide empty lasers
+        if (i >= lasers.length)
+            exports.laserUIBoxes[i].visible = false;
+        else {
+            exports.laserUIBoxes[i].powerLabel.innerHTML = lasers[i].power.toString() + "%";
+            exports.laserUIBoxes[i].slider.value = lasers[i].power.toString();
+            exports.laserUIBoxes[i].waveLengthLabel.innerHTML = lasers[i].waveLength.toString() + "nm";
+            exports.laserUIBoxes[i].isOn = lasers[i].isOn;
+            if (lasers[i].isOn)
+                lightUpLaserBox(exports.laserUIBoxes[i]);
+            else
+                grayOutLaserBox(exports.laserUIBoxes[i]);
+        }
+    });
+}
+exports.updateUILasersFromLasers = updateUILasersFromLasers;
 function sendLaserData(laserBox) {
     fetch(`prismState/lasers/${Number(laserBox.waveLengthLabel.innerHTML.slice(0, -1).slice(0, -1))}`, {
         method: "PUT",
@@ -659,6 +677,50 @@ exports.updateLimits = updateLimits;
 },{}],9:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const scanParameteres_1 = require("./UIparts/scanParameteres");
+const lasers_1 = require("./UIparts/lasers");
+const source = new EventSource("/updates");
+function setUpUpdater() {
+    source.addEventListener("offset-x-updated", (event) => {
+        scanParameteres_1.UIparameters[0].value = JSON.parse(event.data).newValue;
+    });
+    source.addEventListener("offset-y-updated", (event) => {
+        scanParameteres_1.UIparameters[1].value = JSON.parse(event.data).newValue;
+    });
+    source.addEventListener("offset-z-updated", (event) => {
+        scanParameteres_1.UIparameters[2].value = JSON.parse(event.data).newValue;
+    });
+    source.addEventListener("pixelNumber-x-updated", (event) => {
+        scanParameteres_1.UIparameters[3].value = JSON.parse(event.data).newValue;
+    });
+    source.addEventListener("pixelNumber-y-updated", (event) => {
+        scanParameteres_1.UIparameters[4].value = JSON.parse(event.data).newValue;
+    });
+    source.addEventListener("pixelNumber-z-updated", (event) => {
+        scanParameteres_1.UIparameters[5].value = JSON.parse(event.data).newValue;
+    });
+    source.addEventListener("range-x-updated", (event) => {
+        scanParameteres_1.UIparameters[6].value = JSON.parse(event.data).newValue;
+    });
+    source.addEventListener("range-y-updated", (event) => {
+        scanParameteres_1.UIparameters[7].value = JSON.parse(event.data).newValue;
+    });
+    source.addEventListener("range-z-updated", (event) => {
+        scanParameteres_1.UIparameters[8].value = JSON.parse(event.data).newValue;
+    });
+    source.addEventListener("dwellTime-updated", (event) => {
+        scanParameteres_1.UIparameters[9].value = JSON.parse(event.data).newValue;
+    });
+    source.addEventListener("lasers-updated", (event) => {
+        console.log(JSON.parse(event.data));
+        lasers_1.updateUILasersFromLasers(JSON.parse(event.data));
+    });
+}
+exports.setUpUpdater = setUpUpdater;
+
+},{"./UIparts/lasers":6,"./UIparts/scanParameteres":8}],10:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 /*slider initialization*/
 const lasers_1 = require("./UIparts/lasers");
 /*numpad initialization*/
@@ -672,6 +734,8 @@ const pinchObj_1 = require("./UIparts/drag-pinch-joystick/pinchObj");
 /*z slider sensitivity */
 const movObj_1 = require("./UIparts/drag-pinch-joystick/movObj");
 const circJoystick_1 = require("./UIparts/drag-pinch-joystick/circJoystick");
+const UIupdater_1 = require("./UIupdater");
+UIupdater_1.setUpUpdater();
 /*last item in focus*/
 let lastFocus = undefined;
 /*start btn  initialization */
@@ -753,7 +817,6 @@ numpad_1.delBtn.addEventListener("click", () => {
     }
 });
 /*add dragable capabilities*/
-//let lookSurface = new DragObj(inspectArea, sampleArea);
 let lookSurface = new pinchObj_1.PinchObj(movObj_1.inspectArea, movObj_1.sampleArea, 20);
 /*add joystick capabilities*/
 let zMotor = new joystickObj_1.SliderJoystickObj(movObj_1.zThumb, movObj_1.zSlider);
@@ -772,7 +835,7 @@ function getCurrentState() {
         .then(newState => {
         newState;
         scanParameteres_1.updateLimits(newState);
-        lasers_1.updateUILasers(newState);
+        lasers_1.updateUILasersFromState(newState);
         scanParameteres_1.updateUIParameters(newState);
         // updateUIPads(newState);
     });
@@ -781,14 +844,6 @@ function updateUIPads(newState) {
     lookSurface.leftRelPos = newState.scanParams.offset.x.current;
     lookSurface.topRelPos = newState.scanParams.offset.y.current;
 }
-const source = new EventSource("/updates");
-source.addEventListener("state-updated", (event) => {
-    let newState = JSON.parse(event.data);
-    scanParameteres_1.updateLimits(newState);
-    lasers_1.updateUILasers(newState);
-    scanParameteres_1.updateUIParameters(newState);
-    // updateUIPads(newState);
-});
 /*
 lookSurface.area.addEventListener("touchmove", () => {
   fetch("/prismState/scanParams/offset/x", {
@@ -812,4 +867,4 @@ lookSurface.area.addEventListener("touchmove", () => {
 })
 */
 
-},{"./UIparts/drag-pinch-joystick/circJoystick":1,"./UIparts/drag-pinch-joystick/joystickObj":3,"./UIparts/drag-pinch-joystick/movObj":4,"./UIparts/drag-pinch-joystick/pinchObj":5,"./UIparts/lasers":6,"./UIparts/numpad":7,"./UIparts/scanParameteres":8}]},{},[9]);
+},{"./UIparts/drag-pinch-joystick/circJoystick":1,"./UIparts/drag-pinch-joystick/joystickObj":3,"./UIparts/drag-pinch-joystick/movObj":4,"./UIparts/drag-pinch-joystick/pinchObj":5,"./UIparts/lasers":6,"./UIparts/numpad":7,"./UIparts/scanParameteres":8,"./UIupdater":9}]},{},[10]);
