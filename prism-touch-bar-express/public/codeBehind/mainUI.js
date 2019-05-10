@@ -1,6 +1,104 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const dragObj_1 = require("./dragObj");
+class CircJoystickObj extends dragObj_1.DragObj {
+    constructor(element, area) {
+        super(element, area);
+        this.joyStart = (e) => {
+            if (e.target === this.element) {
+                this.joyActive = true;
+                //set start position
+                if (e.type === "touchstart") {
+                    let eTouch = e;
+                    if (eTouch.touches.length === 1) {
+                        this.initialX = eTouch.touches[0].clientX - this.relCenterX;
+                        this.initialY = eTouch.touches[0].clientY - this.relCenterY;
+                    }
+                }
+                else {
+                    this.initialX = e.clientX - this.relCenterX;
+                    this.initialY = e.clientY - this.relCenterY;
+                }
+                this.element.classList.remove("smooth-transition");
+            }
+        };
+        this.joyMove = (e) => {
+            //if user is touching
+            if (this.joyActive) {
+                let currentX;
+                let currentY;
+                e.preventDefault();
+                //set offset position relative to top-left of draggable area
+                if (e.type === "touchmove") {
+                    let eTouch = e;
+                    if (eTouch.touches.length === 1) {
+                        currentX = eTouch.touches[0].clientX - this.initialX;
+                        currentY = eTouch.touches[0].clientY - this.initialY;
+                    }
+                }
+                else {
+                    currentX = e.clientX - this.initialX;
+                    currentY = e.clientY - this.initialY;
+                }
+                this.setPolar(currentX, currentY);
+            }
+        };
+        this.joyEnd = (e) => {
+            this.moveToCenter();
+            this.joyActive = false;
+            this.element.classList.add("smooth-transition");
+        };
+        this.updateCenter();
+        this.moveToCenter();
+        this.updateMaxMag();
+        this.area.addEventListener("touchstart", this.joyStart);
+        this.area.addEventListener("mousedown", this.joyStart);
+        this.area.addEventListener("touchmove", this.joyMove);
+        this.area.addEventListener("mousemove", this.joyMove);
+        this.area.addEventListener("touchend", this.joyEnd);
+        this.area.addEventListener("mouseup", this.joyEnd);
+        window.addEventListener("resize", () => {
+            this.updateCenter();
+            this.moveToCenter();
+            this.updateMaxMag();
+        });
+    }
+    setPolar(left, top) {
+        let a = left - this.relCenterX;
+        let b = -(top - this.relCenterY);
+        this.mag = Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
+        if (a >= 0)
+            this.arg = Math.atan(b / a);
+        else
+            this.arg = Math.atan(b / a) + Math.PI;
+        if (this.mag >= this.maxMag)
+            this.mag = this.maxMag;
+        let newLeft = this.relCenterX + this.mag * Math.cos(this.arg);
+        let newTop = this.relCenterY - this.mag * Math.sin(this.arg);
+        this.leftRelPos = newLeft;
+        this.topRelPos = newTop;
+    }
+    updateCenter() {
+        this.relCenterX = this.areaWidth / 2 - this.elWidth / 2 - this.areaBorderSize;
+        this.relCenterY = this.areaHeight / 2 - this.elHeight / 2 - this.areaBorderSize;
+    }
+    moveToCenter() {
+        this.topRelPos = this.relCenterY;
+        this.leftRelPos = this.relCenterX;
+    }
+    updateMaxMag() {
+        if (this.areaWidth <= this.areaHeight)
+            this.maxMag = 0.9 * (this.areaWidth / 2 - this.elWidth / 2 - this.elBorderSize);
+        else
+            this.maxMag = 0.9 * (this.areaHeight / 2 - this.elHeight / 2 - this.elBorderSize);
+    }
+}
+exports.CircJoystickObj = CircJoystickObj;
+
+},{"./dragObj":2}],2:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const movObj_1 = require("./movObj");
 class DragObj extends movObj_1.MovObj {
     constructor(element, area) {
@@ -66,11 +164,11 @@ class DragObj extends movObj_1.MovObj {
 }
 exports.DragObj = DragObj;
 
-},{"./movObj":3}],2:[function(require,module,exports){
+},{"./movObj":4}],3:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const movObj_1 = require("./movObj");
-class JoystickObj extends movObj_1.MovObj {
+class SliderJoystickObj extends movObj_1.MovObj {
     constructor(element, area) {
         super(element, area);
         this.joyStart = (e) => {
@@ -80,15 +178,15 @@ class JoystickObj extends movObj_1.MovObj {
                 if (e.type === "touchstart") {
                     let eTouch = e;
                     if (eTouch.touches.length === 1) {
-                        this.initialX = eTouch.touches[0].clientX - this.defaultX;
-                        this.initialY = eTouch.touches[0].clientY - this.defaultY;
+                        this.initialX = eTouch.touches[0].clientX - this.centerX;
+                        this.initialY = eTouch.touches[0].clientY - this.centerY;
                     }
                 }
                 else {
-                    this.initialX = e.clientX - this.defaultX;
-                    this.initialY = e.clientY - this.defaultY;
+                    this.initialX = e.clientX - this.centerX;
+                    this.initialY = e.clientY - this.centerY;
                 }
-                this.setDefaultXY();
+                this.setCenter();
                 this.element.classList.remove("smooth-transition");
             }
         };
@@ -129,12 +227,12 @@ class JoystickObj extends movObj_1.MovObj {
             }
         };
         this.joyEnd = (e) => {
-            this.moveToDefaultXY();
+            this.moveToCenter();
             this.joyActive = false;
             this.element.classList.add("smooth-transition");
         };
-        this.setDefaultXY();
-        this.moveToDefaultXY();
+        this.setCenter();
+        this.moveToCenter();
         this.area.addEventListener("touchstart", this.joyStart);
         this.area.addEventListener("mousedown", this.joyStart);
         this.area.addEventListener("touchmove", this.joyMove);
@@ -142,90 +240,22 @@ class JoystickObj extends movObj_1.MovObj {
         this.area.addEventListener("touchend", this.joyEnd);
         this.area.addEventListener("mouseup", this.joyEnd);
         window.addEventListener("resize", () => {
-            this.setDefaultXY();
-            this.moveToDefaultXY();
+            this.setCenter();
+            this.moveToCenter();
         });
     }
-    setDefaultXY() {
-        this.defaultX = this.area.getBoundingClientRect().width / 2 - this.element.getBoundingClientRect().width / 2 - this.areaBorderSize;
-        this.defaultY = this.area.getBoundingClientRect().height / 2 - this.element.getBoundingClientRect().height / 2 - this.areaBorderSize;
+    setCenter() {
+        this.centerX = this.area.getBoundingClientRect().width / 2 - this.element.getBoundingClientRect().width / 2 - this.areaBorderSize;
+        this.centerY = this.area.getBoundingClientRect().height / 2 - this.element.getBoundingClientRect().height / 2 - this.areaBorderSize;
     }
-    moveToDefaultXY() {
-        this.topRelPos = this.defaultY;
-        this.leftRelPos = this.defaultX;
+    moveToCenter() {
+        this.topRelPos = this.centerY;
+        this.leftRelPos = this.centerX;
     }
 }
-exports.JoystickObj = JoystickObj;
-/*
-export function joyStart(e: TouchEvent | MouseEvent) {
-  joystickInfos.forEach(info => {
-    if (e.target === info.element) {
-      info.active = true;
-      //set start position
-      if (e.type === "touchstart") {
-        let eTouch = e as TouchEvent;
-        if (eTouch.touches.length === 1) {
-          info.initialX = eTouch.touches[0].clientX - info.defaultX;
-          info.initialY = eTouch.touches[0].clientY - info.defaultY;
-        }
-      } else {
-        info.initialX = (e as MouseEvent).clientX - info.defaultX;
-        info.initialY = (e as MouseEvent).clientY - info.defaultY;
-      }
-      info.setDefaultXY();
-      info.element.classList.remove("smooth-transition");
-    }
-  });
-}
+exports.SliderJoystickObj = SliderJoystickObj;
 
-
-export function joyMove(e: TouchEvent | MouseEvent) {
-  joystickInfos.forEach(info => {
-    //if user is touching
-    if (info.active) {
-      let xOffset;
-      let yOffset;
-      e.preventDefault();
-      //set offset position relative to top-left of draggable area
-      if (e.type === "touchmove") {
-        let eTouch = e as TouchEvent;
-        if (eTouch.touches.length === 1) {
-          xOffset = eTouch.touches[0].clientX - info.initialX;
-          yOffset = eTouch.touches[0].clientY - info.initialY;
-        }
-      } else {
-        xOffset = (e as MouseEvent).clientX - info.initialX;
-        yOffset = (e as MouseEvent).clientY - info.initialY;
-      }
-
-      //stops movable element from going outside the draggable area when dragging it
-      let areaWidth: number = info.area.getBoundingClientRect().width;
-      let dragElWidth: number = info.element.getBoundingClientRect().width;
-      let areaHeight: number = info.area.getBoundingClientRect().height;
-      let dragElHeight: number = info.element.getBoundingClientRect().height;
-      let padAreaBorderSize: number = getBorderSize(info.area);
-
-      if (xOffset + dragElWidth + 2 * padAreaBorderSize > areaWidth) xOffset = areaWidth - dragElWidth - 2 * padAreaBorderSize;
-      if (xOffset < 0) xOffset = 0;
-      if (yOffset + dragElHeight + 2 * padAreaBorderSize > areaHeight) yOffset = areaHeight - dragElHeight - 2 * padAreaBorderSize;
-      if (yOffset < 0) yOffset = 0;
-
-      translateToUI(xOffset, yOffset, info.element);
-    }
-  });
-}
-
-
-export function joyEnd(e: TouchEvent | MouseEvent) {
-  joystickInfos.forEach(info => {
-    info.moveToDefaultXY();
-    info.active = false;
-    info.element.classList.add("smooth-transition");
-  });
-}
-*/
-
-},{"./movObj":3}],3:[function(require,module,exports){
+},{"./movObj":4}],4:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class MovObj {
@@ -319,7 +349,7 @@ exports.joyThumb = document.querySelector("#joystick-thumb");
 exports.zSensBtn = document.querySelector("#z-sens-btn");
 exports.zSenses = ["0.1x", "0.5x", "1x"];
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const dragObj_1 = require("./dragObj");
@@ -392,7 +422,7 @@ class PinchObj extends dragObj_1.DragObj {
 }
 exports.PinchObj = PinchObj;
 
-},{"./dragObj":1}],5:[function(require,module,exports){
+},{"./dragObj":2}],6:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class LaserUIBox {
@@ -479,7 +509,7 @@ function sendLaserData(laserBox) {
 }
 exports.sendLaserData = sendLaserData;
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const btn0 = document.querySelector("#btn0");
@@ -496,7 +526,7 @@ exports.dotBtn = document.querySelector("#btnDot");
 exports.delBtn = document.querySelector("#btnDel");
 exports.numPad = [btn0, btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9];
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class MaxMin {
@@ -626,7 +656,7 @@ function updateLimits(newState) {
 }
 exports.updateLimits = updateLimits;
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /*slider initialization*/
@@ -641,6 +671,7 @@ const joystickObj_1 = require("./UIparts/drag-pinch-joystick/joystickObj");
 const pinchObj_1 = require("./UIparts/drag-pinch-joystick/pinchObj");
 /*z slider sensitivity */
 const movObj_1 = require("./UIparts/drag-pinch-joystick/movObj");
+const circJoystick_1 = require("./UIparts/drag-pinch-joystick/circJoystick");
 /*last item in focus*/
 let lastFocus = undefined;
 /*start btn  initialization */
@@ -725,8 +756,8 @@ numpad_1.delBtn.addEventListener("click", () => {
 //let lookSurface = new DragObj(inspectArea, sampleArea);
 let lookSurface = new pinchObj_1.PinchObj(movObj_1.inspectArea, movObj_1.sampleArea, 20);
 /*add joystick capabilities*/
-let xyMotor = new joystickObj_1.JoystickObj(movObj_1.joyThumb, movObj_1.joyPad);
-let zMotor = new joystickObj_1.JoystickObj(movObj_1.zThumb, movObj_1.zSlider);
+let zMotor = new joystickObj_1.SliderJoystickObj(movObj_1.zThumb, movObj_1.zSlider);
+let xyMotor = new circJoystick_1.CircJoystickObj(movObj_1.joyThumb, movObj_1.joyPad);
 movObj_1.zSensBtn.addEventListener("click", () => {
     movObj_1.zSensBtn.innerHTML = movObj_1.zSenses[(movObj_1.zSenses.indexOf(movObj_1.zSensBtn.innerHTML) + 1) % movObj_1.zSenses.length];
 });
@@ -779,6 +810,6 @@ lookSurface.area.addEventListener("touchmove", () => {
     })
   });
 })
-*/ 
+*/
 
-},{"./UIparts/drag-pinch-joystick/joystickObj":2,"./UIparts/drag-pinch-joystick/movObj":3,"./UIparts/drag-pinch-joystick/pinchObj":4,"./UIparts/lasers":5,"./UIparts/numpad":6,"./UIparts/scanParameteres":7}]},{},[8]);
+},{"./UIparts/drag-pinch-joystick/circJoystick":1,"./UIparts/drag-pinch-joystick/joystickObj":3,"./UIparts/drag-pinch-joystick/movObj":4,"./UIparts/drag-pinch-joystick/pinchObj":5,"./UIparts/lasers":6,"./UIparts/numpad":7,"./UIparts/scanParameteres":8}]},{},[9]);

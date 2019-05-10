@@ -7,12 +7,13 @@ import { UIparameters, sendParamChange, updateUIParameters, updateLimits, limits
 /*drag capabilties*/
 import { DragObj } from "./UIparts/drag-pinch-joystick/dragObj";
 /*joystick capabilties*/
-import { JoystickObj } from "./UIparts/drag-pinch-joystick/joystickObj";
+import { SliderJoystickObj } from "./UIparts/drag-pinch-joystick/joystickObj";
 /*pinch capabilties*/
 import { PinchObj } from "./UIparts/drag-pinch-joystick/pinchObj";
 /*z slider sensitivity */
 import { zSensBtn, zSenses, zThumb, zSlider, joyThumb, inspectArea, sampleArea, joyPad } from "./UIparts/drag-pinch-joystick/movObj";
 import { State } from "./UIparts/classes";
+import { CircJoystickObj } from "./UIparts/drag-pinch-joystick/circJoystick";
 
 /*last item in focus*/
 let lastFocus: HTMLInputElement = undefined;
@@ -104,12 +105,11 @@ delBtn.addEventListener("click", () => {
 });
 
 /*add dragable capabilities*/
-//let lookSurface = new DragObj(inspectArea, sampleArea);
 let lookSurface = new PinchObj(inspectArea, sampleArea, 20);
 
 /*add joystick capabilities*/
-let xyMotor = new JoystickObj(joyThumb, joyPad);
-let zMotor = new JoystickObj(zThumb, zSlider);
+let zMotor = new SliderJoystickObj(zThumb, zSlider);
+let xyMotor = new CircJoystickObj(joyThumb, joyPad);
 
 zSensBtn.addEventListener("click", () => {
   zSensBtn.innerHTML = zSenses[(zSenses.indexOf(zSensBtn.innerHTML) + 1) % zSenses.length];
@@ -130,11 +130,11 @@ function getCurrentState() {
       updateLimits(newState);
       updateUILasers(newState);
       updateUIParameters(newState);
-     // updateUIPads(newState);
+      // updateUIPads(newState);
     });
 }
 
-function updateUIPads(newState : State) {
+function updateUIPads(newState: State) {
   lookSurface.leftRelPos = newState.scanParams.offset.x.current;
   lookSurface.topRelPos = newState.scanParams.offset.y.current;
 }
@@ -147,7 +147,7 @@ source.addEventListener("state-updated", (event: any) => {
   updateLimits(newState);
   updateUILasers(newState);
   updateUIParameters(newState);
- // updateUIPads(newState);
+  // updateUIPads(newState);
 });
 /*
 lookSurface.area.addEventListener("touchmove", () => {

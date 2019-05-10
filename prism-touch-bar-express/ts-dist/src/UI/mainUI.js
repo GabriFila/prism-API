@@ -12,6 +12,7 @@ const joystickObj_1 = require("./UIparts/drag-pinch-joystick/joystickObj");
 const pinchObj_1 = require("./UIparts/drag-pinch-joystick/pinchObj");
 /*z slider sensitivity */
 const movObj_1 = require("./UIparts/drag-pinch-joystick/movObj");
+const circJoystick_1 = require("./UIparts/drag-pinch-joystick/circJoystick");
 /*last item in focus*/
 let lastFocus = undefined;
 /*start btn  initialization */
@@ -96,8 +97,8 @@ numpad_1.delBtn.addEventListener("click", () => {
 //let lookSurface = new DragObj(inspectArea, sampleArea);
 let lookSurface = new pinchObj_1.PinchObj(movObj_1.inspectArea, movObj_1.sampleArea, 20);
 /*add joystick capabilities*/
-let xyMotor = new joystickObj_1.JoystickObj(movObj_1.joyThumb, movObj_1.joyPad);
-let zMotor = new joystickObj_1.JoystickObj(movObj_1.zThumb, movObj_1.zSlider);
+let zMotor = new joystickObj_1.SliderJoystickObj(movObj_1.zThumb, movObj_1.zSlider);
+let xyMotor = new circJoystick_1.CircJoystickObj(movObj_1.joyThumb, movObj_1.joyPad);
 movObj_1.zSensBtn.addEventListener("click", () => {
     movObj_1.zSensBtn.innerHTML = movObj_1.zSenses[(movObj_1.zSenses.indexOf(movObj_1.zSensBtn.innerHTML) + 1) % movObj_1.zSenses.length];
 });
@@ -150,5 +151,5 @@ lookSurface.area.addEventListener("touchmove", () => {
     })
   });
 })
-*/ 
+*/
 //# sourceMappingURL=mainUI.js.map
