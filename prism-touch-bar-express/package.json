@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "tsc && npm run prepare-browser && node ./ts-dist/server.js",
-    "prepare-browser": "browserify ts-dist/src/UI/mainUI.js -o public/codeBehind/mainUI.js "
+    "prepare-browser": "browserify ts-dist/src/UI/mainUI.js -o public/codeBehind/mainUI.js",
+    "prepare-exe": "pkg package.json --targets node10-linux-armv7l --out-path prod"
   },
   "author": "Gabriele Filaferro",
   "license": "MIT",
@@ -19,8 +20,8 @@
     "typescript": "3.4.5"
   },
   "pkg": {
-    "scripts":"./ts-dist/server.js",
-    "assets":"./public/**/*"
+    "scripts": "./ts-dist/server.js",
+    "assets": "./public/**/*"
   },
-  "bin":"./ts-dist/server.js"
+  "bin": "./ts-dist/server.js"
 }
