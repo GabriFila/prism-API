@@ -35,10 +35,10 @@ const laserBox1: HTMLDivElement = document.querySelector("#slider-box-1");
 const laserBox2: HTMLDivElement = document.querySelector("#slider-box-2");
 const laserBox3: HTMLDivElement = document.querySelector("#slider-box-3");
 
-const laserPower0: HTMLLabelElement = document.querySelector("#slider-value-0");
-const laserPower1: HTMLLabelElement = document.querySelector("#slider-value-1");
-const laserPower2: HTMLLabelElement = document.querySelector("#slider-value-2");
-const laserPower3: HTMLLabelElement = document.querySelector("#slider-value-3");
+const laserPower0: HTMLLabelElement = document.querySelector("#laser-power-0");
+const laserPower1: HTMLLabelElement = document.querySelector("#laser-power-1");
+const laserPower2: HTMLLabelElement = document.querySelector("#laser-power-2");
+const laserPower3: HTMLLabelElement = document.querySelector("#laser-power-3");
 
 const laserSlider0: HTMLInputElement = document.querySelector("#slider-0");
 const laserSlider1: HTMLInputElement = document.querySelector("#slider-1");

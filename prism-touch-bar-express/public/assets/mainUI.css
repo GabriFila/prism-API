@@ -2,7 +2,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  cursor: none;
+  /*cursor: none;*/
 }
 
 :root {
@@ -29,7 +29,6 @@ select {
 }
 
 /*remove highlight properties*/
-
 input,
 button,
 textarea,
@@ -52,13 +51,11 @@ input[type="number"]:focus {
 }
 
 /*set width to 0 for flex adaptability*/
-
 input {
   width: 0;
 }
 
 /*set height to 100% for flex adaptability*/
-
 html {
   height: 100%;
 }
@@ -93,7 +90,6 @@ body {
 }
 
 /*first sector - start button*/
-
 #start-sector {
   display: flex;
   flex: 1;
@@ -119,7 +115,6 @@ body {
 }
 
 /*second sector - parameter box*/
-
 #param-box {
   display: flex;
   flex-direction: column;
@@ -191,13 +186,11 @@ body {
 }
 
 /*to remove blinking cursor*/
-
 .param-input:focus {
   color: transparent;
 }
 
 /*laser sliders*/
-
 #sliders-box {
   display: flex;
   flex-direction: column;
@@ -210,19 +203,19 @@ body {
   align-items: center;
 }
 
-.slider-labels {
+.laser-power {
   align-items: center;
   display: flex;
   flex-direction: column;
   height: 100%;
   flex: 3;
+  vertical-align: end;
 }
 
 .laser-type {
   flex: 1;
   background-color: var(--base-color);
   color: var(--white);
-
   vertical-align: end;
   margin: 3px;
 }

@@ -4,7 +4,7 @@
   "description": "An express-based api to control prism microscope",
   "main": "server.js",
   "scripts": {
-    "start": "tsc && npm run prepare-browser && npm run prepare-prod && node ./server.js",
+    "start": "tsc && npm run prepare-browser && node ./ts-dist/server.js",
     "prepare-browser": "browserify ts-dist/src/UI/mainUI.js -o public/codeBehind/mainUI.js "
   },
   "author": "Gabriele Filaferro",
