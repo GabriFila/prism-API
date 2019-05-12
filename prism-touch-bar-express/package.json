@@ -1,4 +1,4 @@
-{
++{
   "name": "prism-touch-bar-express",
   "version": "1.0.0",
   "description": "An express-based api to control prism microscope",
@@ -6,7 +6,7 @@
   "scripts": {
     "start": "tsc && npm run prepare-browser && node ./ts-dist/server.js",
     "prepare-browser": "browserify ts-dist/src/UI/mainUI.js -o public/codeBehind/mainUI.js",
-    "prepare-exe": "pkg package.json --targets node10-linux-armv7l --out-path prod"
+    "prepare-exe": "pkg package.json --targets node10-linux-armv7 --out-path prod"
   },
   "author": "Gabriele Filaferro",
   "license": "MIT",
