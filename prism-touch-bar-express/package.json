@@ -1,4 +1,4 @@
-+{
+{
   "name": "prism-touch-bar-express",
   "version": "1.0.0",
   "description": "An express-based api to control prism microscope",
