@@ -14,12 +14,46 @@ import { PinchObj } from "./UIparts/drag-pinch-joystick/pinchObj";
 import { CircJoystickObj } from "./UIparts/drag-pinch-joystick/circJoystick";
 /*UI SSE updater*/
 import { setUpUpdater, getCurrentState, sendMode } from "./UIupdater";
-import { METHODS } from "http";
+import { liveBtn, captureBtn, stackBtn, currentMode } from "./UIparts/mode";
 
 /*get microscope state on UI start-up */
 getCurrentState();
 
 setUpUpdater();
+
+/* mode btns events */
+
+liveBtn.addEventListener("click", () => {
+  if (currentMode === "live") {
+    liveBtn.classList.remove("highlighted-button");
+    sendMode("stand-by");
+  } else {
+    liveBtn.classList.add("highlighted-button");
+    sendMode("live");
+  }
+});
+
+captureBtn.addEventListener("click", () => {
+  if (currentMode === "capture") {
+    captureBtn.classList.remove("highlighted-button");
+    sendMode("stand-by");
+  } else {
+    captureBtn.classList.add("highlighted-button");
+    sendMode("capture");
+  }
+});
+
+stackBtn.addEventListener("click", () => {
+  if (currentMode === "stack") {
+    stackBtn.classList.remove("highlighted-button");
+    sendMode("stand-by");
+  } else {
+    stackBtn.classList.add("highlighted-button");
+    sendMode("stack");
+  }
+});
+
+/*UI scanning parameters settings */
 
 /*last item in focus*/
 let lastFocus: HTMLInputElement = undefined;
@@ -53,62 +87,7 @@ function removeHighlithBoder() {
   UIparameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));
 }
 
-let currentMode: string;
-
-export function updateMode(newMode: string) {
-  currentMode = newMode;
-  actionBtns.forEach(btn => btn.classList.remove("highlighted-button"));
-  let higlightBtn: HTMLButtonElement;
-  switch (currentMode) {
-    case "live":
-      higlightBtn = liveBtn;
-      break;
-    case "capture":
-      higlightBtn = captureBtn;
-      break;
-    case "stack":
-      higlightBtn = stackBtn;
-      break;
-    default:
-      higlightBtn = null;
-      break;
-  }
-  if (higlightBtn != null) higlightBtn.classList.add("highlighted-button");
-}
-
-/*mode btns  initialization */
-const liveBtn: HTMLButtonElement = document.querySelector("#live-btn");
-const captureBtn: HTMLButtonElement = document.querySelector("#capture-btn");
-const stackBtn: HTMLButtonElement = document.querySelector("#stack-btn");
-const actionBtns: HTMLButtonElement[] = [liveBtn, captureBtn, stackBtn];
-
-liveBtn.addEventListener("click", () => {
-  if (currentMode === "live") {
-    liveBtn.classList.remove("highlighted-button");
-    sendMode("stand-by");
-  } else {
-    liveBtn.classList.add("highlighted-button");
-    sendMode("live");
-  }
-});
-captureBtn.addEventListener("click", () => {
-  if (currentMode === "capture") {
-    captureBtn.classList.remove("highlighted-button");
-    sendMode("stand-by");
-  } else {
-    captureBtn.classList.add("highlighted-button");
-    sendMode("capture");
-  }
-});
-stackBtn.addEventListener("click", () => {
-  if (currentMode === "stack") {
-    stackBtn.classList.remove("highlighted-button");
-    sendMode("stand-by");
-  } else {
-    stackBtn.classList.add("highlighted-button");
-    sendMode("stack");
-  }
-});
+/*Laser boxes events */
 
 /*adds event to slider box for slider movement and on/off button*/
 laserUIBoxes.forEach(laserUIBox => {
@@ -124,6 +103,8 @@ laserUIBoxes.forEach(laserUIBox => {
     sendLaserData(laserUIBox);
   });
 });
+
+/*Numpad events */
 
 /*add touched num in last focus element*/
 numPad.forEach((numBtn, i) => {
@@ -163,7 +144,8 @@ delBtn.addEventListener("click", () => {
   }
 });
 
-/*pads initializations*/
+/*look surface events*/
+
 export const lookSurface = new PinchObj(inspectArea, sampleArea, 20);
 
 /*update own UI parameters*/
@@ -181,6 +163,8 @@ lookSurface.area.addEventListener("touchend", () => {
   sendParamChangeSingle("range/x", Number(UIparameters[6].value));
   sendParamChangeSingle("range/y", Number(UIparameters[7].value));
 });
+
+/*motor sliders */
 
 /*joystick initializations*/
 let zMotor = new SliderJoystickObj(zThumb, zSlider);
@@ -220,17 +204,15 @@ let intervalCheckerZ: NodeJS.Timeout;
 
 zMotor.element.addEventListener("touchstart", () => {
   intervalCheckerZ = setInterval(() => {
-    
-      fetch("/prismMotors/z", {
-        method: "PUT",
-        body: JSON.stringify({ steps: zMotor.sliderValue }),
-        headers: {
-          "Content-Type": "application/json"
-        }
-      })
-        .then(res => res.json())
-        .then(resBoby => console.log(resBoby));
-    
+    fetch("/prismMotors/z", {
+      method: "PUT",
+      body: JSON.stringify({ steps: zMotor.sliderValue }),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+      .then(res => res.json())
+      .then(resBoby => console.log(resBoby));
   }, 200);
 });
 

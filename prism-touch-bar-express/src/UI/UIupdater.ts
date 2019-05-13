@@ -1,7 +1,8 @@
 import { UIparameters, limits, updateLimits, updateUIParameters } from "./UIparts/scanParameteres";
 import { updateUILasersFromLasers, updateUILasersFromState } from "./UIparts/lasers";
-import { lookSurface, updateMode } from "./mainUI";
+import { lookSurface } from "./mainUI";
 import { State } from "./UIparts/classes";
+import { updateMode } from "./UIparts/mode";
 
 const source = new EventSource("/updates");
 
@@ -54,7 +55,7 @@ export function setUpUpdater() {
     updateUILasersFromLasers(JSON.parse(event.data));
   });
 
-  source.addEventListener("mode-updated", (event: any) => {    
+  source.addEventListener("mode-updated", (event: any) => {
     updateMode(JSON.parse(event.data).mode);
   });
 }
@@ -77,7 +78,6 @@ function updateUIPads(newState: State) {
   lookSurface.elWidth = (newState.scanParams.range.x.current * lookSurface.areaWidth) / limits[6].max;
   lookSurface.elHeight = (newState.scanParams.range.y.current * lookSurface.areaHeight) / limits[7].max;
 }
-
 
 export function sendMode(newMode: string) {
   fetch("/prismState/mode", {

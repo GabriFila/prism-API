@@ -537,6 +537,37 @@ exports.sendLaserData = sendLaserData;
 },{}],7:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/*mode btns  initialization */
+exports.liveBtn = document.querySelector("#live-btn");
+exports.captureBtn = document.querySelector("#capture-btn");
+exports.stackBtn = document.querySelector("#stack-btn");
+exports.actionBtns = [exports.liveBtn, exports.captureBtn, exports.stackBtn];
+function updateMode(newMode) {
+    exports.currentMode = newMode;
+    exports.actionBtns.forEach(btn => btn.classList.remove("highlighted-button"));
+    let higlightBtn;
+    switch (exports.currentMode) {
+        case "live":
+            higlightBtn = exports.liveBtn;
+            break;
+        case "capture":
+            higlightBtn = exports.captureBtn;
+            break;
+        case "stack":
+            higlightBtn = exports.stackBtn;
+            break;
+        default:
+            higlightBtn = null;
+            break;
+    }
+    if (higlightBtn != null)
+        higlightBtn.classList.add("highlighted-button");
+}
+exports.updateMode = updateMode;
+
+},{}],8:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const btn0 = document.querySelector("#btn0");
 const btn1 = document.querySelector("#btn1");
 const btn2 = document.querySelector("#btn2");
@@ -551,7 +582,7 @@ exports.dotBtn = document.querySelector("#btnDot");
 exports.delBtn = document.querySelector("#btnDel");
 exports.numPad = [btn0, btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9];
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class MaxMin {
@@ -691,12 +722,13 @@ function updateLimits(newState) {
 }
 exports.updateLimits = updateLimits;
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const scanParameteres_1 = require("./UIparts/scanParameteres");
 const lasers_1 = require("./UIparts/lasers");
 const mainUI_1 = require("./mainUI");
+const mode_1 = require("./UIparts/mode");
 const source = new EventSource("/updates");
 function setUpUpdater() {
     source.addEventListener("offset-x-updated", (event) => {
@@ -742,7 +774,7 @@ function setUpUpdater() {
         lasers_1.updateUILasersFromLasers(JSON.parse(event.data));
     });
     source.addEventListener("mode-updated", (event) => {
-        mainUI_1.updateMode(JSON.parse(event.data).mode);
+        mode_1.updateMode(JSON.parse(event.data).mode);
     });
 }
 exports.setUpUpdater = setUpUpdater;
@@ -775,7 +807,7 @@ function sendMode(newMode) {
 }
 exports.sendMode = sendMode;
 
-},{"./UIparts/lasers":6,"./UIparts/scanParameteres":8,"./mainUI":10}],10:[function(require,module,exports){
+},{"./UIparts/lasers":6,"./UIparts/mode":7,"./UIparts/scanParameteres":9,"./mainUI":11}],11:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /*laser elements*/
@@ -794,6 +826,7 @@ const pinchObj_1 = require("./UIparts/drag-pinch-joystick/pinchObj");
 const circJoystick_1 = require("./UIparts/drag-pinch-joystick/circJoystick");
 /*UI SSE updater*/
 const UIupdater_1 = require("./UIupdater");
+const mode_1 = require("./UIparts/mode");
 /*get microscope state on UI start-up */
 UIupdater_1.getCurrentState();
 UIupdater_1.setUpUpdater();
@@ -825,61 +858,33 @@ document.body.addEventListener("click", function (e) {
 function removeHighlithBoder() {
     scanParameteres_1.UIparameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));
 }
-let currentMode;
-function updateMode(newMode) {
-    currentMode = newMode;
-    actionBtns.forEach(btn => btn.classList.remove("highlighted-button"));
-    let higlightBtn;
-    switch (currentMode) {
-        case "live":
-            higlightBtn = liveBtn;
-            break;
-        case "capture":
-            higlightBtn = captureBtn;
-            break;
-        case "stack":
-            higlightBtn = stackBtn;
-            break;
-        default:
-            higlightBtn = null;
-            break;
-    }
-    if (higlightBtn != null)
-        higlightBtn.classList.add("highlighted-button");
-}
-exports.updateMode = updateMode;
-/*mode btns  initialization */
-const liveBtn = document.querySelector("#live-btn");
-const captureBtn = document.querySelector("#capture-btn");
-const stackBtn = document.querySelector("#stack-btn");
-const actionBtns = [liveBtn, captureBtn, stackBtn];
-liveBtn.addEventListener("click", () => {
-    if (currentMode === "live") {
-        liveBtn.classList.remove("highlighted-button");
+mode_1.liveBtn.addEventListener("click", () => {
+    if (mode_1.currentMode === "live") {
+        mode_1.liveBtn.classList.remove("highlighted-button");
         UIupdater_1.sendMode("stand-by");
     }
     else {
-        liveBtn.classList.add("highlighted-button");
+        mode_1.liveBtn.classList.add("highlighted-button");
         UIupdater_1.sendMode("live");
     }
 });
-captureBtn.addEventListener("click", () => {
-    if (currentMode === "capture") {
-        captureBtn.classList.remove("highlighted-button");
+mode_1.captureBtn.addEventListener("click", () => {
+    if (mode_1.currentMode === "capture") {
+        mode_1.captureBtn.classList.remove("highlighted-button");
         UIupdater_1.sendMode("stand-by");
     }
     else {
-        captureBtn.classList.add("highlighted-button");
+        mode_1.captureBtn.classList.add("highlighted-button");
         UIupdater_1.sendMode("capture");
     }
 });
-stackBtn.addEventListener("click", () => {
-    if (currentMode === "stack") {
-        stackBtn.classList.remove("highlighted-button");
+mode_1.stackBtn.addEventListener("click", () => {
+    if (mode_1.currentMode === "stack") {
+        mode_1.stackBtn.classList.remove("highlighted-button");
         UIupdater_1.sendMode("stand-by");
     }
     else {
-        stackBtn.classList.add("highlighted-button");
+        mode_1.stackBtn.classList.add("highlighted-button");
         UIupdater_1.sendMode("stack");
     }
 });
@@ -993,4 +998,4 @@ zMotor.element.addEventListener("touchstart", () => {
 });
 zMotor.element.addEventListener("touchend", () => clearInterval(intervalCheckerZ));
 
-},{"./UIparts/drag-pinch-joystick/circJoystick":1,"./UIparts/drag-pinch-joystick/movObj":3,"./UIparts/drag-pinch-joystick/pinchObj":4,"./UIparts/drag-pinch-joystick/sliderJoystickObj":5,"./UIparts/lasers":6,"./UIparts/numpad":7,"./UIparts/scanParameteres":8,"./UIupdater":9}]},{},[10]);
+},{"./UIparts/drag-pinch-joystick/circJoystick":1,"./UIparts/drag-pinch-joystick/movObj":3,"./UIparts/drag-pinch-joystick/pinchObj":4,"./UIparts/drag-pinch-joystick/sliderJoystickObj":5,"./UIparts/lasers":6,"./UIparts/mode":7,"./UIparts/numpad":8,"./UIparts/scanParameteres":9,"./UIupdater":10}]},{},[11]);

@@ -16,6 +16,7 @@ const pinchObj_1 = require("./UIparts/drag-pinch-joystick/pinchObj");
 const circJoystick_1 = require("./UIparts/drag-pinch-joystick/circJoystick");
 /*UI SSE updater*/
 const UIupdater_1 = require("./UIupdater");
+const mode_1 = require("./UIparts/mode");
 /*get microscope state on UI start-up */
 UIupdater_1.getCurrentState();
 UIupdater_1.setUpUpdater();
@@ -47,61 +48,33 @@ document.body.addEventListener("click", function (e) {
 function removeHighlithBoder() {
     scanParameteres_1.UIparameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));
 }
-let currentMode;
-function updateMode(newMode) {
-    currentMode = newMode;
-    actionBtns.forEach(btn => btn.classList.remove("highlighted-button"));
-    let higlightBtn;
-    switch (currentMode) {
-        case "live":
-            higlightBtn = liveBtn;
-            break;
-        case "capture":
-            higlightBtn = captureBtn;
-            break;
-        case "stack":
-            higlightBtn = stackBtn;
-            break;
-        default:
-            higlightBtn = null;
-            break;
-    }
-    if (higlightBtn != null)
-        higlightBtn.classList.add("highlighted-button");
-}
-exports.updateMode = updateMode;
-/*mode btns  initialization */
-const liveBtn = document.querySelector("#live-btn");
-const captureBtn = document.querySelector("#capture-btn");
-const stackBtn = document.querySelector("#stack-btn");
-const actionBtns = [liveBtn, captureBtn, stackBtn];
-liveBtn.addEventListener("click", () => {
-    if (currentMode === "live") {
-        liveBtn.classList.remove("highlighted-button");
+mode_1.liveBtn.addEventListener("click", () => {
+    if (mode_1.currentMode === "live") {
+        mode_1.liveBtn.classList.remove("highlighted-button");
         UIupdater_1.sendMode("stand-by");
     }
     else {
-        liveBtn.classList.add("highlighted-button");
+        mode_1.liveBtn.classList.add("highlighted-button");
         UIupdater_1.sendMode("live");
     }
 });
-captureBtn.addEventListener("click", () => {
-    if (currentMode === "capture") {
-        captureBtn.classList.remove("highlighted-button");
+mode_1.captureBtn.addEventListener("click", () => {
+    if (mode_1.currentMode === "capture") {
+        mode_1.captureBtn.classList.remove("highlighted-button");
         UIupdater_1.sendMode("stand-by");
     }
     else {
-        captureBtn.classList.add("highlighted-button");
+        mode_1.captureBtn.classList.add("highlighted-button");
         UIupdater_1.sendMode("capture");
     }
 });
-stackBtn.addEventListener("click", () => {
-    if (currentMode === "stack") {
-        stackBtn.classList.remove("highlighted-button");
+mode_1.stackBtn.addEventListener("click", () => {
+    if (mode_1.currentMode === "stack") {
+        mode_1.stackBtn.classList.remove("highlighted-button");
         UIupdater_1.sendMode("stand-by");
     }
     else {
-        stackBtn.classList.add("highlighted-button");
+        mode_1.stackBtn.classList.add("highlighted-button");
         UIupdater_1.sendMode("stack");
     }
 });

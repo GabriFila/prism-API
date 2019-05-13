@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const scanParameteres_1 = require("./UIparts/scanParameteres");
 const lasers_1 = require("./UIparts/lasers");
 const mainUI_1 = require("./mainUI");
+const mode_1 = require("./UIparts/mode");
 const source = new EventSource("/updates");
 function setUpUpdater() {
     source.addEventListener("offset-x-updated", (event) => {
@@ -48,7 +49,7 @@ function setUpUpdater() {
         lasers_1.updateUILasersFromLasers(JSON.parse(event.data));
     });
     source.addEventListener("mode-updated", (event) => {
-        mainUI_1.updateMode(JSON.parse(event.data).mode);
+        mode_1.updateMode(JSON.parse(event.data).mode);
     });
 }
 exports.setUpUpdater = setUpUpdater;
