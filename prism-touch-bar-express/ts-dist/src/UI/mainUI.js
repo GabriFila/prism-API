@@ -9,7 +9,7 @@ const scanParameteres_1 = require("./UIparts/scanParameteres");
 /*UI pads,joysticks objects */
 const movObj_1 = require("./UIparts/drag-pinch-joystick/movObj");
 /*joystick capabilties*/
-const joystickObj_1 = require("./UIparts/drag-pinch-joystick/joystickObj");
+const sliderJoystickObj_1 = require("./UIparts/drag-pinch-joystick/sliderJoystickObj");
 /*pinch class*/
 const pinchObj_1 = require("./UIparts/drag-pinch-joystick/pinchObj");
 /*circular joystick class*/
@@ -171,10 +171,47 @@ exports.lookSurface.area.addEventListener("touchend", () => {
     scanParameteres_1.sendParamChangeSingle("range/y", Number(scanParameteres_1.UIparameters[7].value));
 });
 /*joystick initializations*/
-let zMotor = new joystickObj_1.SliderJoystickObj(movObj_1.zThumb, movObj_1.zSlider);
+let zMotor = new sliderJoystickObj_1.SliderJoystickObj(movObj_1.zThumb, movObj_1.zSlider);
 let xyMotor = new circJoystick_1.CircJoystickObj(movObj_1.joyThumb, movObj_1.joyPad);
 /*change z joystick sensibility when touched */
 movObj_1.zSensBtn.addEventListener("click", () => {
     movObj_1.zSensBtn.innerHTML = movObj_1.zSenses[(movObj_1.zSenses.indexOf(movObj_1.zSensBtn.innerHTML) + 1) % movObj_1.zSenses.length];
 });
+let intervalCheckerXY;
+xyMotor.element.addEventListener("touchstart", () => {
+    intervalCheckerXY = setInterval(() => {
+        if (xyMotor.mag > 0) {
+            fetch("/prismMotors/x", {
+                method: "PUT",
+                body: JSON.stringify({ steps: (xyMotor.mag * Math.cos(xyMotor.arg)) / xyMotor.maxMag }),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+        }
+        fetch("/prismMotors/y", {
+            method: "PUT",
+            body: JSON.stringify({ steps: (xyMotor.mag * Math.sin(xyMotor.arg)) / xyMotor.maxMag }),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+    }, 200);
+});
+xyMotor.element.addEventListener("touchend", () => clearInterval(intervalCheckerXY));
+let intervalCheckerZ;
+zMotor.element.addEventListener("touchstart", () => {
+    intervalCheckerZ = setInterval(() => {
+        fetch("/prismMotors/z", {
+            method: "PUT",
+            body: JSON.stringify({ steps: zMotor.sliderValue }),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+            .then(res => res.json())
+            .then(resBoby => console.log(resBoby));
+    }, 200);
+});
+zMotor.element.addEventListener("touchend", () => clearInterval(intervalCheckerZ));
 //# sourceMappingURL=mainUI.js.map

@@ -9,6 +9,11 @@ export class SliderJoystickObj extends MovObj {
   centerX: number;
   centerY: number;
 
+  private _sliderValue: number;
+  public get sliderValue(): number {
+    return this.topRelPos - this.centerX;
+  }
+
   constructor(element: HTMLDivElement, area: HTMLDivElement) {
     super(element, area);
     this.setCenter();
@@ -26,8 +31,8 @@ export class SliderJoystickObj extends MovObj {
   }
 
   setCenter() {
-    this.centerX = this.area.getBoundingClientRect().width / 2 - this.element.getBoundingClientRect().width / 2 - this.areaBorderSize;
-    this.centerY = this.area.getBoundingClientRect().height / 2 - this.element.getBoundingClientRect().height / 2 - this.areaBorderSize;
+    this.centerX = this.areaWidth / 2 - this.elWidth / 2 - this.areaBorderSize;
+    this.centerY = this.areaHeight / 2 - this.elHeight / 2 - this.areaBorderSize;
   }
 
   moveToCenter() {
@@ -73,10 +78,10 @@ export class SliderJoystickObj extends MovObj {
       }
 
       //stops movable element from going outside the draggable area when dragging it
-      let areaWidth: number = this.area.getBoundingClientRect().width;
-      let dragElWidth: number = this.element.getBoundingClientRect().width;
-      let areaHeight: number = this.area.getBoundingClientRect().height;
-      let dragElHeight: number = this.element.getBoundingClientRect().height;
+      let areaWidth: number = this.areaWidth;
+      let dragElWidth: number = this.elWidth;
+      let areaHeight: number = this.areaHeight;
+      let dragElHeight: number = this.elHeight;
       let padAreaBorderSize: number = this.areaBorderSize;
 
       if (xOffset + dragElWidth + 2 * padAreaBorderSize > areaWidth) xOffset = areaWidth - dragElWidth - 2 * padAreaBorderSize;

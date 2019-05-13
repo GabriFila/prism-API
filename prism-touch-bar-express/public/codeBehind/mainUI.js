@@ -164,98 +164,7 @@ class DragObj extends movObj_1.MovObj {
 }
 exports.DragObj = DragObj;
 
-},{"./movObj":4}],3:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const movObj_1 = require("./movObj");
-class SliderJoystickObj extends movObj_1.MovObj {
-    constructor(element, area) {
-        super(element, area);
-        this.joyStart = (e) => {
-            if (e.target === this.element) {
-                this.joyActive = true;
-                //set start position
-                if (e.type === "touchstart") {
-                    let eTouch = e;
-                    if (eTouch.touches.length === 1) {
-                        this.initialX = eTouch.touches[0].clientX - this.centerX;
-                        this.initialY = eTouch.touches[0].clientY - this.centerY;
-                    }
-                }
-                else {
-                    this.initialX = e.clientX - this.centerX;
-                    this.initialY = e.clientY - this.centerY;
-                }
-                this.setCenter();
-                this.element.classList.remove("smooth-transition");
-            }
-        };
-        this.joyMove = (e) => {
-            //if user is touching
-            if (this.joyActive) {
-                let xOffset;
-                let yOffset;
-                e.preventDefault();
-                //set offset position relative to top-left of draggable area
-                if (e.type === "touchmove") {
-                    let eTouch = e;
-                    if (eTouch.touches.length === 1) {
-                        xOffset = eTouch.touches[0].clientX - this.initialX;
-                        yOffset = eTouch.touches[0].clientY - this.initialY;
-                    }
-                }
-                else {
-                    xOffset = e.clientX - this.initialX;
-                    yOffset = e.clientY - this.initialY;
-                }
-                //stops movable element from going outside the draggable area when dragging it
-                let areaWidth = this.area.getBoundingClientRect().width;
-                let dragElWidth = this.element.getBoundingClientRect().width;
-                let areaHeight = this.area.getBoundingClientRect().height;
-                let dragElHeight = this.element.getBoundingClientRect().height;
-                let padAreaBorderSize = this.areaBorderSize;
-                if (xOffset + dragElWidth + 2 * padAreaBorderSize > areaWidth)
-                    xOffset = areaWidth - dragElWidth - 2 * padAreaBorderSize;
-                if (xOffset < 0)
-                    xOffset = 0;
-                if (yOffset + dragElHeight + 2 * padAreaBorderSize > areaHeight)
-                    yOffset = areaHeight - dragElHeight - 2 * padAreaBorderSize;
-                if (yOffset < 0)
-                    yOffset = 0;
-                this.leftRelPos = xOffset;
-                this.topRelPos = yOffset;
-            }
-        };
-        this.joyEnd = (e) => {
-            this.moveToCenter();
-            this.joyActive = false;
-            this.element.classList.add("smooth-transition");
-        };
-        this.setCenter();
-        this.moveToCenter();
-        this.area.addEventListener("touchstart", this.joyStart);
-        this.area.addEventListener("mousedown", this.joyStart);
-        this.area.addEventListener("touchmove", this.joyMove);
-        this.area.addEventListener("mousemove", this.joyMove);
-        this.area.addEventListener("touchend", this.joyEnd);
-        this.area.addEventListener("mouseup", this.joyEnd);
-        window.addEventListener("resize", () => {
-            this.setCenter();
-            this.moveToCenter();
-        });
-    }
-    setCenter() {
-        this.centerX = this.area.getBoundingClientRect().width / 2 - this.element.getBoundingClientRect().width / 2 - this.areaBorderSize;
-        this.centerY = this.area.getBoundingClientRect().height / 2 - this.element.getBoundingClientRect().height / 2 - this.areaBorderSize;
-    }
-    moveToCenter() {
-        this.topRelPos = this.centerY;
-        this.leftRelPos = this.centerX;
-    }
-}
-exports.SliderJoystickObj = SliderJoystickObj;
-
-},{"./movObj":4}],4:[function(require,module,exports){
+},{"./movObj":3}],3:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class MovObj {
@@ -349,7 +258,7 @@ exports.joyThumb = document.querySelector("#joystick-thumb");
 exports.zSensBtn = document.querySelector("#z-sens-btn");
 exports.zSenses = ["0.1x", "0.5x", "1x"];
 
-},{}],5:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const dragObj_1 = require("./dragObj");
@@ -426,7 +335,101 @@ class PinchObj extends dragObj_1.DragObj {
 }
 exports.PinchObj = PinchObj;
 
-},{"./dragObj":2}],6:[function(require,module,exports){
+},{"./dragObj":2}],5:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const movObj_1 = require("./movObj");
+class SliderJoystickObj extends movObj_1.MovObj {
+    constructor(element, area) {
+        super(element, area);
+        this.joyStart = (e) => {
+            if (e.target === this.element) {
+                this.joyActive = true;
+                //set start position
+                if (e.type === "touchstart") {
+                    let eTouch = e;
+                    if (eTouch.touches.length === 1) {
+                        this.initialX = eTouch.touches[0].clientX - this.centerX;
+                        this.initialY = eTouch.touches[0].clientY - this.centerY;
+                    }
+                }
+                else {
+                    this.initialX = e.clientX - this.centerX;
+                    this.initialY = e.clientY - this.centerY;
+                }
+                this.setCenter();
+                this.element.classList.remove("smooth-transition");
+            }
+        };
+        this.joyMove = (e) => {
+            //if user is touching
+            if (this.joyActive) {
+                let xOffset;
+                let yOffset;
+                e.preventDefault();
+                //set offset position relative to top-left of draggable area
+                if (e.type === "touchmove") {
+                    let eTouch = e;
+                    if (eTouch.touches.length === 1) {
+                        xOffset = eTouch.touches[0].clientX - this.initialX;
+                        yOffset = eTouch.touches[0].clientY - this.initialY;
+                    }
+                }
+                else {
+                    xOffset = e.clientX - this.initialX;
+                    yOffset = e.clientY - this.initialY;
+                }
+                //stops movable element from going outside the draggable area when dragging it
+                let areaWidth = this.areaWidth;
+                let dragElWidth = this.elWidth;
+                let areaHeight = this.areaHeight;
+                let dragElHeight = this.elHeight;
+                let padAreaBorderSize = this.areaBorderSize;
+                if (xOffset + dragElWidth + 2 * padAreaBorderSize > areaWidth)
+                    xOffset = areaWidth - dragElWidth - 2 * padAreaBorderSize;
+                if (xOffset < 0)
+                    xOffset = 0;
+                if (yOffset + dragElHeight + 2 * padAreaBorderSize > areaHeight)
+                    yOffset = areaHeight - dragElHeight - 2 * padAreaBorderSize;
+                if (yOffset < 0)
+                    yOffset = 0;
+                this.leftRelPos = xOffset;
+                this.topRelPos = yOffset;
+            }
+        };
+        this.joyEnd = (e) => {
+            this.moveToCenter();
+            this.joyActive = false;
+            this.element.classList.add("smooth-transition");
+        };
+        this.setCenter();
+        this.moveToCenter();
+        this.area.addEventListener("touchstart", this.joyStart);
+        this.area.addEventListener("mousedown", this.joyStart);
+        this.area.addEventListener("touchmove", this.joyMove);
+        this.area.addEventListener("mousemove", this.joyMove);
+        this.area.addEventListener("touchend", this.joyEnd);
+        this.area.addEventListener("mouseup", this.joyEnd);
+        window.addEventListener("resize", () => {
+            this.setCenter();
+            this.moveToCenter();
+        });
+    }
+    get sliderValue() {
+        return this.topRelPos - this.centerX;
+    }
+    setCenter() {
+        this.centerX = this.areaWidth / 2 - this.elWidth / 2 - this.areaBorderSize;
+        this.centerY = this.areaHeight / 2 - this.elHeight / 2 - this.areaBorderSize;
+    }
+    moveToCenter() {
+        this.topRelPos = this.centerY;
+        this.leftRelPos = this.centerX;
+    }
+}
+exports.SliderJoystickObj = SliderJoystickObj;
+
+},{"./movObj":3}],6:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class LaserUIBox {
@@ -784,7 +787,7 @@ const scanParameteres_1 = require("./UIparts/scanParameteres");
 /*UI pads,joysticks objects */
 const movObj_1 = require("./UIparts/drag-pinch-joystick/movObj");
 /*joystick capabilties*/
-const joystickObj_1 = require("./UIparts/drag-pinch-joystick/joystickObj");
+const sliderJoystickObj_1 = require("./UIparts/drag-pinch-joystick/sliderJoystickObj");
 /*pinch class*/
 const pinchObj_1 = require("./UIparts/drag-pinch-joystick/pinchObj");
 /*circular joystick class*/
@@ -946,11 +949,48 @@ exports.lookSurface.area.addEventListener("touchend", () => {
     scanParameteres_1.sendParamChangeSingle("range/y", Number(scanParameteres_1.UIparameters[7].value));
 });
 /*joystick initializations*/
-let zMotor = new joystickObj_1.SliderJoystickObj(movObj_1.zThumb, movObj_1.zSlider);
+let zMotor = new sliderJoystickObj_1.SliderJoystickObj(movObj_1.zThumb, movObj_1.zSlider);
 let xyMotor = new circJoystick_1.CircJoystickObj(movObj_1.joyThumb, movObj_1.joyPad);
 /*change z joystick sensibility when touched */
 movObj_1.zSensBtn.addEventListener("click", () => {
     movObj_1.zSensBtn.innerHTML = movObj_1.zSenses[(movObj_1.zSenses.indexOf(movObj_1.zSensBtn.innerHTML) + 1) % movObj_1.zSenses.length];
 });
+let intervalCheckerXY;
+xyMotor.element.addEventListener("touchstart", () => {
+    intervalCheckerXY = setInterval(() => {
+        if (xyMotor.mag > 0) {
+            fetch("/prismMotors/x", {
+                method: "PUT",
+                body: JSON.stringify({ steps: (xyMotor.mag * Math.cos(xyMotor.arg)) / xyMotor.maxMag }),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+        }
+        fetch("/prismMotors/y", {
+            method: "PUT",
+            body: JSON.stringify({ steps: (xyMotor.mag * Math.sin(xyMotor.arg)) / xyMotor.maxMag }),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+    }, 200);
+});
+xyMotor.element.addEventListener("touchend", () => clearInterval(intervalCheckerXY));
+let intervalCheckerZ;
+zMotor.element.addEventListener("touchstart", () => {
+    intervalCheckerZ = setInterval(() => {
+        fetch("/prismMotors/z", {
+            method: "PUT",
+            body: JSON.stringify({ steps: zMotor.sliderValue }),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+            .then(res => res.json())
+            .then(resBoby => console.log(resBoby));
+    }, 200);
+});
+zMotor.element.addEventListener("touchend", () => clearInterval(intervalCheckerZ));
 
-},{"./UIparts/drag-pinch-joystick/circJoystick":1,"./UIparts/drag-pinch-joystick/joystickObj":3,"./UIparts/drag-pinch-joystick/movObj":4,"./UIparts/drag-pinch-joystick/pinchObj":5,"./UIparts/lasers":6,"./UIparts/numpad":7,"./UIparts/scanParameteres":8,"./UIupdater":9}]},{},[10]);
+},{"./UIparts/drag-pinch-joystick/circJoystick":1,"./UIparts/drag-pinch-joystick/movObj":3,"./UIparts/drag-pinch-joystick/pinchObj":4,"./UIparts/drag-pinch-joystick/sliderJoystickObj":5,"./UIparts/lasers":6,"./UIparts/numpad":7,"./UIparts/scanParameteres":8,"./UIupdater":9}]},{},[10]);

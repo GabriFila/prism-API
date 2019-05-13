@@ -7,13 +7,14 @@ import { UIparameters, sendParamChange, limits, sendParamChangeSingle } from "./
 /*UI pads,joysticks objects */
 import { zSensBtn, zSenses, zThumb, zSlider, joyThumb, inspectArea, sampleArea, joyPad } from "./UIparts/drag-pinch-joystick/movObj";
 /*joystick capabilties*/
-import { SliderJoystickObj } from "./UIparts/drag-pinch-joystick/joystickObj";
+import { SliderJoystickObj } from "./UIparts/drag-pinch-joystick/sliderJoystickObj";
 /*pinch class*/
 import { PinchObj } from "./UIparts/drag-pinch-joystick/pinchObj";
 /*circular joystick class*/
 import { CircJoystickObj } from "./UIparts/drag-pinch-joystick/circJoystick";
 /*UI SSE updater*/
 import { setUpUpdater, getCurrentState, sendMode } from "./UIupdater";
+import { METHODS } from "http";
 
 /*get microscope state on UI start-up */
 getCurrentState();
@@ -189,3 +190,48 @@ let xyMotor = new CircJoystickObj(joyThumb, joyPad);
 zSensBtn.addEventListener("click", () => {
   zSensBtn.innerHTML = zSenses[(zSenses.indexOf(zSensBtn.innerHTML) + 1) % zSenses.length];
 });
+
+let intervalCheckerXY: NodeJS.Timeout;
+
+xyMotor.element.addEventListener("touchstart", () => {
+  intervalCheckerXY = setInterval(() => {
+    if (xyMotor.mag > 0) {
+      fetch("/prismMotors/x", {
+        method: "PUT",
+        body: JSON.stringify({ steps: (xyMotor.mag * Math.cos(xyMotor.arg)) / xyMotor.maxMag }),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+    }
+    fetch("/prismMotors/y", {
+      method: "PUT",
+      body: JSON.stringify({ steps: (xyMotor.mag * Math.sin(xyMotor.arg)) / xyMotor.maxMag }),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+  }, 200);
+});
+
+xyMotor.element.addEventListener("touchend", () => clearInterval(intervalCheckerXY));
+
+let intervalCheckerZ: NodeJS.Timeout;
+
+zMotor.element.addEventListener("touchstart", () => {
+  intervalCheckerZ = setInterval(() => {
+    
+      fetch("/prismMotors/z", {
+        method: "PUT",
+        body: JSON.stringify({ steps: zMotor.sliderValue }),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+        .then(res => res.json())
+        .then(resBoby => console.log(resBoby));
+    
+  }, 200);
+});
+
+zMotor.element.addEventListener("touchend", () => clearInterval(intervalCheckerZ));

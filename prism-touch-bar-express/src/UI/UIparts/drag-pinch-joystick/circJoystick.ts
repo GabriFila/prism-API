@@ -11,7 +11,7 @@ export class CircJoystickObj extends DragObj {
 
   mag: number;
   arg: number;
-  private maxMag: number;
+  maxMag: number;
 
   constructor(element: HTMLDivElement, area: HTMLDivElement) {
     super(element, area);
