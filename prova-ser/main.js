@@ -8,6 +8,12 @@ port.on("open", () => {
   console.log("serial port open");
 });
 
+port.write(
+  JSON.stringify({
+    led: true
+  })
+);
+
 parser.on("data", data => {
-  console.log(JSON.parse(data).Nome);
+  console.log(JSON.parse(data));
 });
