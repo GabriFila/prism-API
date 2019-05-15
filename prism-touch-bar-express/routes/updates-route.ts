@@ -88,6 +88,70 @@ updates.get("/", (req, res) => {
     SSEwrite(microState, "limits-updated");
   });
 
+  updateEmitter.on("micro-updated-offset-x", () => {
+    let newValue = microState.scanParams.offset.x.current;
+    SSEwrite({ newValue }, "updated-offset-x");
+  });
+
+  updateEmitter.on("micro-updated-offset-y", () => {
+    let newValue = microState.scanParams.offset.y.current;
+    SSEwrite({ newValue }, "updated-offset-y");
+  });
+  updateEmitter.on("micro-updated-offset-z", () => {
+    let newValue = microState.scanParams.offset.z.current;
+    SSEwrite({ newValue }, "updated-offset-z");
+  });
+
+  updateEmitter.on("micro-updated-pixelNumber-x", () => {
+    let newValue = microState.scanParams.pixelNumber.x.current;
+    SSEwrite({ newValue }, "updated-pixelNumber-x");
+  });
+  updateEmitter.on("micro-updated-pixelNumber-y", () => {
+    let newValue = microState.scanParams.pixelNumber.y.current;
+    SSEwrite({ newValue }, "updated-pixelNumber-y");
+  });
+  updateEmitter.on("micro-updated-pixelNumber-z", () => {
+    let newValue = microState.scanParams.pixelNumber.z.current;
+    SSEwrite({ newValue }, "updated-pixelNumber-z");
+  });
+
+  updateEmitter.on("micro-updated-range-x", () => {
+    let newValue = microState.scanParams.range.x.current;
+    SSEwrite({ newValue }, "updated-range-x");
+  });
+  updateEmitter.on("micro-updated-range-y", () => {
+    let newValue = microState.scanParams.range.x.current;
+    SSEwrite({ newValue }, "updated-range-y");
+  });
+  updateEmitter.on("micro-updated-range-z", () => {
+    let newValue = microState.scanParams.range.x.current;
+    SSEwrite({ newValue }, "updated-range-z");
+  });
+
+  updateEmitter.on("micro-updated-dwellTime", () => {
+    let newValue = microState.scanParams.dwellTime;
+    SSEwrite({ newValue }, "updated-dwellTime");
+  });
+
+  updateEmitter.on("micro-updated-lasers", () => {
+    let lasers = microState.lasers;
+    SSEwrite(lasers, "updated-lasers");
+  });
+
+  updateEmitter.on("micro-updated-mode", () => {
+    let newMode = microState.mode;
+    SSEwrite({ newMode }, "updated-mode");
+  });
+
+  updateEmitter.on("micro-updated-state", () => {
+    let newState = microState;
+    SSEwrite({ newState }, "updated-state");
+  });
+
+  updateEmitter.on("limits-updated", () => {
+    SSEwrite(microState, "limits-updated");
+  });
+
   function SSEwrite(input: object, event: string) {
     res.write(`data: ${JSON.stringify(input)} \n`);
     res.write(`event: ${event}\n`);
