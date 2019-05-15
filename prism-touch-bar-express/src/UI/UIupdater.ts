@@ -58,6 +58,14 @@ export function setUpUpdater() {
   source.addEventListener("mode-updated", (event: any) => {
     updateMode(JSON.parse(event.data).mode);
   });
+
+  source.addEventListener("state-updated", (event: any) => {
+    let newState = JSON.parse(event.data).newState;
+    updateLimits(newState);
+    updateUIPads(newState);
+    updateUILasersFromState(newState);
+    updateUIParameters(newState);
+  });
 }
 
 export function getCurrentState() {

@@ -32,7 +32,7 @@ server.get("/", (req, res) => {
 let port = process.env.PORT || 5000;
 server.listen(5000, () => console.log(`Listening from ${port}`));
 
-/*fake testing state*/
+/*simulate state*/
 function getStateFromMicroscope() {
   microState.scanParams.dwellTime = 50;
 
@@ -90,5 +90,5 @@ function getStateFromMicroscope() {
 }
 
 function sendStateToPrism() {}
-
+/*sender for updates event */
 export let updateEmitter = new EventEmitter();

@@ -53,6 +53,10 @@ updates.get("/", (req, res) => {
     SSEwrite({ mode: microState.mode }, "mode-updated");
   });
 
+  updateEmitter.on("state-updated", () => {
+    SSEwrite({ newState: microState }, "state-updated");
+  });
+
   updateEmitter.on("limits-updated", () => {
     SSEwrite(microState, "limits-updated");
   });
