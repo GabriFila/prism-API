@@ -4,6 +4,7 @@ import bodyParser = require("body-parser");
 import { State } from "./api-resources";
 import { Motors } from "./api-resources";
 import { EventEmitter } from "events";
+import { startSerial, updateEmitter } from "./updatePrism";
 
 const server = express();
 
@@ -89,6 +90,6 @@ function getStateFromMicroscope() {
   microState.lasers[3].power = 30;
 }
 
+startSerial();
 function sendStateToPrism() {}
 /*sender for updates event */
-export let updateEmitter = new EventEmitter();

@@ -1,5 +1,6 @@
 import * as express from "express";
-import { microState, updateEmitter } from "../server";
+import { microState } from "../server";
+import { updateEmitter } from "../updatePrism";
 
 const prismState = express.Router();
 const lasers = require("./lasers-route");

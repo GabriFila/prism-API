@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
 const server_1 = require("../server");
+const updatePrism_1 = require("../updatePrism");
 const scanParam = express.Router();
 scanParam.get("/", (req, res) => {
     res.json(server_1.microState.scanParams);
@@ -37,7 +38,7 @@ scanParam.put("/:dim/:axis", (req, res) => {
         res.status(400).json({ errors });
     else {
         res.status(200).json({ dim, axis, newValue, state: server_1.microState });
-        server_1.updateEmitter.emit(`${dim}-${axis}-updated`);
+        updatePrism_1.updateEmitter.emit(`${dim}-${axis}-updated`);
     }
 });
 scanParam.put("/:dim", (req, res) => {
@@ -58,7 +59,7 @@ scanParam.put("/:dim", (req, res) => {
         res.status(400).json({ errors });
     else {
         res.status(200).send({ newValue: req.body.newValue });
-        server_1.updateEmitter.emit(`dwellTime-updated`);
+        updatePrism_1.updateEmitter.emit(`dwellTime-updated`);
     }
 });
 module.exports = scanParam;

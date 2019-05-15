@@ -5,7 +5,7 @@ const path = require("path");
 const bodyParser = require("body-parser");
 const api_resources_1 = require("./api-resources");
 const api_resources_2 = require("./api-resources");
-const events_1 = require("events");
+const updatePrism_1 = require("./updatePrism");
 const server = express();
 exports.microState = new api_resources_1.State();
 exports.motorValues = new api_resources_2.Motors();
@@ -26,7 +26,7 @@ server.get("/", (req, res) => {
 //Start server
 let port = process.env.PORT || 5000;
 server.listen(5000, () => console.log(`Listening from ${port}`));
-/*fake testing state*/
+/*simulate state*/
 function getStateFromMicroscope() {
     exports.microState.scanParams.dwellTime = 50;
     exports.microState.scanParams.offset.x.current = 0;
@@ -69,6 +69,7 @@ function getStateFromMicroscope() {
     exports.microState.lasers[3].isOn = true;
     exports.microState.lasers[3].power = 30;
 }
+updatePrism_1.startSerial();
 function sendStateToPrism() { }
-exports.updateEmitter = new events_1.EventEmitter();
+/*sender for updates event */
 //# sourceMappingURL=server.js.map

@@ -1,6 +1,7 @@
 import * as express from "express";
-import { microState, updateEmitter } from "../server";
+import { microState} from "../server";
 import { isBoolean } from "util";
+import { updateEmitter } from "../updatePrism";
 
 const lasers = express.Router();
 

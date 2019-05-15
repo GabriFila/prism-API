@@ -91,11 +91,15 @@ function removeHighlithBoder() {
 
 /*adds event to slider box for slider movement and on/off button*/
 laserUIBoxes.forEach(laserUIBox => {
-  laserUIBox.slider.oninput = () => {
+  laserUIBox.slider.addEventListener("input", () => {
+    let tempValue = laserUIBox.slider.value;
+    laserUIBox.powerLabel.innerHTML = tempValue + "%";
+  });
+  laserUIBox.slider.addEventListener("touchend", () => {
     let tempValue = laserUIBox.slider.value;
     laserUIBox.powerLabel.innerHTML = tempValue + "%";
     sendLaserData(laserUIBox);
-  };
+  });
   laserUIBox.btn.addEventListener("click", () => {
     laserUIBox.isOn = !laserUIBox.isOn;
     if (laserUIBox.isOn) grayOutLaserBox(laserUIBox);

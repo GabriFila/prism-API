@@ -541,10 +541,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.liveBtn = document.querySelector("#live-btn");
 exports.captureBtn = document.querySelector("#capture-btn");
 exports.stackBtn = document.querySelector("#stack-btn");
-exports.actionBtns = [exports.liveBtn, exports.captureBtn, exports.stackBtn];
+exports.modeBtns = [exports.liveBtn, exports.captureBtn, exports.stackBtn];
 function updateMode(newMode) {
     exports.currentMode = newMode;
-    exports.actionBtns.forEach(btn => btn.classList.remove("highlighted-button"));
+    exports.modeBtns.forEach(btn => btn.classList.remove("highlighted-button"));
     let higlightBtn;
     switch (exports.currentMode) {
         case "live":
@@ -776,6 +776,13 @@ function setUpUpdater() {
     source.addEventListener("mode-updated", (event) => {
         mode_1.updateMode(JSON.parse(event.data).mode);
     });
+    source.addEventListener("state-updated", (event) => {
+        let newState = JSON.parse(event.data).newState;
+        scanParameteres_1.updateLimits(newState);
+        updateUIPads(newState);
+        lasers_1.updateUILasersFromState(newState);
+        scanParameteres_1.updateUIParameters(newState);
+    });
 }
 exports.setUpUpdater = setUpUpdater;
 function getCurrentState() {
@@ -830,34 +837,7 @@ const mode_1 = require("./UIparts/mode");
 /*get microscope state on UI start-up */
 UIupdater_1.getCurrentState();
 UIupdater_1.setUpUpdater();
-/*last item in focus*/
-let lastFocus = undefined;
-/*store last parameters input in focus*/
-scanParameteres_1.UIparameters.forEach(param => {
-    param.addEventListener("touchstart", () => {
-        removeHighlithBoder();
-        lastFocus = param;
-        param.value = "";
-        param.classList.add("highlighted");
-        //sendParamChange(param);
-    });
-});
-/*remove highlight border only when touching something excluding numpad and selectred parameter*/
-document.body.addEventListener("click", function (e) {
-    if (lastFocus != null) {
-        if (numpad_1.numPad.filter(numBtn => numBtn === e.target).length == 0) {
-            if (e.target !== numpad_1.delBtn && e.target !== numpad_1.dotBtn)
-                if (scanParameteres_1.UIparameters.filter(param => param === e.target).length == 0) {
-                    removeHighlithBoder();
-                    scanParameteres_1.sendParamChange(lastFocus);
-                    lastFocus = null;
-                }
-        }
-    }
-});
-function removeHighlithBoder() {
-    scanParameteres_1.UIparameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));
-}
+/* mode btns events */
 mode_1.liveBtn.addEventListener("click", () => {
     if (mode_1.currentMode === "live") {
         mode_1.liveBtn.classList.remove("highlighted-button");
@@ -888,13 +868,47 @@ mode_1.stackBtn.addEventListener("click", () => {
         UIupdater_1.sendMode("stack");
     }
 });
+/*UI scanning parameters settings */
+/*last item in focus*/
+let lastFocus = undefined;
+/*store last parameters input in focus*/
+scanParameteres_1.UIparameters.forEach(param => {
+    param.addEventListener("touchstart", () => {
+        removeHighlithBoder();
+        lastFocus = param;
+        param.value = "";
+        param.classList.add("highlighted");
+        //sendParamChange(param);
+    });
+});
+/*remove highlight border only when touching something excluding numpad and selectred parameter*/
+document.body.addEventListener("click", function (e) {
+    if (lastFocus != null) {
+        if (numpad_1.numPad.filter(numBtn => numBtn === e.target).length == 0) {
+            if (e.target !== numpad_1.delBtn && e.target !== numpad_1.dotBtn)
+                if (scanParameteres_1.UIparameters.filter(param => param === e.target).length == 0) {
+                    removeHighlithBoder();
+                    scanParameteres_1.sendParamChange(lastFocus);
+                    lastFocus = null;
+                }
+        }
+    }
+});
+function removeHighlithBoder() {
+    scanParameteres_1.UIparameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));
+}
+/*Laser boxes events */
 /*adds event to slider box for slider movement and on/off button*/
 lasers_1.laserUIBoxes.forEach(laserUIBox => {
-    laserUIBox.slider.oninput = () => {
+    laserUIBox.slider.addEventListener("input", () => {
+        let tempValue = laserUIBox.slider.value;
+        laserUIBox.powerLabel.innerHTML = tempValue + "%";
+    });
+    laserUIBox.slider.addEventListener("touchend", () => {
         let tempValue = laserUIBox.slider.value;
         laserUIBox.powerLabel.innerHTML = tempValue + "%";
         lasers_1.sendLaserData(laserUIBox);
-    };
+    });
     laserUIBox.btn.addEventListener("click", () => {
         laserUIBox.isOn = !laserUIBox.isOn;
         if (laserUIBox.isOn)
@@ -904,6 +918,7 @@ lasers_1.laserUIBoxes.forEach(laserUIBox => {
         lasers_1.sendLaserData(laserUIBox);
     });
 });
+/*Numpad events */
 /*add touched num in last focus element*/
 numpad_1.numPad.forEach((numBtn, i) => {
     numBtn.addEventListener("click", () => {
@@ -937,7 +952,7 @@ numpad_1.delBtn.addEventListener("click", () => {
         scanParameteres_1.sendParamChange(lastFocus);
     }
 });
-/*pads initializations*/
+/*look surface events*/
 exports.lookSurface = new pinchObj_1.PinchObj(movObj_1.inspectArea, movObj_1.sampleArea, 20);
 /*update own UI parameters*/
 exports.lookSurface.area.addEventListener("touchmove", () => {
@@ -953,6 +968,7 @@ exports.lookSurface.area.addEventListener("touchend", () => {
     scanParameteres_1.sendParamChangeSingle("range/x", Number(scanParameteres_1.UIparameters[6].value));
     scanParameteres_1.sendParamChangeSingle("range/y", Number(scanParameteres_1.UIparameters[7].value));
 });
+/*motor sliders */
 /*joystick initializations*/
 let zMotor = new sliderJoystickObj_1.SliderJoystickObj(movObj_1.zThumb, movObj_1.zSlider);
 let xyMotor = new circJoystick_1.CircJoystickObj(movObj_1.joyThumb, movObj_1.joyPad);

@@ -1,5 +1,5 @@
 import * as express from "express";
-import { motorValues, microState } from "../server";
+import { motorValues } from "../server";
 
 const prismMotors = express.Router();
 

@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
 const server_1 = require("../server");
+const updatePrism_1 = require("../updatePrism");
 const prismState = express.Router();
 const lasers = require("./lasers-route");
 const scanParams = require("./scanParams-route");
@@ -19,7 +20,7 @@ prismState.put("/", (req, res) => {
         res.status(400).json(errors);
     else {
         res.status(200).json({ newState: server_1.microState });
-        server_1.updateEmitter.emit("state-updated");
+        updatePrism_1.updateEmitter.emit("state-updated");
     }
 });
 prismState.get("/mode", (req, res) => {
@@ -42,7 +43,7 @@ prismState.put("/mode", (req, res) => {
         res.status(400).json({ errors });
     else {
         res.status(200).json({ newMode: server_1.microState.mode });
-        server_1.updateEmitter.emit("mode-updated");
+        updatePrism_1.updateEmitter.emit("mode-updated");
     }
 });
 prismState.use("/lasers", lasers);

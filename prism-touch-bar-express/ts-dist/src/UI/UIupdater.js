@@ -51,6 +51,13 @@ function setUpUpdater() {
     source.addEventListener("mode-updated", (event) => {
         mode_1.updateMode(JSON.parse(event.data).mode);
     });
+    source.addEventListener("state-updated", (event) => {
+        let newState = JSON.parse(event.data).newState;
+        scanParameteres_1.updateLimits(newState);
+        updateUIPads(newState);
+        lasers_1.updateUILasersFromState(newState);
+        scanParameteres_1.updateUIParameters(newState);
+    });
 }
 exports.setUpUpdater = setUpUpdater;
 function getCurrentState() {

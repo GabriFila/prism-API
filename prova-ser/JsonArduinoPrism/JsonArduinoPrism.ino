@@ -1,8 +1,8 @@
 
 #include "ArduinoJson.h"
 
-StaticJsonDocument<256> objRx;
-StaticJsonDocument<256> objTx;
+StaticJsonDocument<300> objRx;
+StaticJsonDocument<300> objTx;
 
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
@@ -33,15 +33,16 @@ void loop() {
       digitalWrite(LED_BUILTIN, LOW);
       delay((int)(objRx["delay"])*(i+1));
       }*/
+    /*
+        digitalWrite(LED_BUILTIN, HIGH);
+        delay(objRx["delay"]);
+        digitalWrite(LED_BUILTIN, LOW);
+        delay(objRx["delay"]);
+        objTx["delayRX"] = objRx["delay"];
+        objTx["msg"] = "send" ;
 
-    digitalWrite(LED_BUILTIN, HIGH);
-    delay(objRx["delay"]);
-    digitalWrite(LED_BUILTIN, LOW);
-    delay(objRx["delay"]);
-    objTx["delayRX"] = objRx["delay"];
-    objTx["msg"] = "send" ;
-
-    serializeJson(objTx, Serial);
+        serializeJson(objTx, Serial);
+    */    serializeJson(objRx, Serial);
     Serial.println();
   }
 
