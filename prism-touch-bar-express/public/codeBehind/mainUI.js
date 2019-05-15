@@ -731,35 +731,35 @@ const mainUI_1 = require("./mainUI");
 const mode_1 = require("./UIparts/mode");
 const source = new EventSource("/updates");
 function setUpUpdater() {
-    source.addEventListener("offset-x-updated", (event) => {
+    source.addEventListener("updated-offset-x", (event) => {
         scanParameteres_1.UIparameters[0].value = JSON.parse(event.data).newValue;
         mainUI_1.lookSurface.leftRelPos = (Number(scanParameteres_1.UIparameters[0].value) * mainUI_1.lookSurface.areaWidth) / scanParameteres_1.limits[0].max;
     });
-    source.addEventListener("offset-y-updated", (event) => {
+    source.addEventListener("updated-offset-y", (event) => {
         scanParameteres_1.UIparameters[1].value = JSON.parse(event.data).newValue;
         mainUI_1.lookSurface.topRelPos = (Number(scanParameteres_1.UIparameters[1].value) * mainUI_1.lookSurface.areaHeight) / scanParameteres_1.limits[1].max;
     });
-    source.addEventListener("offset-z-updated", (event) => {
+    source.addEventListener("updated-offset-z", (event) => {
         scanParameteres_1.UIparameters[2].value = JSON.parse(event.data).newValue;
     });
-    source.addEventListener("pixelNumber-x-updated", (event) => {
+    source.addEventListener("updated-pixelNumber-x", (event) => {
         scanParameteres_1.UIparameters[3].value = JSON.parse(event.data).newValue;
     });
-    source.addEventListener("pixelNumber-y-updated", (event) => {
+    source.addEventListener("updated-pixelNumber-y", (event) => {
         scanParameteres_1.UIparameters[4].value = JSON.parse(event.data).newValue;
     });
-    source.addEventListener("pixelNumber-z-updated", (event) => {
+    source.addEventListener("updated-pixelNumber-z", (event) => {
         scanParameteres_1.UIparameters[5].value = JSON.parse(event.data).newValue;
     });
-    source.addEventListener("range-x-updated", (event) => {
+    source.addEventListener("updated-range-x", (event) => {
         scanParameteres_1.UIparameters[6].value = JSON.parse(event.data).newValue;
         mainUI_1.lookSurface.elWidth = (Number(scanParameteres_1.UIparameters[6].value) * mainUI_1.lookSurface.areaWidth) / scanParameteres_1.limits[6].max;
     });
-    source.addEventListener("range-y-updated", (event) => {
+    source.addEventListener("updated-range-y", (event) => {
         scanParameteres_1.UIparameters[7].value = JSON.parse(event.data).newValue;
         mainUI_1.lookSurface.elHeight = (Number(scanParameteres_1.UIparameters[7].value) * mainUI_1.lookSurface.areaHeight) / scanParameteres_1.limits[7].max;
     });
-    source.addEventListener("range-z-updated", (event) => {
+    source.addEventListener("updated-range-z", (event) => {
         scanParameteres_1.UIparameters[8].value = JSON.parse(event.data).newValue;
     });
     source.addEventListener("dwellTime-updated", (event) => {

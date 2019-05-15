@@ -29,7 +29,7 @@ scanParam.put("/:dim/:axis", (req, res) => {
   if (errors.length > 0) res.status(400).json({ errors });
   else {
     res.status(200).json({ dim, axis, newValue, state: microState });
-    updateEmitter.emit(`${dim}-${axis}-updated`);
+    updateEmitter.emit(`UI-updated-${dim}-${axis}`);
   }
 });
 
@@ -45,7 +45,7 @@ scanParam.put("/:dim", (req, res) => {
   if (errors.length > 0) res.status(400).json({ errors });
   else {
     res.status(200).send({ newValue: req.body.newValue });
-    updateEmitter.emit(`dwellTime-updated`);
+    updateEmitter.emit(`UI-updated-dwellTime`);
   }
 });
 

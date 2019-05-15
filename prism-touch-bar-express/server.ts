@@ -91,5 +91,4 @@ function getStateFromMicroscope() {
 }
 
 startSerial();
-function sendStateToPrism() {}
 /*sender for updates event */

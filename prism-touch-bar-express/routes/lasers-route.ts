@@ -39,7 +39,7 @@ lasers.put("/:waveLength", (req, res) => {
       isOn: microState.lasers.find(laser => laser.waveLength == targetWaveLength).isOn
     });
 
-  updateEmitter.emit("lasers-updated");
+  updateEmitter.emit("UI-updated-lasers");
 });
 
 module.exports = lasers;

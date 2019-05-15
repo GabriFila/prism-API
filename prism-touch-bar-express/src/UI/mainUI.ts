@@ -65,7 +65,6 @@ UIparameters.forEach(param => {
     lastFocus = param;
     param.value = "";
     param.classList.add("highlighted");
-    //sendParamChange(param);
   });
 });
 

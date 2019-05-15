@@ -25,3 +25,7 @@ updateEmitter.on("lasers-updated", () => {
   
   port.write(JSON.stringify({lasers: microState.lasers}));
 });
+
+export function sendUpdateToPrism(event : string, data : object) {
+
+}

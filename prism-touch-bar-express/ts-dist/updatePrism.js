@@ -24,4 +24,7 @@ exports.updateEmitter.on("lasers-updated", () => {
     console.log("Mando pacchetto laser");
     port.write(JSON.stringify({ lasers: server_1.microState.lasers }));
 });
+function sendUpdateToPrism(event, data) {
+}
+exports.sendUpdateToPrism = sendUpdateToPrism;
 //# sourceMappingURL=updatePrism.js.map

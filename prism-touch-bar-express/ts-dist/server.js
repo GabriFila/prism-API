@@ -70,6 +70,5 @@ function getStateFromMicroscope() {
     exports.microState.lasers[3].power = 30;
 }
 updatePrism_1.startSerial();
-function sendStateToPrism() { }
 /*sender for updates event */
 //# sourceMappingURL=server.js.map
