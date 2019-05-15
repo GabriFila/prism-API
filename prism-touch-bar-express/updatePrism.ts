@@ -22,10 +22,15 @@ parser.on("data", data => {
 
 updateEmitter.on("lasers-updated", () => {
   console.log("Mando pacchetto laser");
-  
-  port.write(JSON.stringify({lasers: microState.lasers}));
+
+  port.write(JSON.stringify({ lasers: microState.lasers }));
 });
 
-export function sendUpdateToPrism(event : string, data : object) {
+export function sendUpdateToPrism(event: string, data: object) {
+  port.write(serialize({ event, data }));
+  
+}
 
+function serialize(obj: object): string {
+  return JSON.stringify(obj);
 }

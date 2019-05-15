@@ -29,39 +29,59 @@ updates.get("/", (req, res) => {
   });
 
   updateEmitter.on("UI-updated-pixelNumber-x", () => {
-    SSEwrite({ newValue: microState.scanParams.pixelNumber.x.current }, "updated-pixelNumber-x");
+    let newValue = microState.scanParams.pixelNumber.x.current;
+    SSEwrite({ newValue }, "updated-pixelNumber-x");
+    sendUpdateToPrism("updated-pixelNumber-x", { newValue });
   });
   updateEmitter.on("UI-updated-pixelNumber-y", () => {
-    SSEwrite({ newValue: microState.scanParams.pixelNumber.y.current }, "updated-pixelNumber-y");
+    let newValue = microState.scanParams.pixelNumber.y.current;
+    SSEwrite({ newValue }, "updated-pixelNumber-y");
+    sendUpdateToPrism("updated-pixelNumber-y", { newValue });
   });
   updateEmitter.on("UI-updated-pixelNumber-z", () => {
-    SSEwrite({ newValue: microState.scanParams.pixelNumber.z.current }, "updated-pixelNumber-z");
+    let newValue = microState.scanParams.pixelNumber.z.current;
+    SSEwrite({ newValue }, "updated-pixelNumber-z");
+    sendUpdateToPrism("updated-pixelNumber-z", { newValue });
   });
 
   updateEmitter.on("UI-updated-range-x", () => {
-    SSEwrite({ newValue: microState.scanParams.range.x.current }, "updated-range-x");
+    let newValue = microState.scanParams.range.x.current;
+    SSEwrite({ newValue }, "updated-range-x");
+    sendUpdateToPrism("updated-range-x", { newValue });
   });
   updateEmitter.on("UI-updated-range-y", () => {
-    SSEwrite({ newValue: microState.scanParams.range.y.current }, "updated-range-y");
+    let newValue = microState.scanParams.range.x.current;
+    SSEwrite({ newValue }, "updated-range-y");
+    sendUpdateToPrism("updated-range-y", { newValue });
   });
   updateEmitter.on("UI-updated-range-z", () => {
-    SSEwrite({ newValue: microState.scanParams.range.z.current }, "updated-range-z");
+    let newValue = microState.scanParams.range.x.current;
+    SSEwrite({ newValue }, "updated-range-z");
+    sendUpdateToPrism("updated-range-z", { newValue });
   });
 
   updateEmitter.on("UI-updated-dwellTime", () => {
-    SSEwrite({ newValue: microState.scanParams.dwellTime }, "dwellTime-updated");
+    let newValue = microState.scanParams.dwellTime;
+    SSEwrite({ newValue }, "updated-dwellTime");
+    sendUpdateToPrism("updated-dwellTime", { newValue });
   });
 
   updateEmitter.on("UI-updated-lasers", () => {
-    SSEwrite(microState.lasers, "lasers-updated");
+    let lasers = microState.lasers;
+    SSEwrite(lasers, "updated-lasers");
+    sendUpdateToPrism("updated-lasers", { lasers });
   });
 
   updateEmitter.on("UI-updated-mode", () => {
-    SSEwrite({ mode: microState.mode }, "mode-updated");
+    let newMode = microState.mode;
+    SSEwrite({ newMode }, "updated-mode");
+    sendUpdateToPrism("updated-mode", { mode: newMode });
   });
 
   updateEmitter.on("UI-updated-state", () => {
-    SSEwrite({ newState: microState }, "state-updated");
+    let newState = microState;
+    SSEwrite({ newState }, "updated-state");
+    sendUpdateToPrism("updated-state", newState);
   });
 
   updateEmitter.on("limits-updated", () => {

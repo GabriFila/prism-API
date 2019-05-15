@@ -1,0 +1,79 @@
+{
+  "scanParams": {
+    "offset": {
+      "x": {
+        "current": 500,
+        "max": 1000,
+        "min": 0
+      },
+      "y": {
+        "current": 500,
+        "max": 1000,
+        "min": 0
+      },
+      "z": {
+        "current": 500,
+        "max": 1000,
+        "min": 0
+      }
+    },
+    "pixelNumber": {
+      "x": {
+        "current": 500,
+        "max": 1000,
+        "min": 0
+      },
+      "y": {
+        "current": 500,
+        "max": 1000,
+        "min": 0
+      },
+      "z": {
+        "current": 500,
+        "max": 1000,
+        "min": 0
+      }
+    },
+    "range": {
+      "x": {
+        "current": 500,
+        "max": 1000,
+        "min": 0
+      },
+      "y": {
+        "current": 500,
+        "max": 1000,
+        "min": 0
+      },
+      "z": {
+        "current": 500,
+        "max": 1000,
+        "min": 0
+      }
+    },
+    "dwellTime": 40
+  },
+  "lasers": [
+    {
+      "waveLength": 300,
+      "power": 30
+    },
+    {
+      "waveLength": 400,
+      "power": 40
+    },
+    {
+      "waveLength": 500,
+      "power": 50
+    },
+    {
+      "waveLength": 600,
+      "power": 60
+    }
+  ],
+  "motors": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  }
+}

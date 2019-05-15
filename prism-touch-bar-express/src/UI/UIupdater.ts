@@ -41,7 +41,7 @@ export function setUpUpdater() {
     UIparameters[8].value = JSON.parse(event.data).newValue;
   });
 
-  source.addEventListener("dwellTime-updated", (event: any) => {
+  source.addEventListener("updated-dwellTime", (event: any) => {
     UIparameters[9].value = JSON.parse(event.data).newValue;
   });
 
@@ -51,15 +51,15 @@ export function setUpUpdater() {
     updateUIPads(newState);
   });
 
-  source.addEventListener("lasers-updated", (event: any) => {
+  source.addEventListener("updated-lasers", (event: any) => {
     updateUILasersFromLasers(JSON.parse(event.data));
   });
 
-  source.addEventListener("mode-updated", (event: any) => {
-    updateMode(JSON.parse(event.data).mode);
+  source.addEventListener("updated-mode", (event: any) => {
+    updateMode(JSON.parse(event.data).newMode);
   });
 
-  source.addEventListener("state-updated", (event: any) => {
+  source.addEventListener("updated-state", (event: any) => {
     let newState = JSON.parse(event.data).newState;
     updateLimits(newState);
     updateUIPads(newState);

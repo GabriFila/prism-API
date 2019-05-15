@@ -61,7 +61,6 @@ scanParameteres_1.UIparameters.forEach(param => {
         lastFocus = param;
         param.value = "";
         param.classList.add("highlighted");
-        //sendParamChange(param);
     });
 });
 /*remove highlight border only when touching something excluding numpad and selectred parameter*/

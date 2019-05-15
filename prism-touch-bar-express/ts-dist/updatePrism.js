@@ -25,6 +25,10 @@ exports.updateEmitter.on("lasers-updated", () => {
     port.write(JSON.stringify({ lasers: server_1.microState.lasers }));
 });
 function sendUpdateToPrism(event, data) {
+    port.write(serialize({ event, data }));
 }
 exports.sendUpdateToPrism = sendUpdateToPrism;
+function serialize(obj) {
+    return JSON.stringify(obj);
+}
 //# sourceMappingURL=updatePrism.js.map

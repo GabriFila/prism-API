@@ -762,7 +762,7 @@ function setUpUpdater() {
     source.addEventListener("updated-range-z", (event) => {
         scanParameteres_1.UIparameters[8].value = JSON.parse(event.data).newValue;
     });
-    source.addEventListener("dwellTime-updated", (event) => {
+    source.addEventListener("updated-dwellTime", (event) => {
         scanParameteres_1.UIparameters[9].value = JSON.parse(event.data).newValue;
     });
     source.addEventListener("limits-updated", (event) => {
@@ -770,13 +770,13 @@ function setUpUpdater() {
         scanParameteres_1.updateLimits(newState);
         updateUIPads(newState);
     });
-    source.addEventListener("lasers-updated", (event) => {
+    source.addEventListener("updated-lasers", (event) => {
         lasers_1.updateUILasersFromLasers(JSON.parse(event.data));
     });
-    source.addEventListener("mode-updated", (event) => {
-        mode_1.updateMode(JSON.parse(event.data).mode);
+    source.addEventListener("updated-mode", (event) => {
+        mode_1.updateMode(JSON.parse(event.data).newMode);
     });
-    source.addEventListener("state-updated", (event) => {
+    source.addEventListener("updated-state", (event) => {
         let newState = JSON.parse(event.data).newState;
         scanParameteres_1.updateLimits(newState);
         updateUIPads(newState);
@@ -878,7 +878,6 @@ scanParameteres_1.UIparameters.forEach(param => {
         lastFocus = param;
         param.value = "";
         param.classList.add("highlighted");
-        //sendParamChange(param);
     });
 });
 /*remove highlight border only when touching something excluding numpad and selectred parameter*/
