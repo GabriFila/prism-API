@@ -1,0 +1,349 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  /*cursor: none;*/
+}
+
+:root {
+  --base-color: #252525;
+  --dark-gray: rgb(121, 121, 121);
+  --light-gray: rgb(192, 192, 192);
+  --sky-blue: #2e83b3;
+  --white: white;
+  --slider-thumb: #5f5f5f;
+  --red-limit: #cf2828;
+}
+
+.grayed-out {
+  opacity: 0.35;
+  cursor: none;
+}
+
+select {
+  text-align: center;
+  background-color: var(--base-color);
+  color: var(--white);
+  text-align: center;
+  border-radius: 3%;
+}
+
+/*remove highlight properties*/
+input,
+button,
+textarea,
+:focus {
+  outline: none;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+button:focus,
+select:focus,
+option:focus,
+input[type="range"]:focus,
+input[type="number"]:focus {
+  outline: 0;
+}
+
+/*set width to 0 for flex adaptability*/
+input {
+  width: 0;
+}
+
+/*set height to 100% for flex adaptability*/
+html {
+  height: 100%;
+}
+
+body {
+  background-color: var(--base-color);
+  height: 100%;
+  color: var(--white);
+  display: flex;
+  font-family: sans-serif;
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+}
+
+#col-0 {
+  flex: 7;
+}
+
+#col-1 {
+  flex: 7;
+}
+
+#col-2 {
+  flex: 8;
+}
+
+#col-3 {
+  flex: 2;
+}
+
+/*first sector - start button*/
+#start-sector {
+  display: flex;
+  flex: 1;
+}
+
+.action-btn {
+  width: 20%;
+  height: 20%;
+  margin: auto;
+  font-size: 1.2em;
+  border: none;
+  border-radius: 10%;
+}
+
+.div-action-buttons {
+  display: flex;
+  flex: 1;
+}
+
+.highlighted-button {
+  background-color: var(--sky-blue);
+  color: var(--white);
+}
+
+/*second sector - parameter box*/
+#param-box {
+  display: flex;
+  flex-direction: column;
+  flex: 2;
+}
+
+.param-row {
+  display: flex;
+  flex: 3;
+  align-items: center;
+}
+
+#preset-row {
+  display: flex;
+  justify-items: center;
+}
+
+#preset-selector {
+  margin: auto 0% auto 15%;
+  flex-basis: 60%;
+  font-size: 1.1em;
+}
+
+#add-preset-btn {
+  width: 20%;
+  margin: auto 15% auto 0%;
+  font-size: 1.1em;
+}
+
+.top-param-label-row {
+  display: flex;
+  flex: 1;
+  align-items: center;
+}
+
+.top-param-label-spacer {
+  flex: 5;
+}
+
+.top-param-label {
+  flex: 2;
+  margin: auto 7px;
+}
+
+.left-param-label {
+  flex: 5;
+  text-align: center;
+}
+
+.param-input {
+  background-color: var(--base-color);
+  border: 2px solid var(--slider-thumb);
+  color: var(--white);
+  flex: 3;
+  margin: auto 7px;
+  padding: 4px 3px;
+  border-radius: 10%;
+  text-align: right;
+}
+
+.highlighted {
+  border: 2px solid var(--sky-blue);
+  transition: 0.2s ease;
+}
+
+.limit {
+  border: 2px solid var(--red-limit);
+  transition: 0.4s ease-in-out;
+}
+
+/*to remove blinking cursor*/
+.param-input:focus {
+  color: transparent;
+}
+
+/*laser sliders*/
+#sliders-box {
+  display: flex;
+  flex-direction: column;
+  flex: 4;
+}
+
+.slider-box {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.laser-power {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  flex: 3;
+  vertical-align: end;
+}
+
+.laser-type {
+  flex: 1;
+  background-color: var(--base-color);
+  color: var(--white);
+  vertical-align: end;
+  margin: 3px;
+}
+
+input[type="range"].slider {
+  cursor: pointer;
+  flex: 7;
+  -webkit-appearance: none;
+  height: 5px;
+  background-color: var(--sky-blue);
+}
+
+input[type="range"].slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 7px;
+  height: 20px;
+  background-color: var(--dark-gray);
+  border: 1px solid var(--light-gray);
+  border-radius: 25%;
+}
+
+.div-laser-on-off-btn {
+  flex: 3;
+  height: 100%;
+  display: flex;
+}
+
+.laser-on-off-btn {
+  height: 35px;
+  width: 35px;
+  border-radius: 50%;
+  background-color: var(--base-color);
+  margin: auto;
+  font-size: 1.2em;
+  border: none;
+}
+
+.laser-btn-on {
+  border: 2px solid green;
+  color: green;
+}
+
+.laser-btn-off {
+  border: 2px solid red;
+  color: red;
+}
+
+/*numpad*/
+
+#numpad {
+  display: flex;
+  flex-direction: column;
+  flex: 3;
+}
+
+.numpad-row {
+  display: flex;
+  flex: 1;
+  align-items: center;
+}
+
+.numpad-btn {
+  flex: 1;
+  text-align: center;
+  border: 2px solid var(--white);
+  background-color: var(--base-color);
+  color: var(--white);
+  height: 100%;
+  font-size: 1.3em;
+}
+
+/*sample control*/
+
+#border-square {
+  border: 5px solid var(--dark-gray);
+}
+
+#sample-area {
+  background-color: var(--base-color);
+  width: 100%;
+  height: 0;
+  padding-bottom: 100%;
+}
+
+.inspect-area {
+  width: 60px;
+  height: 60px;
+  border: 3px solid var(--sky-blue);
+  background-color: var(--light-gray);
+  border-radius: 5%;
+}
+
+#joystick-pad {
+  border: 5px solid var(--dark-gray);
+  flex: 1;
+}
+
+#joystick-thumb {
+  width: 60px;
+  height: 60px;
+  border: 3px solid var(--sky-blue);
+  border-radius: 50%;
+  background-color: var(--light-gray);
+}
+
+/*z-slider*/
+
+#z-slider {
+  border: 3px solid var(--dark-gray);
+  flex: 10;
+}
+#z-thumb {
+  width: 100%;
+  height: 55px;
+  border: 3px solid var(--sky-blue);
+  border-radius: 10%;
+  background-color: var(--light-gray);
+}
+
+#z-sens-btn {
+  flex: 1;
+  background-color: var(--base-color);
+  border: 3px solid var(--dark-gray);
+  color: white;
+  font-size: 1.3em;
+}
+/* smooth tranisition for joystick thumbs*/
+
+.smooth-transition {
+  transition: 0.15s ease-out;
+}

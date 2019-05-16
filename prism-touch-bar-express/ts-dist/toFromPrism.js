@@ -23,14 +23,16 @@ function startSerial() {
                 console.log("Found It");
                 portName = port.comName.toString();
                 console.log(portName);
+                port = new SerialPort(portName, {
+                    baudRate: 9600,
+                    autoOpen: false
+                });
+                port.open(() => console.log(`Serial port ${port.path} open`));
+                port.pipe(parser);
             }
+            else
+                console.log("no microscope attached");
         });
-        port = new SerialPort(portName, {
-            baudRate: 9600,
-            autoOpen: false
-        });
-        port.open(() => console.log(`Serial port ${port.path} open`));
-        port.pipe(parser);
     });
 }
 exports.startSerial = startSerial;

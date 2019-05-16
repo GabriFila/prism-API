@@ -1,0 +1,124 @@
+{
+  "mode": "stop",
+  "scanParams": {
+    "offset": {
+      "x": {
+        "value": 500,
+        "max": 1000,
+        "min": 0,
+        "unit": "nm"
+      },
+      "y": {
+        "value": 500,
+        "max": 1000,
+        "min": 0,
+        "unit": "nm"
+      },
+      "z": {
+        "value": 500,
+        "max": 1000,
+        "min": 0,
+        "unit": "nm"
+      }
+    },
+    "pixelNumber": {
+      "x": {
+        "value": 500,
+        "max": 1000,
+        "min": 0,
+        "unit": "px"
+      },
+      "y": {
+        "value": 500,
+        "max": 1000,
+        "min": 0,
+        "unit": "px"
+      },
+      "z": {
+        "value": 500,
+        "max": 1000,
+        "min": 0,
+        "unit": "px"
+      }
+    },
+    "range": {
+      "x": {
+        "value": 500,
+        "max": 1000,
+        "min": 0,
+        "unit": "nm"
+      },
+      "y": {
+        "value": 500,
+        "max": 1000,
+        "min": 0,
+        "unit": "nm"
+      },
+      "z": {
+        "value": 500,
+        "max": 1000,
+        "min": 0,
+        "unit": "nm"
+      }
+    },
+    "dwellTime": {
+      "value": 40,
+      "unit": "nm"
+    }
+  },
+  "lasers": [
+    {
+      "waveLength": {
+        "value": 100,
+        "unit": "nm"
+      },
+      "power": {
+        "value": 10,
+        "unit": "%"
+      },
+      "isOn": { "value": { "value": true } },
+      "isPresent": { "value": true }
+    },
+    {
+      "waveLength": {
+        "value": 200,
+        "unit": "nm"
+      },
+      "power": {
+        "value": 20,
+        "unit": "%"
+      },
+      "isOn": { "value": true },
+      "isPresent": { "value": true }
+    },
+    {
+      "waveLength": {
+        "value": 300,
+        "unit": "nm"
+      },
+      "power": {
+        "value": 30,
+        "unit": "%"
+      },
+      "isOn": { "value": true },
+      "isPresent": { "value": true }
+    },
+    {
+      "waveLength": {
+        "value": 400,
+        "unit": "nm"
+      },
+      "power": {
+        "value": 40,
+        "unit": "%"
+      },
+      "isOn": { "value": { "value": true } },
+      "isPresent": { "value": true }
+    }
+  ],
+  "motors": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  }
+}
