@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "paths": { "*": ["types/*"] },
+        "target": "es6",
+        "module": "commonjs",
+        "noImplicitAny": true,
+        "sourceMap": true,
+        "outDir": "./ts-dist",
+        "rootDir": "./",
+        "baseUrl": ".",
+    }
+}

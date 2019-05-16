@@ -23,20 +23,20 @@ const port = new SerialPort("COM4", {
 export function startSerial() {
   SerialPort.list(function(err, ports) {
     ports.forEach(function(port) {
-      
       if (port.vendorId == "2341") {
         console.log("Found It");
         portName = port.comName.toString();
         console.log(portName);
+        port = new SerialPort(portName, {
+          baudRate: 9600,
+          autoOpen: false
+        });
+        port.open(() => console.log(`Serial port ${port.path} open`));
+        port.pipe(parser);
       }
+      else console.log("no microscope attached");
+      
     });
-
-    port = new SerialPort(portName, {
-      baudRate: 9600,
-      autoOpen: false
-    });
-    port.open(() => console.log(`Serial port ${port.path} open`));
-    port.pipe(parser);
   });
 }
 
