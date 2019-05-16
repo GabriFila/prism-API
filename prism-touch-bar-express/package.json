@@ -22,7 +22,7 @@
     "typescript": "3.4.5"
   },
   "pkg": {
-    "scripts": "./ts-dist/server.js",
+    "scripts": ["./ts-dist/server.js","./ts-dist/toFromPrism.js"],
     "assets": "./public/**/*"
   },
   "bin": "./ts-dist/server.js"
