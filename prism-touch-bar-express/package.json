@@ -22,8 +22,8 @@
     "typescript": "3.4.5"
   },
   "pkg": {
-    "scripts": ["./ts-dist/server.js","./ts-dist/toFromPrism.js"],
-    "assets": "./public/**/*"
+    "scripts": ["./ts-dist/server.js"],
+    "assets": ["./public/**/*","./ts-dist/toFromPrism.js"]
   },
   "bin": "./ts-dist/server.js"
 }
