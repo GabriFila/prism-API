@@ -3,16 +3,35 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const SerialPort = require("serialport");
 const events_1 = require("events");
 const api_resources_1 = require("./api-resources");
+let portName;
+let port;
 const parser = new SerialPort.parsers.Readline({ delimiter: "\n", includeDelimiter: false });
 exports.updateEmitter = new events_1.EventEmitter();
 exports.microState = new api_resources_1.State();
 exports.updateEmitter.setMaxListeners(0);
+/*
 const port = new SerialPort("COM4", {
-    autoOpen: false
+  autoOpen: false
 });
+
+
+*/
 function startSerial() {
-    port.open(() => console.log(`Serial port ${port.path} open`));
-    port.pipe(parser);
+    SerialPort.list(function (err, ports) {
+        ports.forEach(function (port) {
+            if (port.vendorId == "2341") {
+                console.log("Found It");
+                portName = port.comName.toString();
+                console.log(portName);
+            }
+        });
+        port = new SerialPort(portName, {
+            baudRate: 9600,
+            autoOpen: false
+        });
+        port.open(() => console.log(`Serial port ${port.path} open`));
+        port.pipe(parser);
+    });
 }
 exports.startSerial = startSerial;
 parser.on("data", data => {

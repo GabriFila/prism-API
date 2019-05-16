@@ -2,20 +2,42 @@ import * as SerialPort from "serialport";
 import { EventEmitter } from "events";
 import { State } from "./api-resources";
 
-const parser = new SerialPort.parsers.Readline({ delimiter: "\n", includeDelimiter: false });
-export let updateEmitter = new EventEmitter();
+let portName: string;
+let port: SerialPort;
 
+const parser = new SerialPort.parsers.Readline({ delimiter: "\n", includeDelimiter: false });
+
+export let updateEmitter = new EventEmitter();
 export let microState = new State();
 
 updateEmitter.setMaxListeners(0);
 
+/*
 const port = new SerialPort("COM4", {
   autoOpen: false
 });
 
+
+*/
+
 export function startSerial() {
-  port.open(() => console.log(`Serial port ${port.path} open`));
-  port.pipe(parser);
+  SerialPort.list(function(err, ports) {
+    ports.forEach(function(port) {
+      
+      if (port.vendorId == "2341") {
+        console.log("Found It");
+        portName = port.comName.toString();
+        console.log(portName);
+      }
+    });
+
+    port = new SerialPort(portName, {
+      baudRate: 9600,
+      autoOpen: false
+    });
+    port.open(() => console.log(`Serial port ${port.path} open`));
+    port.pipe(parser);
+  });
 }
 
 parser.on("data", data => {
@@ -27,7 +49,7 @@ parser.on("data", data => {
     } else console.log("Object received is null");
   } catch (s) {
     console.log("ERRORE:  !!!!!!!!!!!!!!!!");
-    
+
     //console.log(s);
   }
 });
@@ -38,7 +60,7 @@ export function sendUpdateToPrism(event: string, data: any) {
 
 function serialize(obj: object): string {
   //console.log(JSON.stringify(obj));
-console.log("sent");
+  console.log("sent");
 
   return JSON.stringify(obj);
 }
