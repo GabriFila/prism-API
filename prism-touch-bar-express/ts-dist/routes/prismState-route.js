@@ -1,13 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
-const server_1 = require("../server");
-const updatePrism_1 = require("../updatePrism");
+const toFromPrism_1 = require("../toFromPrism");
+const toFromPrism_2 = require("../toFromPrism");
 const prismState = express.Router();
 const lasers = require("./lasers-route");
 const scanParams = require("./scanParams-route");
 prismState.get("/", (req, res) => {
-    res.json(server_1.microState);
+    res.json(toFromPrism_1.microState);
 });
 //to improve
 prismState.put("/", (req, res) => {
@@ -19,12 +19,12 @@ prismState.put("/", (req, res) => {
     if (errors.length > 0)
         res.status(400).json(errors);
     else {
-        res.status(200).json({ newState: server_1.microState });
-        updatePrism_1.updateEmitter.emit("UI-updated-state");
+        res.status(200).json({ newState: toFromPrism_1.microState });
+        toFromPrism_2.updateEmitter.emit("UI-updated-state");
     }
 });
 prismState.get("/mode", (req, res) => {
-    res.json({ mode: server_1.microState.mode });
+    res.json({ mode: toFromPrism_1.microState.mode });
 });
 prismState.put("/mode", (req, res) => {
     let errors = [];
@@ -32,7 +32,7 @@ prismState.put("/mode", (req, res) => {
     if (req.body.newMode) {
         newMode = req.body.newMode;
         if (newMode === "live" || newMode === "capture" || newMode === "stack" || newMode === "stand-by") {
-            server_1.microState.mode = newMode;
+            toFromPrism_1.microState.mode = newMode;
         }
         else
             errors.push(`${newMode} mode is invalid`);
@@ -42,8 +42,8 @@ prismState.put("/mode", (req, res) => {
     if (errors.length > 0)
         res.status(400).json({ errors });
     else {
-        res.status(200).json({ newMode: server_1.microState.mode });
-        updatePrism_1.updateEmitter.emit("UI-updated-mode");
+        res.status(200).json({ newMode: toFromPrism_1.microState.mode });
+        toFromPrism_2.updateEmitter.emit("UI-updated-mode");
     }
 });
 prismState.use("/lasers", lasers);

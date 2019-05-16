@@ -215,7 +215,6 @@ zMotor.element.addEventListener("touchstart", () => {
       }
     })
       .then(res => res.json())
-      .then(resBoby => console.log(resBoby));
   }, 200);
 });
 

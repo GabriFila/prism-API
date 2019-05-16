@@ -1007,8 +1007,7 @@ zMotor.element.addEventListener("touchstart", () => {
                 "Content-Type": "application/json"
             }
         })
-            .then(res => res.json())
-            .then(resBoby => console.log(resBoby));
+            .then(res => res.json());
     }, 200);
 });
 zMotor.element.addEventListener("touchend", () => clearInterval(intervalCheckerZ));

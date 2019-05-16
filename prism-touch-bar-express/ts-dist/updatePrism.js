@@ -28,7 +28,7 @@ function sendUpdateToPrism(event, data) {
 }
 exports.sendUpdateToPrism = sendUpdateToPrism;
 function serialize(obj) {
-    console.log(JSON.stringify(obj));
+    //console.log(JSON.stringify(obj));
     return JSON.stringify(obj);
 }
 function updateStateFromPrism(objRx) {

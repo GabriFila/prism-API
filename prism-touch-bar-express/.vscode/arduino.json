@@ -1,0 +1,5 @@
+{
+    "board": "arduino:avr:uno",
+    "sketch": "JsonArduinoPrism\\JsonArduinoPrism.ino",
+    "port": "COM4"
+}

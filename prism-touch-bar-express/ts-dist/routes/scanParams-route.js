@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
-const server_1 = require("../server");
-const updatePrism_1 = require("../updatePrism");
+const toFromPrism_1 = require("../toFromPrism");
+const toFromPrism_2 = require("../toFromPrism");
 const scanParam = express.Router();
 scanParam.get("/", (req, res) => {
-    res.json(server_1.microState.scanParams);
+    res.json(toFromPrism_1.microState.scanParams);
 });
 scanParam.put("/:dim/:axis", (req, res) => {
     let errors = [];
@@ -16,15 +16,15 @@ scanParam.put("/:dim/:axis", (req, res) => {
         if (axis == "x" || axis == "y" || axis == "z") {
             if ("newValue" in req.body) {
                 newValue = req.body.newValue;
-                if (newValue >= server_1.microState.scanParams[dim][axis].min) {
-                    if (newValue <= server_1.microState.scanParams[dim][axis].max) {
-                        server_1.microState.scanParams[dim][axis].current = newValue;
+                if (newValue >= toFromPrism_1.microState.scanParams[dim][axis].min) {
+                    if (newValue <= toFromPrism_1.microState.scanParams[dim][axis].max) {
+                        toFromPrism_1.microState.scanParams[dim][axis].current = newValue;
                     }
                     else
-                        errors.push(`${newValue} for ${dim} ${axis} is higher than max value(${server_1.microState.scanParams[dim][axis].max})`);
+                        errors.push(`${newValue} for ${dim} ${axis} is higher than max value(${toFromPrism_1.microState.scanParams[dim][axis].max})`);
                 }
                 else
-                    errors.push(`${newValue} for ${dim} ${axis} is lower than min value (${server_1.microState.scanParams[dim][axis].min})`);
+                    errors.push(`${newValue} for ${dim} ${axis} is lower than min value (${toFromPrism_1.microState.scanParams[dim][axis].min})`);
             }
             else
                 errors.push(`newValue field not specified`);
@@ -37,8 +37,8 @@ scanParam.put("/:dim/:axis", (req, res) => {
     if (errors.length > 0)
         res.status(400).json({ errors });
     else {
-        res.status(200).json({ dim, axis, newValue, state: server_1.microState });
-        updatePrism_1.updateEmitter.emit(`UI-updated-${dim}-${axis}`);
+        res.status(200).json({ dim, axis, newValue, state: toFromPrism_1.microState });
+        toFromPrism_2.updateEmitter.emit(`UI-updated-${dim}-${axis}`);
     }
 });
 scanParam.put("/:dim", (req, res) => {
@@ -46,7 +46,7 @@ scanParam.put("/:dim", (req, res) => {
     if (req.params.dim == "dwellTime") {
         if (req.body.newValue) {
             if (req.body.newValue > 0)
-                server_1.microState.scanParams.dwellTime = req.body.newValue;
+                toFromPrism_1.microState.scanParams.dwellTime = req.body.newValue;
             else
                 errors.push("time value must be positive");
         }
@@ -59,7 +59,7 @@ scanParam.put("/:dim", (req, res) => {
         res.status(400).json({ errors });
     else {
         res.status(200).send({ newValue: req.body.newValue });
-        updatePrism_1.updateEmitter.emit(`UI-updated-dwellTime`);
+        toFromPrism_2.updateEmitter.emit(`UI-updated-dwellTime`);
     }
 });
 module.exports = scanParam;

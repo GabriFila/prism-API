@@ -1,6 +1,6 @@
 import * as express from "express";
-import { microState } from "../server";
-import { updateEmitter } from "../updatePrism";
+import { microState } from "../toFromPrism";
+import { updateEmitter } from "../toFromPrism";
 
 const scanParam = express.Router();
 

@@ -1,6 +1,6 @@
 import * as express from "express";
-import { microState } from "../server";
-import { updateEmitter, sendUpdateToPrism } from "../updatePrism";
+import { microState } from "../toFromPrism";
+import { updateEmitter, sendUpdateToPrism } from "../toFromPrism";
 
 const updates = express.Router();
 
@@ -40,6 +40,7 @@ updates.get("/", (req, res) => {
   });
   updateEmitter.on("UI-updated-pixelNumber-z", () => {
     let newValue = microState.scanParams.pixelNumber.z.current;
+    
     SSEwrite({ newValue }, "updated-pixelNumber-z");
     sendUpdateToPrism("updated-pixelNumber-z", { newValue });
   });
@@ -50,12 +51,12 @@ updates.get("/", (req, res) => {
     sendUpdateToPrism("updated-range-x", { newValue });
   });
   updateEmitter.on("UI-updated-range-y", () => {
-    let newValue = microState.scanParams.range.x.current;
+    let newValue = microState.scanParams.range.y.current;
     SSEwrite({ newValue }, "updated-range-y");
     sendUpdateToPrism("updated-range-y", { newValue });
   });
   updateEmitter.on("UI-updated-range-z", () => {
-    let newValue = microState.scanParams.range.x.current;
+    let newValue = microState.scanParams.range.z.current;
     SSEwrite({ newValue }, "updated-range-z");
     sendUpdateToPrism("updated-range-z", { newValue });
   });
@@ -120,11 +121,11 @@ updates.get("/", (req, res) => {
     SSEwrite({ newValue }, "updated-range-x");
   });
   updateEmitter.on("micro-updated-range-y", () => {
-    let newValue = microState.scanParams.range.x.current;
+    let newValue = microState.scanParams.range.y.current;
     SSEwrite({ newValue }, "updated-range-y");
   });
   updateEmitter.on("micro-updated-range-z", () => {
-    let newValue = microState.scanParams.range.x.current;
+    let newValue = microState.scanParams.range.z.current;
     SSEwrite({ newValue }, "updated-range-z");
   });
 
@@ -160,3 +161,5 @@ updates.get("/", (req, res) => {
 });
 
 module.exports = updates;
+
+
