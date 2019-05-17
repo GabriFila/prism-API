@@ -1,4 +1,3 @@
-
 interface MicroState {
   scanParams: ScanParams;
   lasers: Laser[];
@@ -24,7 +23,7 @@ interface Laser {
   isPresent: Resource;
 }
 
-export let microState: MicroState = JSON.parse(require("./resource.json"));
+export let microState: MicroState = require("../resources.json");
 
 interface Resource {
   name: string;

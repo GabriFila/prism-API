@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "tsc && npm run prepare-browser && node ./ts-dist/server.js",
-    "prepare-browser": "browserify ts-dist/src/UI/mainUI.js -o public/codeBehind/mainUI.js",
+    "prepare-browser": "browserify ts-dist/UI/mainUI.js -o public/codeBehind/mainUI.js",
     "prepare-exe": "pkg package.json --targets node10-linux-armv7 --out-path prod"
   },
   "author": "Gabriele Filaferro",
