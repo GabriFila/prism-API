@@ -8,7 +8,7 @@ declare namespace Express {
 declare namespace Express {
   export interface Resource {
     name: string;
-    value: number;
+    value: number | boolean;
     unit?: string;
     min?: number;
     max?: number;

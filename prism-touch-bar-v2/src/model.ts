@@ -25,8 +25,10 @@ interface Laser {
 
 export let microState: MicroState = require("../resources.json");
 
-interface Resource {
+export interface Resource {
   name: string;
   value: number;
   unit?: string;
+  min?: number;
+  max?: number;
 }

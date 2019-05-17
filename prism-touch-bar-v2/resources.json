@@ -76,8 +76,12 @@
         "value": 10,
         "unit": "%"
       },
-      "isOn": { "value": { "value": true } },
-      "isPresent": { "value": true }
+      "isOn": {
+        "value": true
+      },
+      "isPresent": {
+        "value": true
+      }
     },
     {
       "waveLength": {
@@ -88,8 +92,12 @@
         "value": 20,
         "unit": "%"
       },
-      "isOn": { "value": true },
-      "isPresent": { "value": true }
+      "isOn": {
+        "value": true
+      },
+      "isPresent": {
+        "value": true
+      }
     },
     {
       "waveLength": {
@@ -97,11 +105,16 @@
         "unit": "nm"
       },
       "power": {
+        "name":"laser-300-nm-power",
         "value": 30,
         "unit": "%"
       },
-      "isOn": { "value": true },
-      "isPresent": { "value": true }
+      "isOn": {
+        "value": false
+      },
+      "isPresent": {
+        "value": true
+      }
     },
     {
       "waveLength": {
@@ -112,8 +125,12 @@
         "value": 40,
         "unit": "%"
       },
-      "isOn": { "value": { "value": true } },
-      "isPresent": { "value": true }
+      "isOn": {
+        "value": true
+      },
+      "isPresent": {
+        "value": true
+      }
     }
   ],
   "motors": {
