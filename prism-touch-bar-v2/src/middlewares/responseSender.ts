@@ -1,15 +1,14 @@
 import * as express from "express";
+import * as observer from "node-observer";
 
-function responseSender(req: express.Request, res: express.Response, next: express.NextFunction) {
+export function responseSender(req: express.Request, res: express.Response, next: express.NextFunction) {
   console.info("Sending response");
 
   //check if there are errors in request
-  if ("errors" in res) res.status(400).json(res.errors);
-  else
-    res.status(200).json({
-      event: `${res.resource.name} updated to ${res.resource.value} ${"unit" in res.resource ? res.resource.unit : ""}`,
-      newValue: res.resource.value
-    });
+  if (req.method == "PUT") {
+    res.resource.value = req.body.newValue;
+    observer.send(this, "API-updated", res.resource);
+    res.status(200).json({ newValue: res.resource.value });
+  } else if (req.method == "GET") res.status(200).json({ value: res.resource.value });
+  else next();
 }
-
-module.exports = responseSender;

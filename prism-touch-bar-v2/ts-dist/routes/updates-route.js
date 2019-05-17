@@ -5,19 +5,13 @@ const observer = require("node-observer");
 exports.updates = express.Router();
 function setUpObserver() {
     console.log(`setting up observer`);
-    observer.subscribe(this, "API-updated", (who, data) => {
+    observer.subscribe(this, "API-updated", (who, resource) => {
         //function sendUpdateToPrism(`updated-${resource.name}`, resource.value)
         //SSEwrite(resource.value, `updated-${resource.name}`);
-        console.info(`Sent update with ${data.value}`);
-        //console.log("name " + data.name);
-        //console.log("value " + data.value);
+        console.info(`Sent update with ${resource.value}`);
     });
 }
 exports.setUpObserver = setUpObserver;
-function speak() {
-    console.log("parlare");
-}
-exports.speak = speak;
 exports.updates.get("/", (req, res) => {
     res.writeHead(200, {
         "Content-Type": "text/event-stream",
@@ -35,5 +29,4 @@ exports.updates.get("/", (req, res) => {
         res.write(`\n`);
     }
 });
-//module.exports = updates;
 //# sourceMappingURL=updates-route.js.map

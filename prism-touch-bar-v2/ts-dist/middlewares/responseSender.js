@@ -1,15 +1,18 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const observer = require("node-observer");
 function responseSender(req, res, next) {
     console.info("Sending response");
     //check if there are errors in request
-    if ("errors" in res)
-        res.status(400).json(res.errors);
+    if (req.method == "PUT") {
+        res.resource.value = req.body.newValue;
+        observer.send(this, "API-updated", res.resource);
+        res.status(200).json({ newValue: res.resource.value });
+    }
+    else if (req.method == "GET")
+        res.status(200).json({ value: res.resource.value });
     else
-        res.status(200).json({
-            event: `${res.resource.name} updated to ${res.resource.value} ${"unit" in res.resource ? res.resource.unit : ""}`,
-            newValue: res.resource.value
-        });
+        next();
 }
-module.exports = responseSender;
+exports.responseSender = responseSender;
 //# sourceMappingURL=responseSender.js.map

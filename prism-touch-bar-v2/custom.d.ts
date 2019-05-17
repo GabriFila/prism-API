@@ -1,7 +1,6 @@
 declare namespace Express {
   export interface Response {
     resource?: Resource;
-    errors?: string[];
   }
 }
 

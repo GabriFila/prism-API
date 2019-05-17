@@ -1,23 +1,28 @@
 import * as express from "express";
 import * as path from "path";
 import * as bodyParser from "body-parser";
-import { setUpObserver, speak } from "./routes/updates-route";
+import { setUpObserver } from "./routes/updates-route";
 import { updates } from "./routes/updates-route";
 import { lasers } from "./routes/lasers-route";
+import { bodyChecker } from "./middlewares/bodyChecker";
+import { limitsChecker } from "./middlewares/limitsChecker";
+import { responseSender } from "./middlewares/responseSender";
+import { prismState } from "./routes/prismState-route";
 const server = express();
 
 setUpObserver();
 
 //json parser middlware
 server.use(bodyParser.json());
-server.use(require("./middlewares/bodyChecker"));
+server.use(bodyChecker);
 
 //routes
-//server.use("/prismState", require("./routes/prismState-route"));
+server.use("/prismState", prismState);
 //server.use("/prismMotors", require("./routes/prismMotors-route"));
 server.use("/updates", updates);
 server.use("/lasers", lasers);
-server.use(require("./middlewares/limitsChecker"));
+server.use(limitsChecker);
+server.use(responseSender);
 
 //static file to render UI on client
 server.use("/public", express.static(path.join(__dirname + "/../public")));

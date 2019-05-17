@@ -1,12 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 function bodyChecker(req, res, next) {
-    console.info("Checking body");
-    //check if there is newValue field in request
-    if ("newValue" in req.body)
-        next();
+    if (req.method == "PUT")
+        if ("newValue" in req.body)
+            next();
+        else
+            res.status(400).json({ error: `No newValue field in request body` });
     else
-        res.errors = [`No newValue fieldin request`];
+        next();
 }
-module.exports = bodyChecker;
+exports.bodyChecker = bodyChecker;
 //# sourceMappingURL=bodyChecker.js.map

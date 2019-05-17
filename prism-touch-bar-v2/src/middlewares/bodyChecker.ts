@@ -1,11 +1,8 @@
 import * as express from "express";
 
-function bodyChecker(req: express.Request, res: express.Response, next: express.NextFunction) {
-  console.info("Checking body");
-
-  //check if there is newValue field in request
-  if ("newValue" in req.body) next();
-  else res.errors = [`No newValue fieldin request`];
+export function bodyChecker(req: express.Request, res: express.Response, next: express.NextFunction) {
+  if (req.method == "PUT")
+    if ("newValue" in req.body) next();
+    else res.status(400).json({ error: `No newValue field in request body` });
+  else next();
 }
-
-module.exports = bodyChecker;

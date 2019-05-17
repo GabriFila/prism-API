@@ -14,9 +14,6 @@ export function setUpObserver() {
   });
 }
 
-export function speak() {
-  console.log("parlare");
-}
 updates.get("/", (req, res) => {
   res.writeHead(200, {
     "Content-Type": "text/event-stream",
@@ -36,5 +33,3 @@ updates.get("/", (req, res) => {
     res.write(`\n`);
   }
 });
-
-//module.exports = updates;
