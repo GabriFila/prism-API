@@ -4,7 +4,6 @@
     "value": "stop"
   },
   "scanParams": {
-    "name": "scanParams",
     "offset": {
       "x": {
         "name": "offset-x",

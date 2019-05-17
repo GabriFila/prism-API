@@ -1,4 +1,4 @@
-import { State } from "./classes";
+import { ScanParams, XYZ } from "../../model";
 
 class MaxMin {
   max: number;
@@ -8,6 +8,18 @@ class MaxMin {
     this.min = Number.NEGATIVE_INFINITY;
   }
 }
+class Limit {
+  id: string;
+  max: number;
+  min: number;
+  constructor(id: string) {
+    this.id = id;
+    this.max = Number.POSITIVE_INFINITY;
+    this.min = Number.NEGATIVE_INFINITY;
+  }
+}
+
+let limits: Limit[] = [];
 
 /*
 export class Preset {
@@ -21,17 +33,17 @@ export class Preset {
 */
 //export const presets: Preset[] = [];
 
-const offsetX: HTMLInputElement = document.querySelector("#offset-X");
-const offsetY: HTMLInputElement = document.querySelector("#offset-Y");
-const offsetZ: HTMLInputElement = document.querySelector("#offset-Z");
-const pixelNumberX: HTMLInputElement = document.querySelector("#pixel-number-X");
-const pixelNumberY: HTMLInputElement = document.querySelector("#pixel-number-Y");
-const pixelNumberZ: HTMLInputElement = document.querySelector("#pixel-number-Z");
-const rangeX: HTMLInputElement = document.querySelector("#range-X");
-const rangeY: HTMLInputElement = document.querySelector("#range-Y");
-const rangeZ: HTMLInputElement = document.querySelector("#range-Z");
-const dwellTime: HTMLInputElement = document.querySelector("#dwell-time");
-const totalTime: HTMLInputElement = document.querySelector("#total-time");
+const offsetX: HTMLInputElement = document.querySelector("#offset-x");
+const offsetY: HTMLInputElement = document.querySelector("#offset-y");
+const offsetZ: HTMLInputElement = document.querySelector("#offset-z");
+const pixelNumberX: HTMLInputElement = document.querySelector("#pixelNumber-x");
+const pixelNumberY: HTMLInputElement = document.querySelector("#pixelNumber-y");
+const pixelNumberZ: HTMLInputElement = document.querySelector("#pixelNumber-z");
+const rangeX: HTMLInputElement = document.querySelector("#range-x");
+const rangeY: HTMLInputElement = document.querySelector("#range-y");
+const rangeZ: HTMLInputElement = document.querySelector("#range-z");
+const dwellTime: HTMLInputElement = document.querySelector("#dwellTime");
+const totalTime: HTMLInputElement = document.querySelector("#totalTime");
 
 export const UIparameters: HTMLInputElement[] = [
   offsetX,
@@ -45,14 +57,20 @@ export const UIparameters: HTMLInputElement[] = [
   rangeZ,
   dwellTime
 ];
+console.log(offsetX);
+
+UIparameters.forEach(param => {
+  console.log(param);
+
+  limits.push(new Limit(param.id));
+});
 
 export const addPresetBtn: HTMLButtonElement = document.querySelector("#add-preset-btn");
 export const presetSelector: HTMLSelectElement = document.querySelector("#preset-selector");
 
-export const limits: MaxMin[] = [];
+//export const limits: MaxMin[] = [];
 
 //fills limits
-UIparameters.forEach(() => limits.push(new MaxMin()));
 
 export function sendParamChange(param: HTMLInputElement) {
   let target: string = param.id;
@@ -109,41 +127,66 @@ export function sendParamChangeSingle(resource: string, newValue: number) {
     headers: {
       "Content-Type": "application/json"
     }
-  })
+  });
 }
 
-export function updateUIParameters(state: State) {
-  UIparameters[0].value = state.scanParams.offset.x.current.toString();
-  UIparameters[1].value = state.scanParams.offset.y.current.toString();
-  UIparameters[2].value = state.scanParams.offset.z.current.toString();
-  UIparameters[3].value = state.scanParams.pixelNumber.x.current.toString();
-  UIparameters[4].value = state.scanParams.pixelNumber.y.current.toString();
-  UIparameters[5].value = state.scanParams.pixelNumber.z.current.toString();
-  UIparameters[6].value = state.scanParams.range.x.current.toString();
-  UIparameters[7].value = state.scanParams.range.y.current.toString();
-  UIparameters[8].value = state.scanParams.range.z.current.toString();
-  UIparameters[9].value = state.scanParams.dwellTime.toString();
-}
+export function updateUIParameters(scanParams: ScanParams) {
+  let props = Object.keys(scanParams);
+  props
+    .filter(prop => {
+      let innerProps = Object.keys((scanParams as any)[prop]);
+      return innerProps.includes("x") && innerProps.includes("y") && innerProps.includes("z");
+    })
+    .forEach(prop => {
+      (document.getElementById((scanParams as any)[prop].x.name) as HTMLInputElement).value = (scanParams as any)[prop].x.value.toString();
+      (document.getElementById((scanParams as any)[prop].y.name) as HTMLInputElement).value = (scanParams as any)[prop].y.value.toString();
+      (document.getElementById((scanParams as any)[prop].z.name) as HTMLInputElement).value = (scanParams as any)[prop].z.value.toString();
+    });
+    (document.getElementById("dwellTime")as HTMLInputElement).value = scanParams.dwellTime.value.toString();
+  }
 
-export function updateLimits(newState: State) {
-  limits[0].max = newState.scanParams.offset.x.max;
-  limits[0].min = newState.scanParams.offset.x.min;
-  limits[1].max = newState.scanParams.offset.y.max;
-  limits[1].min = newState.scanParams.offset.y.min;
-  limits[2].max = newState.scanParams.offset.z.max;
-  limits[2].min = newState.scanParams.offset.z.min;
+export function updateLimits(scanParams: ScanParams) {
+  let props = Object.keys(scanParams);
+  props
+    .filter(prop => {
+      let innerProps = Object.keys((scanParams as any)[prop]);
+      return innerProps.includes("x") && innerProps.includes("y") && innerProps.includes("z");
+    })
+    .forEach(prop => {
+      limits.find(limit => limit.id == (scanParams as any)[prop].x.name).max = (scanParams as any)[prop].x.max;
+      limits.find(limit => limit.id == (scanParams as any)[prop].x.name).min = (scanParams as any)[prop].x.min;
 
-  limits[3].max = newState.scanParams.pixelNumber.x.max;
-  limits[3].min = newState.scanParams.pixelNumber.x.min;
-  limits[4].max = newState.scanParams.pixelNumber.y.max;
-  limits[4].min = newState.scanParams.pixelNumber.y.min;
-  limits[5].max = newState.scanParams.pixelNumber.z.max;
-  limits[5].min = newState.scanParams.pixelNumber.z.min;
+      limits.find(limit => limit.id == (scanParams as any)[prop].y.name).max = (scanParams as any)[prop].y.max;
+      limits.find(limit => limit.id == (scanParams as any)[prop].y.name).min = (scanParams as any)[prop].y.min;
 
-  limits[6].max = newState.scanParams.range.x.max;
-  limits[6].min = newState.scanParams.range.x.min;
-  limits[7].max = newState.scanParams.range.y.max;
-  limits[7].min = newState.scanParams.range.y.min;
-  limits[8].max = newState.scanParams.range.z.max;
-  limits[8].min = newState.scanParams.range.z.min;
+      limits.find(limit => limit.id == (scanParams as any)[prop].z.name).max = (scanParams as any)[prop].z.max;
+      limits.find(limit => limit.id == (scanParams as any)[prop].z.name).min = (scanParams as any)[prop].z.min;
+    });
+  limits.find(limit => limit.id == "dwellTime").max = scanParams.dwellTime.max;
+
+  /*
+  limits[0].max = scanParams.offset.x.max;
+  limits[0].min = scanParams.offset.x.min;
+  limits[1].max = scanParams.offset.y.max;
+  limits[1].min = scanParams.offset.y.min;
+  limits[2].max = scanParams.offset.z.max;
+  limits[2].min = scanParams.offset.z.min;
+
+  limits[3].max = scanParams.pixelNumber.x.max;
+  limits[3].min = scanParams.pixelNumber.x.min;
+  limits[4].max = scanParams.pixelNumber.y.max;
+  limits[4].min = scanParams.pixelNumber.y.min;
+  limits[5].max = scanParams.pixelNumber.z.max;
+  limits[5].min = scanParams.pixelNumber.z.min;
+
+  limits[6].max = scanParams.range.x.max;
+  limits[6].min = scanParams.range.x.min;
+  limits[7].max = scanParams.range.y.max;
+  limits[7].min = scanParams.range.y.min;
+  limits[8].max = scanParams.range.z.max;
+  limits[8].min = scanParams.range.z.min;
+  */
+  console.log("limit: ");
+
+  console.log(limits);
 }

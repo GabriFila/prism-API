@@ -1,23 +1,23 @@
-interface MicroState {
+export interface MicroState {
   scanParams: ScanParams;
   lasers: Laser[];
   mode: Resource;
   motors: XYZ;
 }
-interface ScanParams {
+export interface ScanParams {
   offset: XYZ;
   pixelNumber: XYZ;
   range: XYZ;
   dwellTime: Resource;
 }
 
-interface XYZ {
+export interface XYZ {
   x: Resource;
   y: Resource;
   z: Resource;
 }
 
-interface Laser {
+export interface Laser {
   waveLength: Resource;
   power: Resource;
   isOn: Resource;

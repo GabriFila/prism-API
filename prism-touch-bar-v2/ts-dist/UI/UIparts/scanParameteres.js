@@ -6,6 +6,14 @@ class MaxMin {
         this.min = Number.NEGATIVE_INFINITY;
     }
 }
+class Limit {
+    constructor(id) {
+        this.id = id;
+        this.max = Number.POSITIVE_INFINITY;
+        this.min = Number.NEGATIVE_INFINITY;
+    }
+}
+let limits = [];
 /*
 export class Preset {
     name: string;
@@ -17,17 +25,17 @@ export class Preset {
 }
 */
 //export const presets: Preset[] = [];
-const offsetX = document.querySelector("#offset-X");
-const offsetY = document.querySelector("#offset-Y");
-const offsetZ = document.querySelector("#offset-Z");
-const pixelNumberX = document.querySelector("#pixel-number-X");
-const pixelNumberY = document.querySelector("#pixel-number-Y");
-const pixelNumberZ = document.querySelector("#pixel-number-Z");
-const rangeX = document.querySelector("#range-X");
-const rangeY = document.querySelector("#range-Y");
-const rangeZ = document.querySelector("#range-Z");
-const dwellTime = document.querySelector("#dwell-time");
-const totalTime = document.querySelector("#total-time");
+const offsetX = document.querySelector("#offset-x");
+const offsetY = document.querySelector("#offset-y");
+const offsetZ = document.querySelector("#offset-z");
+const pixelNumberX = document.querySelector("#pixelNumber-x");
+const pixelNumberY = document.querySelector("#pixelNumber-y");
+const pixelNumberZ = document.querySelector("#pixelNumber-z");
+const rangeX = document.querySelector("#range-x");
+const rangeY = document.querySelector("#range-y");
+const rangeZ = document.querySelector("#range-z");
+const dwellTime = document.querySelector("#dwellTime");
+const totalTime = document.querySelector("#totalTime");
 exports.UIparameters = [
     offsetX,
     offsetY,
@@ -40,11 +48,15 @@ exports.UIparameters = [
     rangeZ,
     dwellTime
 ];
+console.log(offsetX);
+exports.UIparameters.forEach(param => {
+    console.log(param);
+    limits.push(new Limit(param.id));
+});
 exports.addPresetBtn = document.querySelector("#add-preset-btn");
 exports.presetSelector = document.querySelector("#preset-selector");
-exports.limits = [];
+//export const limits: MaxMin[] = [];
 //fills limits
-exports.UIparameters.forEach(() => exports.limits.push(new MaxMin()));
 function sendParamChange(param) {
     let target = param.id;
     let resource;
@@ -102,38 +114,61 @@ function sendParamChangeSingle(resource, newValue) {
     });
 }
 exports.sendParamChangeSingle = sendParamChangeSingle;
-function updateUIParameters(state) {
-    exports.UIparameters[0].value = state.scanParams.offset.x.current.toString();
-    exports.UIparameters[1].value = state.scanParams.offset.y.current.toString();
-    exports.UIparameters[2].value = state.scanParams.offset.z.current.toString();
-    exports.UIparameters[3].value = state.scanParams.pixelNumber.x.current.toString();
-    exports.UIparameters[4].value = state.scanParams.pixelNumber.y.current.toString();
-    exports.UIparameters[5].value = state.scanParams.pixelNumber.z.current.toString();
-    exports.UIparameters[6].value = state.scanParams.range.x.current.toString();
-    exports.UIparameters[7].value = state.scanParams.range.y.current.toString();
-    exports.UIparameters[8].value = state.scanParams.range.z.current.toString();
-    exports.UIparameters[9].value = state.scanParams.dwellTime.toString();
+function updateUIParameters(scanParams) {
+    let props = Object.keys(scanParams);
+    props
+        .filter(prop => {
+        let innerProps = Object.keys(scanParams[prop]);
+        return innerProps.includes("x") && innerProps.includes("y") && innerProps.includes("z");
+    })
+        .forEach(prop => {
+        document.getElementById(scanParams[prop].x.name).value = scanParams[prop].x.value.toString();
+        document.getElementById(scanParams[prop].y.name).value = scanParams[prop].y.value.toString();
+        document.getElementById(scanParams[prop].z.name).value = scanParams[prop].z.value.toString();
+    });
+    document.getElementById("dwellTime").value = scanParams.dwellTime.value.toString();
 }
 exports.updateUIParameters = updateUIParameters;
-function updateLimits(newState) {
-    exports.limits[0].max = newState.scanParams.offset.x.max;
-    exports.limits[0].min = newState.scanParams.offset.x.min;
-    exports.limits[1].max = newState.scanParams.offset.y.max;
-    exports.limits[1].min = newState.scanParams.offset.y.min;
-    exports.limits[2].max = newState.scanParams.offset.z.max;
-    exports.limits[2].min = newState.scanParams.offset.z.min;
-    exports.limits[3].max = newState.scanParams.pixelNumber.x.max;
-    exports.limits[3].min = newState.scanParams.pixelNumber.x.min;
-    exports.limits[4].max = newState.scanParams.pixelNumber.y.max;
-    exports.limits[4].min = newState.scanParams.pixelNumber.y.min;
-    exports.limits[5].max = newState.scanParams.pixelNumber.z.max;
-    exports.limits[5].min = newState.scanParams.pixelNumber.z.min;
-    exports.limits[6].max = newState.scanParams.range.x.max;
-    exports.limits[6].min = newState.scanParams.range.x.min;
-    exports.limits[7].max = newState.scanParams.range.y.max;
-    exports.limits[7].min = newState.scanParams.range.y.min;
-    exports.limits[8].max = newState.scanParams.range.z.max;
-    exports.limits[8].min = newState.scanParams.range.z.min;
+function updateLimits(scanParams) {
+    let props = Object.keys(scanParams);
+    props
+        .filter(prop => {
+        let innerProps = Object.keys(scanParams[prop]);
+        return innerProps.includes("x") && innerProps.includes("y") && innerProps.includes("z");
+    })
+        .forEach(prop => {
+        limits.find(limit => limit.id == scanParams[prop].x.name).max = scanParams[prop].x.max;
+        limits.find(limit => limit.id == scanParams[prop].x.name).min = scanParams[prop].x.min;
+        limits.find(limit => limit.id == scanParams[prop].y.name).max = scanParams[prop].y.max;
+        limits.find(limit => limit.id == scanParams[prop].y.name).min = scanParams[prop].y.min;
+        limits.find(limit => limit.id == scanParams[prop].z.name).max = scanParams[prop].z.max;
+        limits.find(limit => limit.id == scanParams[prop].z.name).min = scanParams[prop].z.min;
+    });
+    limits.find(limit => limit.id == "dwellTime").max = scanParams.dwellTime.max;
+    /*
+    limits[0].max = scanParams.offset.x.max;
+    limits[0].min = scanParams.offset.x.min;
+    limits[1].max = scanParams.offset.y.max;
+    limits[1].min = scanParams.offset.y.min;
+    limits[2].max = scanParams.offset.z.max;
+    limits[2].min = scanParams.offset.z.min;
+  
+    limits[3].max = scanParams.pixelNumber.x.max;
+    limits[3].min = scanParams.pixelNumber.x.min;
+    limits[4].max = scanParams.pixelNumber.y.max;
+    limits[4].min = scanParams.pixelNumber.y.min;
+    limits[5].max = scanParams.pixelNumber.z.max;
+    limits[5].min = scanParams.pixelNumber.z.min;
+  
+    limits[6].max = scanParams.range.x.max;
+    limits[6].min = scanParams.range.x.min;
+    limits[7].max = scanParams.range.y.max;
+    limits[7].min = scanParams.range.y.min;
+    limits[8].max = scanParams.range.z.max;
+    limits[8].min = scanParams.range.z.min;
+    */
+    console.log("limit: ");
+    console.log(limits);
 }
 exports.updateLimits = updateLimits;
 //# sourceMappingURL=scanParameteres.js.map

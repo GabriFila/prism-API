@@ -1,8 +1,8 @@
-import { UIparameters, limits, updateLimits, updateUIParameters } from "./UIparts/scanParameteres";
+/*
 import { updateUILasersFromLasers, updateUILasersFromState } from "./UIparts/lasers";
 import { lookSurface } from "./mainUI";
-import { State } from "./UIparts/classes";
 import { updateMode } from "./UIparts/mode";
+import { MicroState } from "../model";
 
 const source = new EventSource("/updates");
 
@@ -68,23 +68,13 @@ export function setUpUpdater() {
   });
 }
 
-export function getCurrentState() {
-  fetch("/prismState/")
-    .then(res => res.json())
-    .then(newState => {
-      newState;
-      updateLimits(newState);
-      updateUILasersFromState(newState);
-      updateUIParameters(newState);
-      updateUIPads(newState);
-    });
-}
 
-function updateUIPads(newState: State) {
-  lookSurface.leftRelPos = (newState.scanParams.offset.x.current * lookSurface.areaWidth) / limits[0].max;
-  lookSurface.topRelPos = (newState.scanParams.offset.y.current * lookSurface.areaHeight) / limits[1].max;
-  lookSurface.elWidth = (newState.scanParams.range.x.current * lookSurface.areaWidth) / limits[6].max;
-  lookSurface.elHeight = (newState.scanParams.range.y.current * lookSurface.areaHeight) / limits[7].max;
+
+function updateUIPads(newState: MicroState) {
+  lookSurface.leftRelPos = (newState.scanParams.offset.x.value * lookSurface.areaWidth) / limits[0].max;
+  lookSurface.topRelPos = (newState.scanParams.offset.y.value * lookSurface.areaHeight) / limits[1].max;
+  lookSurface.elWidth = (newState.scanParams.range.x.value * lookSurface.areaWidth) / limits[6].max;
+  lookSurface.elHeight = (newState.scanParams.range.y.value * lookSurface.areaHeight) / limits[7].max;
 }
 
 export function sendMode(newMode: string) {
@@ -95,4 +85,18 @@ export function sendMode(newMode: string) {
       "Content-type": "application/json"
     }
   });
+}
+
+*/
+import { UIparameters, updateLimits, updateUIParameters } from "./UIparts/scanParameteres";
+import { MicroState } from "../model";
+export function getCurrentState() {
+  fetch("/prismState/")
+    .then(res => res.json())
+    .then((newState : MicroState) => {
+      updateLimits(newState.scanParams);
+      //updateUILasersFromState(newState);
+       updateUIParameters(newState.scanParams);
+      //updateUIPads(newState);
+    });
 }

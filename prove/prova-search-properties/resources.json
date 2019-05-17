@@ -1,0 +1,180 @@
+{
+    "mode": {
+      "name": "mode",
+      "value": "stop"
+    },
+    "scanParams": {
+      "offset": {
+        "x": {
+          "name": "offset-x",
+          "value": 500,
+          "max": 1000,
+          "min": 0,
+          "unit": "nm"
+        },
+        "y": {
+          "name": "offset-y",
+          "value": 500,
+          "max": 1000,
+          "min": 0,
+          "unit": "nm"
+        },
+        "z": {
+          "name": "offset-z",
+          "value": 500,
+          "max": 1000,
+          "min": 0,
+          "unit": "nm"
+        }
+      },
+      "pixelNumber": {
+        "x": {
+          "name": "pixelNumber-x",
+          "value": 500,
+          "max": 1000,
+          "min": 0,
+          "unit": "px"
+        },
+        "y": {
+          "name": "pixelNumber-y",
+          "value": 500,
+          "max": 1000,
+          "min": 0,
+          "unit": "px"
+        },
+        "z": {
+          "name": "pixelNumber-z",
+          "value": 500,
+          "max": 1000,
+          "min": 0,
+          "unit": "px"
+        }
+      },
+      "range": {
+        "x": {
+          "name": "range-x",
+          "value": 500,
+          "max": 1000,
+          "min": 0,
+          "unit": "nm"
+        },
+        "y": {
+          "name": "range-y",
+          "value": 500,
+          "max": 1000,
+          "min": 0,
+          "unit": "nm"
+        },
+        "z": {
+          "name": "range-z",
+          "value": 500,
+          "max": 1000,
+          "min": 0,
+          "unit": "nm"
+        }
+      },
+      "dwellTime": {
+        "name": "dwellTime",
+        "value": 40,
+        "unit": "nm",
+        "min": 0
+      }
+    },
+    "lasers": [
+      {
+        "waveLength": {
+          "name": "laser-100-nm-waveLength",
+          "value": 100,
+          "unit": "nm"
+        },
+        "power": {
+          "name": "laser-100-nm-power",
+          "value": 10,
+          "unit": "%"
+        },
+        "isOn": {
+          "name": "laser-100-nm-isOn",
+          "value": true
+        },
+        "isPresent": {
+          "name": "laser-100-nm-isPresent",
+          "value": true
+        }
+      },
+      {
+        "name": "laser-200-nm-waveLength",
+        "waveLength": {
+          "value": 200,
+          "unit": "nm"
+        },
+        "power": {
+          "name": "laser-200-nm-power",
+          "value": 20,
+          "unit": "%"
+        },
+        "isOn": {
+          "name": "laser-200-nm-isOn",
+          "value": true
+        },
+        "isPresent": {
+          "name": "laser-200-nm-isPresent",
+          "value": true
+        }
+      },
+      {
+        "waveLength": {
+          "name": "laser-300-nm-waveLength",
+          "value": 300,
+          "unit": "nm"
+        },
+        "power": {
+          "name": "laser-300-nm-power",
+          "value": 30,
+          "unit": "%"
+        },
+        "isOn": {
+          "name": "laser-300-nm-isOn",
+          "value": false
+        },
+        "isPresent": {
+          "name": "laser-300-nm-isPresent",
+          "value": true
+        }
+      },
+      {
+        "waveLength": {
+          "name": "laser-400-nm-waveLength",
+          "value": 400,
+          "unit": "nm"
+        },
+        "power": {
+          "name": "laser-400-nm-power",
+          "value": 40,
+          "unit": "%"
+        },
+        "isOn": {
+          "name": "laser-400-nm-isOn",
+          "value": true
+        },
+        "isPresent": {
+          "name": "laser400-nm-isPresent",
+          "value": true
+        }
+      }
+    ],
+    "motors": {
+      "x": {
+        "value": 0,
+        "unit": "steps"
+      },
+      "y": {
+        "value": 0,
+        "unit": "steps"
+      },
+      "z": {
+        "value": 0,
+        "unit": "steps"
+      }
+    }
+  }
+  

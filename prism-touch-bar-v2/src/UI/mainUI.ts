@@ -1,9 +1,9 @@
 /*laser elements*/
-import { laserUIBoxes, grayOutLaserBox, lightUpLaserBox, sendLaserData } from "./UIparts/lasers";
+//import { laserUIBoxes, grayOutLaserBox, lightUpLaserBox, sendLaserData } from "./UIparts/lasers";
 /*numpad element*/
 import { numPad, delBtn, dotBtn } from "./UIparts/numpad";
 /*parameters elements and methods*/
-import { UIparameters, sendParamChange, limits, sendParamChangeSingle } from "./UIparts/scanParameteres";
+//import { UIparameters, sendParamChange, limits, sendParamChangeSingle } from "./UIparts/scanParameteres";
 /*UI pads,joysticks objects */
 import { zSensBtn, zSenses, zThumb, zSlider, joyThumb, inspectArea, sampleArea, joyPad } from "./UIparts/drag-pinch-joystick/movObj";
 /*joystick capabilties*/
@@ -13,15 +13,15 @@ import { PinchObj } from "./UIparts/drag-pinch-joystick/pinchObj";
 /*circular joystick class*/
 import { CircJoystickObj } from "./UIparts/drag-pinch-joystick/circJoystick";
 /*UI SSE updater*/
-import { setUpUpdater, getCurrentState, sendMode } from "./UIupdater";
+import { getCurrentState } from "./UIupdater";
 import { liveBtn, captureBtn, stackBtn, currentMode } from "./UIparts/mode";
 
 /*get microscope state on UI start-up */
+
 getCurrentState();
+//setUpUpdater();
 
-setUpUpdater();
-
-/* mode btns events */
+/* mode btns events 
 
 liveBtn.addEventListener("click", () => {
   if (currentMode === "live") {
@@ -55,10 +55,10 @@ stackBtn.addEventListener("click", () => {
 
 /*UI scanning parameters settings */
 
-/*last item in focus*/
+/*last item in focus
 let lastFocus: HTMLInputElement = undefined;
 
-/*store last parameters input in focus*/
+/*store last parameters input in focus
 UIparameters.forEach(param => {
   param.addEventListener("touchstart", () => {
     removeHighlithBoder();
@@ -68,7 +68,7 @@ UIparameters.forEach(param => {
   });
 });
 
-/*remove highlight border only when touching something excluding numpad and selectred parameter*/
+/*remove highlight border only when touching something excluding numpad and selectred parameter
 document.body.addEventListener("click", function(e) {
   if (lastFocus != null) {
     if (numPad.filter(numBtn => numBtn === e.target).length == 0) {
@@ -88,7 +88,7 @@ function removeHighlithBoder() {
 
 /*Laser boxes events */
 
-/*adds event to slider box for slider movement and on/off button*/
+/*adds event to slider box for slider movement and on/off button
 laserUIBoxes.forEach(laserUIBox => {
   laserUIBox.slider.addEventListener("input", () => {
     let tempValue = laserUIBox.slider.value;
@@ -109,7 +109,7 @@ laserUIBoxes.forEach(laserUIBox => {
 
 /*Numpad events */
 
-/*add touched num in last focus element*/
+/*add touched num in last focus element
 numPad.forEach((numBtn, i) => {
   numBtn.addEventListener("click", () => {
     if (lastFocus != null) {
@@ -130,7 +130,7 @@ numPad.forEach((numBtn, i) => {
   });
 });
 
-/*add dot to last focus element when dot button pressed */
+/*add dot to last focus element when dot button pressed 
 dotBtn.addEventListener("click", () => {
   if (lastFocus !== null && lastFocus.value.slice(-1) !== "." && lastFocus.value.length != 0) {
     lastFocus.classList.add("highlighted");
@@ -138,20 +138,20 @@ dotBtn.addEventListener("click", () => {
   }
 });
 
-/*delete number to last focus element when delete button pressed */
+/*delete number to last focus element when delete button pressed 
 delBtn.addEventListener("click", () => {
   if (lastFocus != null) {
     lastFocus.classList.add("highlighted");
-    lastFocus.value = lastFocus.value.slice(0, -1); /*remove last character */
+    lastFocus.value = lastFocus.value.slice(0, -1); /*remove last character 
     sendParamChange(lastFocus);
   }
 });
 
-/*look surface events*/
+/*look surface events
 
 export const lookSurface = new PinchObj(inspectArea, sampleArea, 20);
 
-/*update own UI parameters*/
+/*update own UI parameters
 lookSurface.area.addEventListener("touchmove", () => {
   UIparameters[0].value = String((lookSurface.leftRelPos * limits[0].max) / lookSurface.areaWidth);
   UIparameters[1].value = String((lookSurface.topRelPos * limits[1].max) / lookSurface.areaHeight);
@@ -159,7 +159,7 @@ lookSurface.area.addEventListener("touchmove", () => {
   UIparameters[7].value = String((lookSurface.elHeight * limits[7].max) / lookSurface.areaHeight);
 });
 
-/*send parameter change when untouched*/
+/*send parameter change when untouched
 lookSurface.area.addEventListener("touchend", () => {
   sendParamChangeSingle("offset/x", Number(UIparameters[0].value));
   sendParamChangeSingle("offset/y", Number(UIparameters[1].value));
@@ -169,11 +169,11 @@ lookSurface.area.addEventListener("touchend", () => {
 
 /*motor sliders */
 
-/*joystick initializations*/
+/*joystick initializations
 let zMotor = new SliderJoystickObj(zThumb, zSlider);
 let xyMotor = new CircJoystickObj(joyThumb, joyPad);
 
-/*change z joystick sensibility when touched */
+/*change z joystick sensibility when touched 
 zSensBtn.addEventListener("click", () => {
   zSensBtn.innerHTML = zSenses[(zSenses.indexOf(zSensBtn.innerHTML) + 1) % zSenses.length];
 });
@@ -219,3 +219,5 @@ zMotor.element.addEventListener("touchstart", () => {
 });
 
 zMotor.element.addEventListener("touchend", () => clearInterval(intervalCheckerZ));
+
+*/

@@ -1,4 +1,5 @@
-import { State, Laser } from "./classes";
+/*
+import { State as MicroState, Laser } from "../../model";
 
 class LaserUIBox {
   box: HTMLDivElement;
@@ -76,7 +77,7 @@ export function lightUpLaserBox(laserBox: LaserUIBox) {
   laserBox.btn.classList.add("laser-btn-on");
 }
 
-export function updateUILasersFromState(newState: State) {
+export function updateUILasersFromState(newState: MicroState) {
   laserUIBoxes.forEach((laserUIBox, i) => {
     //hide empty lasers
     if (i >= newState.lasers.length) laserUIBoxes[i].visible = false;
@@ -121,3 +122,5 @@ export function sendLaserData(laserBox: LaserUIBox) {
     })
   }).then(res => res.json());
 }
+
+*/
