@@ -5,8 +5,6 @@ import { Resource } from "../model";
 export const updates = express.Router();
 
 export function setUpObserver() {
-  console.log(`setting up observer`);
-
   observer.subscribe(this, "API-updated", (who: any, resource: Resource) => {
     //function sendUpdateToPrism(`updated-${resource.name}`, resource.value)
     //SSEwrite(resource.value, `updated-${resource.name}`);

@@ -1,12 +1,10 @@
 import * as express from "express";
 import { microState } from "../model";
-import { runInNewContext } from "vm";
 
 export const mode = express.Router();
 
-mode.get("/", (req, res,next) => {
-  res.resource = microState.mode;
-  next();
+mode.get("/", (req, res) => {
+  res.status(200).json(microState.mode);
 });
 
 mode.put("/", (req, res, next) => {

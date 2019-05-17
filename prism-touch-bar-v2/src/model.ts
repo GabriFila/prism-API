@@ -2,6 +2,7 @@ interface MicroState {
   scanParams: ScanParams;
   lasers: Laser[];
   mode: Resource;
+  motors: XYZ;
 }
 interface ScanParams {
   offset: XYZ;

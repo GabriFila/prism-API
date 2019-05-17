@@ -9,6 +9,5 @@ export function responseSender(req: express.Request, res: express.Response, next
     res.resource.value = req.body.newValue;
     observer.send(this, "API-updated", res.resource);
     res.status(200).json({ newValue: res.resource.value });
-  } else if (req.method == "GET") res.status(200).json({ value: res.resource.value });
-  else next();
+  } else next();
 }

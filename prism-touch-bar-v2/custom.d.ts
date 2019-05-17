@@ -1,6 +1,7 @@
 declare namespace Express {
   export interface Response {
     resource?: Resource;
+    toGet ?: any;
   }
 }
 

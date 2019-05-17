@@ -4,6 +4,7 @@
     "value": "stop"
   },
   "scanParams": {
+    "name": "scanParams",
     "offset": {
       "x": {
         "name": "offset-x",
@@ -77,7 +78,7 @@
       "name": "dwellTime",
       "value": 40,
       "unit": "nm",
-      "min":0
+      "min": 0
     }
   },
   "lasers": [
