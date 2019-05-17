@@ -4,7 +4,6 @@ const express = require("express");
 const observer = require("node-observer");
 exports.updates = express.Router();
 function setUpObserver() {
-    console.log(`setting up observer`);
     observer.subscribe(this, "API-updated", (who, resource) => {
         //function sendUpdateToPrism(`updated-${resource.name}`, resource.value)
         //SSEwrite(resource.value, `updated-${resource.name}`);

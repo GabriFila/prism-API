@@ -1,5 +1,5 @@
 import * as express from "express";
-import { microState } from "../model";
+import { microState } from "../../model";
 import { isBoolean, isNumber } from "util";
 
 export const lasers = express.Router();

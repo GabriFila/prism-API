@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
-const model_1 = require("../model");
+const model_1 = require("../../model");
 exports.scanParams = express.Router();
 exports.scanParams.get("/", (req, res) => {
     res.status(200).json(model_1.microState.scanParams);

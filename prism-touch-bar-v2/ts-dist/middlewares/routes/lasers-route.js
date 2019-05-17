@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
-const model_1 = require("../model");
+const model_1 = require("../../model");
 const util_1 = require("util");
 exports.lasers = express.Router();
 exports.lasers.get("/", (req, res) => {

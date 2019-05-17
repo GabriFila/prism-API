@@ -1,15 +1,15 @@
 import * as express from "express";
 import * as path from "path";
 import * as bodyParser from "body-parser";
-import { setUpObserver } from "./routes/updates-route";
+import { setUpObserver } from "./middlewares/routes/updates-route";
 
-import { updates } from "./routes/updates-route";
-import { prismState } from "./routes/prismState-route";
+import { updates } from "./middlewares/routes/updates-route";
+import { prismState } from "./middlewares/routes/prismState-route";
 
 import { bodyChecker } from "./middlewares/bodyChecker";
 import { limitsChecker } from "./middlewares/limitsChecker";
 import { responseSender } from "./middlewares/responseSender";
-import { prismMotors } from "./routes/prismMotors-route";
+import { prismMotors } from "./middlewares/routes/prismMotors-route";
 
 const server = express();
 

@@ -1,6 +1,6 @@
 import * as express from "express";
 import * as observer from "node-observer";
-import { Resource } from "../model";
+import { Resource } from "../../model";
 
 export const updates = express.Router();
 

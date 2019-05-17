@@ -1,6 +1,6 @@
 import * as express from "express";
 import { isNumber } from "util";
-import { microState } from "../model";
+import { microState } from "../../model";
 
 export const prismMotors = express.Router();
 

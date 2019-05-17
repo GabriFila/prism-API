@@ -3,13 +3,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");
-const updates_route_1 = require("./routes/updates-route");
-const updates_route_2 = require("./routes/updates-route");
-const prismState_route_1 = require("./routes/prismState-route");
+const updates_route_1 = require("./middlewares/routes/updates-route");
+const updates_route_2 = require("./middlewares/routes/updates-route");
+const prismState_route_1 = require("./middlewares/routes/prismState-route");
 const bodyChecker_1 = require("./middlewares/bodyChecker");
 const limitsChecker_1 = require("./middlewares/limitsChecker");
 const responseSender_1 = require("./middlewares/responseSender");
-const prismMotors_route_1 = require("./routes/prismMotors-route");
+const prismMotors_route_1 = require("./middlewares/routes/prismMotors-route");
 const server = express();
 updates_route_1.setUpObserver();
 //json parser middlware

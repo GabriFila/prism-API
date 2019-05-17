@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
-const model_1 = require("../model");
+const model_1 = require("../../model");
 const scanParams_route_1 = require("./scanParams-route");
 const mode_route_1 = require("./mode-route");
 const lasers_route_1 = require("./lasers-route");

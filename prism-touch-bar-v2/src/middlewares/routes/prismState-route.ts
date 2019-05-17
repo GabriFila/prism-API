@@ -1,5 +1,5 @@
 import * as express from "express";
-import { microState } from "../model";
+import { microState } from "../../model";
 import { scanParams } from "./scanParams-route";
 import { mode } from "./mode-route";
 import { lasers } from "./lasers-route";
