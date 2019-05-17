@@ -9,7 +9,7 @@ mode.get("/", (req, res) => {
 
 mode.put("/", (req, res, next) => {
   let newMode = req.body.newValue;
-  if (newMode === "live" || newMode === "capture" || newMode === "stack" || newMode === "stand-by") {
+  if (newMode === "live" || newMode === "capture" || newMode === "stack" || newMode === "stop") {
     res.resource = microState.mode;
     next();
   } else res.status(400).json({ error: `${newMode} is invalid for mode` });

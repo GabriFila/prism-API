@@ -8,7 +8,7 @@ exports.mode.get("/", (req, res) => {
 });
 exports.mode.put("/", (req, res, next) => {
     let newMode = req.body.newValue;
-    if (newMode === "live" || newMode === "capture" || newMode === "stack" || newMode === "stand-by") {
+    if (newMode === "live" || newMode === "capture" || newMode === "stack" || newMode === "stop") {
         res.resource = model_1.microState.mode;
         next();
     }

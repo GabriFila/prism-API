@@ -1,8 +1,28 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/*parameters elements and methods*/
+//import { UIparameters, sendParamChange, limits, sendParamChangeSingle } from "./UIparts/scanParameteres";
+/*UI pads,joysticks objects */
+const movObj_1 = require("./UIparts/drag-pinch-joystick/movObj");
+/*pinch class*/
+const pinchObj_1 = require("./UIparts/drag-pinch-joystick/pinchObj");
 /*UI SSE updater*/
 const UIupdater_1 = require("./UIupdater");
+const mode_1 = require("./UIparts/mode");
 /*get microscope state on UI start-up */
+mode_1.modeBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+        if (btn.classList.contains("highlighted-button")) {
+            btn.classList.remove("highlighted-button");
+            UIupdater_1.sendPut("prismState/mode", "stop");
+        }
+        else {
+            mode_1.modeBtns.forEach(btn => btn.classList.remove("highlighted-button"));
+            btn.classList.add("highlighted-button");
+            UIupdater_1.sendPut("prismState/mode", btn.id.split("-")[0]);
+        }
+    });
+});
 UIupdater_1.getCurrentState();
 //setUpUpdater();
 /* mode btns events
@@ -130,7 +150,6 @@ delBtn.addEventListener("click", () => {
 
 /*look surface events
 
-export const lookSurface = new PinchObj(inspectArea, sampleArea, 20);
 
 /*update own UI parameters
 lookSurface.area.addEventListener("touchmove", () => {
@@ -200,5 +219,6 @@ zMotor.element.addEventListener("touchstart", () => {
 
 zMotor.element.addEventListener("touchend", () => clearInterval(intervalCheckerZ));
 
-*/ 
+*/
+exports.lookSurface = new pinchObj_1.PinchObj(movObj_1.inspectArea, movObj_1.sampleArea, 20);
 //# sourceMappingURL=mainUI.js.map

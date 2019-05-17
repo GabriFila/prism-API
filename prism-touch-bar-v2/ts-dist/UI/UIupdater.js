@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 /*
 import { updateUILasersFromLasers, updateUILasersFromState } from "./UIparts/lasers";
-import { lookSurface } from "./mainUI";
 import { updateMode } from "./UIparts/mode";
 import { MicroState } from "../model";
 
@@ -72,34 +71,79 @@ export function setUpUpdater() {
 
 
 
-function updateUIPads(newState: MicroState) {
-  lookSurface.leftRelPos = (newState.scanParams.offset.x.value * lookSurface.areaWidth) / limits[0].max;
-  lookSurface.topRelPos = (newState.scanParams.offset.y.value * lookSurface.areaHeight) / limits[1].max;
-  lookSurface.elWidth = (newState.scanParams.range.x.value * lookSurface.areaWidth) / limits[6].max;
-  lookSurface.elHeight = (newState.scanParams.range.y.value * lookSurface.areaHeight) / limits[7].max;
-}
-
-export function sendMode(newMode: string) {
-  fetch("/prismState/mode", {
-    method: "PUT",
-    body: JSON.stringify({ newMode }),
-    headers: {
-      "Content-type": "application/json"
-    }
-  });
-}
 
 */
+function sendMode(newMode) {
+    fetch("/prismState/mode", {
+        method: "PUT",
+        body: JSON.stringify({ newValue: newMode }),
+        headers: {
+            "Content-type": "application/json"
+        }
+    });
+}
+exports.sendMode = sendMode;
+function sendPut(resoruce, newValue) {
+    fetch(`/${resoruce}`, {
+        method: "PUT",
+        body: JSON.stringify({ newValue }),
+        headers: {
+            "Content-type": "application/json"
+        }
+    });
+}
+exports.sendPut = sendPut;
 const scanParameteres_1 = require("./UIparts/scanParameteres");
 function getCurrentState() {
     fetch("/prismState/")
         .then(res => res.json())
         .then((newState) => {
-        scanParameteres_1.updateLimits(newState.scanParams);
+        updateLimits(newState.scanParams);
         //updateUILasersFromState(newState);
-        scanParameteres_1.updateUIParameters(newState.scanParams);
-        //updateUIPads(newState);
+        updateUIParameters(newState.scanParams);
+        updateUIPads(newState.scanParams);
     });
 }
 exports.getCurrentState = getCurrentState;
+const mainUI_1 = require("./mainUI");
+function updateUIPads(scanParams) {
+    mainUI_1.lookSurface.leftRelPos =
+        (scanParams.offset.x.value * mainUI_1.lookSurface.areaWidth) / scanParameteres_1.limits.find(limit => limit.id == scanParams.offset.x.name).max;
+    mainUI_1.lookSurface.topRelPos =
+        (scanParams.offset.y.value * mainUI_1.lookSurface.areaHeight) / scanParameteres_1.limits.find(limit => limit.id == scanParams.offset.y.name).max;
+    mainUI_1.lookSurface.elWidth = (scanParams.range.x.value * mainUI_1.lookSurface.areaWidth) / scanParameteres_1.limits.find(limit => limit.id == scanParams.range.x.name).max;
+    mainUI_1.lookSurface.elHeight =
+        (scanParams.range.y.value * mainUI_1.lookSurface.areaHeight) / scanParameteres_1.limits.find(limit => limit.id == scanParams.range.y.name).max;
+}
+function updateUIParameters(scanParams) {
+    let props = Object.keys(scanParams);
+    props
+        .filter(prop => {
+        let innerProps = Object.keys(scanParams[prop]);
+        return innerProps.includes("x") && innerProps.includes("y") && innerProps.includes("z");
+    })
+        .forEach(prop => {
+        document.getElementById(scanParams[prop].x.name).value = scanParams[prop].x.value.toString();
+        document.getElementById(scanParams[prop].y.name).value = scanParams[prop].y.value.toString();
+        document.getElementById(scanParams[prop].z.name).value = scanParams[prop].z.value.toString();
+    });
+    document.getElementById("dwellTime").value = scanParams.dwellTime.value.toString();
+}
+function updateLimits(scanParams) {
+    let props = Object.keys(scanParams);
+    props
+        .filter(prop => {
+        let innerProps = Object.keys(scanParams[prop]);
+        return innerProps.includes("x") && innerProps.includes("y") && innerProps.includes("z");
+    })
+        .forEach(prop => {
+        scanParameteres_1.limits.find(limit => limit.id == scanParams[prop].x.name).max = scanParams[prop].x.max;
+        scanParameteres_1.limits.find(limit => limit.id == scanParams[prop].x.name).min = scanParams[prop].x.min;
+        scanParameteres_1.limits.find(limit => limit.id == scanParams[prop].y.name).max = scanParams[prop].y.max;
+        scanParameteres_1.limits.find(limit => limit.id == scanParams[prop].y.name).min = scanParams[prop].y.min;
+        scanParameteres_1.limits.find(limit => limit.id == scanParams[prop].z.name).max = scanParams[prop].z.max;
+        scanParameteres_1.limits.find(limit => limit.id == scanParams[prop].z.name).min = scanParams[prop].z.min;
+    });
+    scanParameteres_1.limits.find(limit => limit.id == "dwellTime").max = scanParams.dwellTime.max;
+}
 //# sourceMappingURL=UIupdater.js.map

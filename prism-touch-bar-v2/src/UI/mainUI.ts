@@ -13,11 +13,23 @@ import { PinchObj } from "./UIparts/drag-pinch-joystick/pinchObj";
 /*circular joystick class*/
 import { CircJoystickObj } from "./UIparts/drag-pinch-joystick/circJoystick";
 /*UI SSE updater*/
-import { getCurrentState } from "./UIupdater";
-import { liveBtn, captureBtn, stackBtn, currentMode } from "./UIparts/mode";
+import { getCurrentState, sendPut } from "./UIupdater";
+import { liveBtn, captureBtn, stackBtn, currentMode, modeBtns } from "./UIparts/mode";
 
 /*get microscope state on UI start-up */
 
+modeBtns.forEach(btn => {
+  btn.addEventListener("click", () => {
+    if (btn.classList.contains("highlighted-button")) {
+      btn.classList.remove("highlighted-button")
+      sendPut("prismState/mode", "stop");
+    } else {
+      modeBtns.forEach(btn => btn.classList.remove("highlighted-button"));
+      btn.classList.add("highlighted-button");
+      sendPut("prismState/mode", btn.id.split("-")[0]);
+    }
+  });
+});
 getCurrentState();
 //setUpUpdater();
 
@@ -149,7 +161,6 @@ delBtn.addEventListener("click", () => {
 
 /*look surface events
 
-export const lookSurface = new PinchObj(inspectArea, sampleArea, 20);
 
 /*update own UI parameters
 lookSurface.area.addEventListener("touchmove", () => {
@@ -221,3 +232,5 @@ zMotor.element.addEventListener("touchstart", () => {
 zMotor.element.addEventListener("touchend", () => clearInterval(intervalCheckerZ));
 
 */
+
+export const lookSurface = new PinchObj(inspectArea, sampleArea, 20);

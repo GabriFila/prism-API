@@ -1,13 +1,5 @@
-import { ScanParams, XYZ } from "../../model";
+import { ScanParams } from "../../model";
 
-class MaxMin {
-  max: number;
-  min: number;
-  constructor() {
-    this.max = Number.POSITIVE_INFINITY;
-    this.min = Number.NEGATIVE_INFINITY;
-  }
-}
 class Limit {
   id: string;
   max: number;
@@ -19,19 +11,7 @@ class Limit {
   }
 }
 
-let limits: Limit[] = [];
-
-/*
-export class Preset {
-    name: string;
-    param: ParamState;
-    constructor(name: string, param: ParamState) {
-        this.name = name;
-        this.param = param;
-    }
-}
-*/
-//export const presets: Preset[] = [];
+export const limits: Limit[] = [];
 
 const offsetX: HTMLInputElement = document.querySelector("#offset-x");
 const offsetY: HTMLInputElement = document.querySelector("#offset-y");
@@ -57,20 +37,15 @@ export const UIparameters: HTMLInputElement[] = [
   rangeZ,
   dwellTime
 ];
-console.log(offsetX);
 
-UIparameters.forEach(param => {
-  console.log(param);
-
-  limits.push(new Limit(param.id));
-});
+//initialize limit array
+UIparameters.forEach(param => limits.push(new Limit(param.id)));
 
 export const addPresetBtn: HTMLButtonElement = document.querySelector("#add-preset-btn");
 export const presetSelector: HTMLSelectElement = document.querySelector("#preset-selector");
 
 //export const limits: MaxMin[] = [];
 
-//fills limits
 
 export function sendParamChange(param: HTMLInputElement) {
   let target: string = param.id;
@@ -130,63 +105,14 @@ export function sendParamChangeSingle(resource: string, newValue: number) {
   });
 }
 
-export function updateUIParameters(scanParams: ScanParams) {
-  let props = Object.keys(scanParams);
-  props
-    .filter(prop => {
-      let innerProps = Object.keys((scanParams as any)[prop]);
-      return innerProps.includes("x") && innerProps.includes("y") && innerProps.includes("z");
-    })
-    .forEach(prop => {
-      (document.getElementById((scanParams as any)[prop].x.name) as HTMLInputElement).value = (scanParams as any)[prop].x.value.toString();
-      (document.getElementById((scanParams as any)[prop].y.name) as HTMLInputElement).value = (scanParams as any)[prop].y.value.toString();
-      (document.getElementById((scanParams as any)[prop].z.name) as HTMLInputElement).value = (scanParams as any)[prop].z.value.toString();
-    });
-    (document.getElementById("dwellTime")as HTMLInputElement).value = scanParams.dwellTime.value.toString();
-  }
-
-export function updateLimits(scanParams: ScanParams) {
-  let props = Object.keys(scanParams);
-  props
-    .filter(prop => {
-      let innerProps = Object.keys((scanParams as any)[prop]);
-      return innerProps.includes("x") && innerProps.includes("y") && innerProps.includes("z");
-    })
-    .forEach(prop => {
-      limits.find(limit => limit.id == (scanParams as any)[prop].x.name).max = (scanParams as any)[prop].x.max;
-      limits.find(limit => limit.id == (scanParams as any)[prop].x.name).min = (scanParams as any)[prop].x.min;
-
-      limits.find(limit => limit.id == (scanParams as any)[prop].y.name).max = (scanParams as any)[prop].y.max;
-      limits.find(limit => limit.id == (scanParams as any)[prop].y.name).min = (scanParams as any)[prop].y.min;
-
-      limits.find(limit => limit.id == (scanParams as any)[prop].z.name).max = (scanParams as any)[prop].z.max;
-      limits.find(limit => limit.id == (scanParams as any)[prop].z.name).min = (scanParams as any)[prop].z.min;
-    });
-  limits.find(limit => limit.id == "dwellTime").max = scanParams.dwellTime.max;
-
-  /*
-  limits[0].max = scanParams.offset.x.max;
-  limits[0].min = scanParams.offset.x.min;
-  limits[1].max = scanParams.offset.y.max;
-  limits[1].min = scanParams.offset.y.min;
-  limits[2].max = scanParams.offset.z.max;
-  limits[2].min = scanParams.offset.z.min;
-
-  limits[3].max = scanParams.pixelNumber.x.max;
-  limits[3].min = scanParams.pixelNumber.x.min;
-  limits[4].max = scanParams.pixelNumber.y.max;
-  limits[4].min = scanParams.pixelNumber.y.min;
-  limits[5].max = scanParams.pixelNumber.z.max;
-  limits[5].min = scanParams.pixelNumber.z.min;
-
-  limits[6].max = scanParams.range.x.max;
-  limits[6].min = scanParams.range.x.min;
-  limits[7].max = scanParams.range.y.max;
-  limits[7].min = scanParams.range.y.min;
-  limits[8].max = scanParams.range.z.max;
-  limits[8].min = scanParams.range.z.min;
-  */
-  console.log("limit: ");
-
-  console.log(limits);
+/*
+export class Preset {
+    name: string;
+    param: ParamState;
+    constructor(name: string, param: ParamState) {
+        this.name = name;
+        this.param = param;
+    }
 }
+*/
+//export const presets: Preset[] = [];

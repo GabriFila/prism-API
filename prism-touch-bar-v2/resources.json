@@ -53,14 +53,14 @@
     "range": {
       "x": {
         "name": "range-x",
-        "value": 500,
+        "value": 100,
         "max": 1000,
         "min": 0,
         "unit": "nm"
       },
       "y": {
         "name": "range-y",
-        "value": 500,
+        "value": 100,
         "max": 1000,
         "min": 0,
         "unit": "nm"

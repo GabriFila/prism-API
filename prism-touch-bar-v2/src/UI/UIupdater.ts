@@ -1,6 +1,5 @@
 /*
 import { updateUILasersFromLasers, updateUILasersFromState } from "./UIparts/lasers";
-import { lookSurface } from "./mainUI";
 import { updateMode } from "./UIparts/mode";
 import { MicroState } from "../model";
 
@@ -70,33 +69,77 @@ export function setUpUpdater() {
 
 
 
-function updateUIPads(newState: MicroState) {
-  lookSurface.leftRelPos = (newState.scanParams.offset.x.value * lookSurface.areaWidth) / limits[0].max;
-  lookSurface.topRelPos = (newState.scanParams.offset.y.value * lookSurface.areaHeight) / limits[1].max;
-  lookSurface.elWidth = (newState.scanParams.range.x.value * lookSurface.areaWidth) / limits[6].max;
-  lookSurface.elHeight = (newState.scanParams.range.y.value * lookSurface.areaHeight) / limits[7].max;
-}
 
-export function sendMode(newMode: string) {
-  fetch("/prismState/mode", {
+*/
+
+export function sendPut(resoruce: string, newValue: string | boolean | number) {
+  fetch(`/${resoruce}`, {
     method: "PUT",
-    body: JSON.stringify({ newMode }),
+    body: JSON.stringify({ newValue }),
     headers: {
       "Content-type": "application/json"
     }
   });
 }
 
-*/
-import { UIparameters, updateLimits, updateUIParameters } from "./UIparts/scanParameteres";
-import { MicroState } from "../model";
+import { UIparameters, limits } from "./UIparts/scanParameteres";
+import { MicroState, ScanParams } from "../model";
 export function getCurrentState() {
   fetch("/prismState/")
     .then(res => res.json())
-    .then((newState : MicroState) => {
+    .then((newState: MicroState) => {
       updateLimits(newState.scanParams);
       //updateUILasersFromState(newState);
-       updateUIParameters(newState.scanParams);
-      //updateUIPads(newState);
+      updateUIParameters(newState.scanParams);
+      updateUIPads(newState.scanParams);
     });
+}
+
+import { lookSurface } from "./mainUI";
+
+function updateUIPads(scanParams: ScanParams) {
+  lookSurface.leftRelPos =
+    (scanParams.offset.x.value * lookSurface.areaWidth) / limits.find(limit => limit.id == scanParams.offset.x.name).max;
+
+  lookSurface.topRelPos =
+    (scanParams.offset.y.value * lookSurface.areaHeight) / limits.find(limit => limit.id == scanParams.offset.y.name).max;
+
+  lookSurface.elWidth = (scanParams.range.x.value * lookSurface.areaWidth) / limits.find(limit => limit.id == scanParams.range.x.name).max;
+  lookSurface.elHeight =
+    (scanParams.range.y.value * lookSurface.areaHeight) / limits.find(limit => limit.id == scanParams.range.y.name).max;
+}
+
+function updateUIParameters(scanParams: ScanParams) {
+  let props = Object.keys(scanParams);
+  props
+    .filter(prop => {
+      let innerProps = Object.keys((scanParams as any)[prop]);
+      return innerProps.includes("x") && innerProps.includes("y") && innerProps.includes("z");
+    })
+    .forEach(prop => {
+      (document.getElementById((scanParams as any)[prop].x.name) as HTMLInputElement).value = (scanParams as any)[prop].x.value.toString();
+      (document.getElementById((scanParams as any)[prop].y.name) as HTMLInputElement).value = (scanParams as any)[prop].y.value.toString();
+      (document.getElementById((scanParams as any)[prop].z.name) as HTMLInputElement).value = (scanParams as any)[prop].z.value.toString();
+    });
+  (document.getElementById("dwellTime") as HTMLInputElement).value = scanParams.dwellTime.value.toString();
+}
+
+function updateLimits(scanParams: ScanParams) {
+  let props = Object.keys(scanParams);
+  props
+    .filter(prop => {
+      let innerProps = Object.keys((scanParams as any)[prop]);
+      return innerProps.includes("x") && innerProps.includes("y") && innerProps.includes("z");
+    })
+    .forEach(prop => {
+      limits.find(limit => limit.id == (scanParams as any)[prop].x.name).max = (scanParams as any)[prop].x.max;
+      limits.find(limit => limit.id == (scanParams as any)[prop].x.name).min = (scanParams as any)[prop].x.min;
+
+      limits.find(limit => limit.id == (scanParams as any)[prop].y.name).max = (scanParams as any)[prop].y.max;
+      limits.find(limit => limit.id == (scanParams as any)[prop].y.name).min = (scanParams as any)[prop].y.min;
+
+      limits.find(limit => limit.id == (scanParams as any)[prop].z.name).max = (scanParams as any)[prop].z.max;
+      limits.find(limit => limit.id == (scanParams as any)[prop].z.name).min = (scanParams as any)[prop].z.min;
+    });
+  limits.find(limit => limit.id == "dwellTime").max = scanParams.dwellTime.max;
 }
