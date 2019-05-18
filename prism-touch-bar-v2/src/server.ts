@@ -9,7 +9,6 @@ import { prismState } from "./middlewares/routes/prismState-route";
 import { bodyChecker } from "./middlewares/bodyChecker";
 import { limitsChecker } from "./middlewares/limitsChecker";
 import { responseSender } from "./middlewares/responseSender";
-import { prismMotors } from "./middlewares/routes/prismMotors-route";
 
 const server = express();
 
@@ -21,7 +20,6 @@ server.use(bodyChecker);
 
 //routes
 server.use("/prismState", prismState);
-server.use("/prismMotors", prismMotors);
 server.use("/updates", updates);
 server.use(limitsChecker);
 server.use(responseSender);

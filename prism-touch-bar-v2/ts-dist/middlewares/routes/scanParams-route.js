@@ -6,7 +6,7 @@ exports.scanParams = express.Router();
 exports.scanParams.get("/", (req, res) => {
     res.status(200).json(model_1.microState.scanParams);
 });
-exports.scanParams.get("/:dim/axis", (req, res) => {
+exports.scanParams.get("/:dim/:axis", (req, res) => {
     let dim = req.params.dim;
     let axis = req.params.axis.toLowerCase();
     if (dim == "offset" || dim == "range" || dim == "pixelNumber" || dim == "offset") {
@@ -25,6 +25,8 @@ exports.scanParams.put("/:dim/:axis", (req, res, next) => {
     if (dim == "offset" || dim == "range" || dim == "pixelNumber" || dim == "offset") {
         if (axis == "x" || axis == "y" || axis == "z") {
             res.resource = model_1.microState.scanParams[dim][axis];
+            console.log("dim: " + dim);
+            console.log("axis: " + axis);
             next();
         }
         else

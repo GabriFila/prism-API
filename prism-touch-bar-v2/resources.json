@@ -6,21 +6,21 @@
   "scanParams": {
     "offset": {
       "x": {
-        "name": "offset-x",
+        "name": "scanParams-offset-x",
         "value": 500,
         "max": 1000,
         "min": 0,
         "unit": "nm"
       },
       "y": {
-        "name": "offset-y",
+        "name": "scanParams-offset-y",
         "value": 500,
         "max": 1000,
         "min": 0,
         "unit": "nm"
       },
       "z": {
-        "name": "offset-z",
+        "name": "scanParams-offset-z",
         "value": 500,
         "max": 1000,
         "min": 0,
@@ -29,21 +29,21 @@
     },
     "pixelNumber": {
       "x": {
-        "name": "pixelNumber-x",
+        "name": "scanParams-pixelNumber-x",
         "value": 500,
         "max": 1000,
         "min": 0,
         "unit": "px"
       },
       "y": {
-        "name": "pixelNumber-y",
+        "name": "scanParams-pixelNumber-y",
         "value": 500,
         "max": 1000,
         "min": 0,
         "unit": "px"
       },
       "z": {
-        "name": "pixelNumber-z",
+        "name": "scanParams-pixelNumber-z",
         "value": 500,
         "max": 1000,
         "min": 0,
@@ -52,21 +52,21 @@
     },
     "range": {
       "x": {
-        "name": "range-x",
+        "name": "scanParams-range-x",
         "value": 100,
         "max": 1000,
         "min": 0,
         "unit": "nm"
       },
       "y": {
-        "name": "range-y",
+        "name": "scanParams-range-y",
         "value": 100,
         "max": 1000,
         "min": 0,
         "unit": "nm"
       },
       "z": {
-        "name": "range-z",
+        "name": "scanParams-range-z",
         "value": 500,
         "max": 1000,
         "min": 0,
@@ -74,7 +74,7 @@
       }
     },
     "dwellTime": {
-      "name": "dwellTime",
+      "name": "scanParams-dwellTime",
       "value": 40,
       "unit": "nm",
       "min": 0

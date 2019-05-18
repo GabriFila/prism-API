@@ -240,33 +240,19 @@ exports.PinchObj = PinchObj;
 },{"./dragObj":1}],4:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-/*mode btns  initialization */
-exports.liveBtn = document.querySelector("#live-btn");
-exports.captureBtn = document.querySelector("#capture-btn");
-exports.stackBtn = document.querySelector("#stack-btn");
-exports.modeBtns = [exports.liveBtn, exports.captureBtn, exports.stackBtn];
-function updateMode(newMode) {
-    exports.currentMode = newMode;
-    exports.modeBtns.forEach(btn => btn.classList.remove("highlighted-button"));
-    let higlightBtn;
-    switch (exports.currentMode) {
-        case "live":
-            higlightBtn = exports.liveBtn;
-            break;
-        case "capture":
-            higlightBtn = exports.captureBtn;
-            break;
-        case "stack":
-            higlightBtn = exports.stackBtn;
-            break;
-        default:
-            higlightBtn = null;
-            break;
-    }
-    if (higlightBtn != null)
-        higlightBtn.classList.add("highlighted-button");
-}
-exports.updateMode = updateMode;
+const btn0 = document.querySelector("#btn0");
+const btn1 = document.querySelector("#btn1");
+const btn2 = document.querySelector("#btn2");
+const btn3 = document.querySelector("#btn3");
+const btn4 = document.querySelector("#btn4");
+const btn5 = document.querySelector("#btn5");
+const btn6 = document.querySelector("#btn6");
+const btn7 = document.querySelector("#btn7");
+const btn8 = document.querySelector("#btn8");
+const btn9 = document.querySelector("#btn9");
+exports.dotBtn = document.querySelector("#btnDot");
+exports.delBtn = document.querySelector("#btnDel");
+exports.numPad = [btn0, btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9];
 
 },{}],5:[function(require,module,exports){
 "use strict";
@@ -277,93 +263,27 @@ class Limit {
         this.max = Number.POSITIVE_INFINITY;
         this.min = Number.NEGATIVE_INFINITY;
     }
+    check(value) {
+        console.log("value: " + value);
+        console.log("max: " + this.max);
+        console.log("min: " + this.min);
+        console.log("check: " + (value <= this.max && value >= this.min));
+        return value <= this.max && value >= this.min;
+    }
 }
-exports.limits = [];
-const offsetX = document.querySelector("#offset-x");
-const offsetY = document.querySelector("#offset-y");
-const offsetZ = document.querySelector("#offset-z");
-const pixelNumberX = document.querySelector("#pixelNumber-x");
-const pixelNumberY = document.querySelector("#pixelNumber-y");
-const pixelNumberZ = document.querySelector("#pixelNumber-z");
-const rangeX = document.querySelector("#range-x");
-const rangeY = document.querySelector("#range-y");
-const rangeZ = document.querySelector("#range-z");
-const dwellTime = document.querySelector("#dwellTime");
-const totalTime = document.querySelector("#totalTime");
-exports.UIparameters = [
-    offsetX,
-    offsetY,
-    offsetZ,
-    pixelNumberX,
-    pixelNumberY,
-    pixelNumberZ,
-    rangeX,
-    rangeY,
-    rangeZ,
-    dwellTime
-];
+const tempUIparams = document.querySelectorAll(".param-input");
+exports.UIparameters = [];
+//remove grayed out elemts from tempUIparameters
+tempUIparams.forEach(param => {
+    if (!param.classList.contains("grayed-out")) {
+        exports.UIparameters.push(param);
+    }
+});
 //initialize limit array
+exports.limits = [];
 exports.UIparameters.forEach(param => exports.limits.push(new Limit(param.id)));
 exports.addPresetBtn = document.querySelector("#add-preset-btn");
 exports.presetSelector = document.querySelector("#preset-selector");
-//export const limits: MaxMin[] = [];
-function sendParamChange(param) {
-    let target = param.id;
-    let resource;
-    let dim = "offset";
-    switch (target) {
-        case "offset-X":
-            resource = "offset/X";
-            break;
-        case "offset-Y":
-            resource = "offset/Y";
-            break;
-        case "offset-Z":
-            resource = "offset/Z";
-            break;
-        case "pixel-number-X":
-            resource = "pixelNumber/X";
-            break;
-        case "pixel-number-Y":
-            resource = "pixelNumber/Y";
-            break;
-        case "pixel-number-Z":
-            resource = "pixelNumber/Z";
-            break;
-        case "range-X":
-            resource = "range/X";
-            break;
-        case "range-Y":
-            resource = "range/Y";
-            break;
-        case "range-Z":
-            resource = "range/Z";
-            break;
-        case "dwell-time":
-            resource = "dwellTime";
-            break;
-    }
-    fetch("/prismState/scanParams/" + resource, {
-        method: "PUT",
-        body: JSON.stringify({
-            newValue: Number(param.value)
-        }),
-        headers: new Headers({
-            "Content-Type": "application/json"
-        })
-    });
-}
-exports.sendParamChange = sendParamChange;
-function sendParamChangeSingle(resource, newValue) {
-    fetch(`/prismState/scanParams/${resource}`, {
-        method: "PUT",
-        body: JSON.stringify({ newValue }),
-        headers: {
-            "Content-Type": "application/json"
-        }
-    });
-}
-exports.sendParamChangeSingle = sendParamChangeSingle;
 /*
 export class Preset {
     name: string;
@@ -378,7 +298,6 @@ export class Preset {
 
 },{}],6:[function(require,module,exports){
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /*
 import { updateUILasersFromLasers, updateUILasersFromState } from "./UIparts/lasers";
 import { updateMode } from "./UIparts/mode";
@@ -452,18 +371,10 @@ export function setUpUpdater() {
 
 
 */
-function sendMode(newMode) {
-    fetch("/prismState/mode", {
-        method: "PUT",
-        body: JSON.stringify({ newValue: newMode }),
-        headers: {
-            "Content-type": "application/json"
-        }
-    });
-}
-exports.sendMode = sendMode;
-function sendPut(resoruce, newValue) {
-    fetch(`/${resoruce}`, {
+Object.defineProperty(exports, "__esModule", { value: true });
+function sendPut(resource, newValue) {
+    console.log("resource: " + resource);
+    fetch(`/${resource}`, {
         method: "PUT",
         body: JSON.stringify({ newValue }),
         headers: {
@@ -506,7 +417,7 @@ function updateUIParameters(scanParams) {
         document.getElementById(scanParams[prop].y.name).value = scanParams[prop].y.value.toString();
         document.getElementById(scanParams[prop].z.name).value = scanParams[prop].z.value.toString();
     });
-    document.getElementById("dwellTime").value = scanParams.dwellTime.value.toString();
+    document.getElementById("scanParams-dwellTime").value = scanParams.dwellTime.value.toString();
 }
 function updateLimits(scanParams) {
     let props = Object.keys(scanParams);
@@ -523,12 +434,16 @@ function updateLimits(scanParams) {
         scanParameteres_1.limits.find(limit => limit.id == scanParams[prop].z.name).max = scanParams[prop].z.max;
         scanParameteres_1.limits.find(limit => limit.id == scanParams[prop].z.name).min = scanParams[prop].z.min;
     });
-    scanParameteres_1.limits.find(limit => limit.id == "dwellTime").max = scanParams.dwellTime.max;
+    scanParameteres_1.limits.find(limit => limit.id == "scanParams-dwellTime").max = scanParams.dwellTime.max;
 }
 
 },{"./UIparts/scanParameteres":5,"./mainUI":7}],7:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/*laser elements*/
+//import { laserUIBoxes, grayOutLaserBox, lightUpLaserBox, sendLaserData } from "./UIparts/lasers";
+/*numpad element*/
+const numpad_1 = require("./UIparts/numpad");
 /*parameters elements and methods*/
 //import { UIparameters, sendParamChange, limits, sendParamChangeSingle } from "./UIparts/scanParameteres";
 /*UI pads,joysticks objects */
@@ -537,87 +452,69 @@ const movObj_1 = require("./UIparts/drag-pinch-joystick/movObj");
 const pinchObj_1 = require("./UIparts/drag-pinch-joystick/pinchObj");
 /*UI SSE updater*/
 const UIupdater_1 = require("./UIupdater");
-const mode_1 = require("./UIparts/mode");
+const scanParameteres_1 = require("./UIparts/scanParameteres");
 /*get microscope state on UI start-up */
-mode_1.modeBtns.forEach(btn => {
+const modeBtns = document.querySelectorAll(".mode-btn");
+// mode btns events
+modeBtns.forEach(btn => {
     btn.addEventListener("click", () => {
         if (btn.classList.contains("highlighted-button")) {
             btn.classList.remove("highlighted-button");
             UIupdater_1.sendPut("prismState/mode", "stop");
         }
         else {
-            mode_1.modeBtns.forEach(btn => btn.classList.remove("highlighted-button"));
+            modeBtns.forEach(btn => btn.classList.remove("highlighted-button"));
             btn.classList.add("highlighted-button");
             UIupdater_1.sendPut("prismState/mode", btn.id.split("-")[0]);
         }
     });
 });
-UIupdater_1.getCurrentState();
-//setUpUpdater();
-/* mode btns events
-
-liveBtn.addEventListener("click", () => {
-  if (currentMode === "live") {
-    liveBtn.classList.remove("highlighted-button");
-    sendMode("stand-by");
-  } else {
-    liveBtn.classList.add("highlighted-button");
-    sendMode("live");
-  }
-});
-
-captureBtn.addEventListener("click", () => {
-  if (currentMode === "capture") {
-    captureBtn.classList.remove("highlighted-button");
-    sendMode("stand-by");
-  } else {
-    captureBtn.classList.add("highlighted-button");
-    sendMode("capture");
-  }
-});
-
-stackBtn.addEventListener("click", () => {
-  if (currentMode === "stack") {
-    stackBtn.classList.remove("highlighted-button");
-    sendMode("stand-by");
-  } else {
-    stackBtn.classList.add("highlighted-button");
-    sendMode("stack");
-  }
-});
-
-/*UI scanning parameters settings */
-/*last item in focus
-let lastFocus: HTMLInputElement = undefined;
-
-/*store last parameters input in focus
-UIparameters.forEach(param => {
-  param.addEventListener("touchstart", () => {
-    removeHighlithBoder();
-    lastFocus = param;
-    param.value = "";
-    param.classList.add("highlighted");
-  });
-});
-
-/*remove highlight border only when touching something excluding numpad and selectred parameter
-document.body.addEventListener("click", function(e) {
-  if (lastFocus != null) {
-    if (numPad.filter(numBtn => numBtn === e.target).length == 0) {
-      if (e.target !== delBtn && e.target !== dotBtn)
-        if (UIparameters.filter(param => param === e.target).length == 0) {
-          removeHighlithBoder();
-          sendParamChange(lastFocus);
-          lastFocus = null;
+//last item in focus
+let lastFocus = undefined;
+//remove highlight border only when touching something excluding numpad and selectred parameter
+document.body.addEventListener("click", function (e) {
+    if (lastFocus != null) {
+        if (numpad_1.numPad.filter(numBtn => numBtn === e.target).length == 0) {
+            if (e.target !== numpad_1.delBtn && e.target !== numpad_1.dotBtn)
+                if (scanParameteres_1.UIparameters.filter(param => param === e.target).length == 0) {
+                    removeHighlithBoder();
+                    UIupdater_1.sendPut(`prismState/${lastFocus.id.replace("-", "/").replace("-", "/")}`, Number(lastFocus.value));
+                    lastFocus = null;
+                }
         }
     }
-  }
 });
-
+//store last parameters input in focus
+scanParameteres_1.UIparameters.forEach(param => {
+    param.addEventListener("touchstart", () => {
+        removeHighlithBoder();
+        lastFocus = param;
+        param.value = "";
+        param.classList.add("highlighted");
+    });
+});
+//add touched num in last focus element
+numpad_1.numPad.forEach((numBtn, i) => {
+    numBtn.addEventListener("click", () => {
+        if (lastFocus != null) {
+            lastFocus.classList.add("highlighted");
+            if (scanParameteres_1.limits.find(limit => limit.id == lastFocus.id).check(Number(lastFocus.value + i))) {
+                lastFocus.value += i;
+                UIupdater_1.sendPut(`prismState/${lastFocus.id.replace("-", "/").replace("-", "/")}`, Number(lastFocus.value));
+            }
+            else {
+                lastFocus.classList.add("limit");
+                setTimeout(() => lastFocus.classList.remove("limit"), 600);
+            }
+        }
+    });
+});
 function removeHighlithBoder() {
-  UIparameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));
+    scanParameteres_1.UIparameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));
 }
-
+UIupdater_1.getCurrentState();
+//setUpUpdater();
+/*UI scanning parameters settings */
 /*Laser boxes events */
 /*adds event to slider box for slider movement and on/off button
 laserUIBoxes.forEach(laserUIBox => {
@@ -639,27 +536,6 @@ laserUIBoxes.forEach(laserUIBox => {
 });
 
 /*Numpad events */
-/*add touched num in last focus element
-numPad.forEach((numBtn, i) => {
-  numBtn.addEventListener("click", () => {
-    if (lastFocus != null) {
-      lastFocus.classList.add("highlighted");
-      let lastFocusParamIndex = UIparameters.indexOf(lastFocus);
-
-      if (
-        Number(UIparameters[lastFocusParamIndex].value + i) > limits[lastFocusParamIndex].max ||
-        Number(UIparameters[lastFocusParamIndex].value + i) < limits[lastFocusParamIndex].min
-      ) {
-        lastFocus.classList.add("limit");
-        setTimeout(() => lastFocus.classList.remove("limit"), 600);
-      } else {
-        lastFocus.value += i;
-        sendParamChange(lastFocus);
-      }
-    }
-  });
-});
-
 /*add dot to last focus element when dot button pressed
 dotBtn.addEventListener("click", () => {
   if (lastFocus !== null && lastFocus.value.slice(-1) !== "." && lastFocus.value.length != 0) {
@@ -751,4 +627,4 @@ zMotor.element.addEventListener("touchend", () => clearInterval(intervalCheckerZ
 */
 exports.lookSurface = new pinchObj_1.PinchObj(movObj_1.inspectArea, movObj_1.sampleArea, 20);
 
-},{"./UIparts/drag-pinch-joystick/movObj":2,"./UIparts/drag-pinch-joystick/pinchObj":3,"./UIparts/mode":4,"./UIupdater":6}]},{},[7]);
+},{"./UIparts/drag-pinch-joystick/movObj":2,"./UIparts/drag-pinch-joystick/pinchObj":3,"./UIparts/numpad":4,"./UIparts/scanParameteres":5,"./UIupdater":6}]},{},[7]);

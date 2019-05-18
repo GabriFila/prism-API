@@ -1,5 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/*laser elements*/
+//import { laserUIBoxes, grayOutLaserBox, lightUpLaserBox, sendLaserData } from "./UIparts/lasers";
+/*numpad element*/
+const numpad_1 = require("./UIparts/numpad");
 /*parameters elements and methods*/
 //import { UIparameters, sendParamChange, limits, sendParamChangeSingle } from "./UIparts/scanParameteres";
 /*UI pads,joysticks objects */
@@ -8,87 +12,69 @@ const movObj_1 = require("./UIparts/drag-pinch-joystick/movObj");
 const pinchObj_1 = require("./UIparts/drag-pinch-joystick/pinchObj");
 /*UI SSE updater*/
 const UIupdater_1 = require("./UIupdater");
-const mode_1 = require("./UIparts/mode");
+const scanParameteres_1 = require("./UIparts/scanParameteres");
 /*get microscope state on UI start-up */
-mode_1.modeBtns.forEach(btn => {
+const modeBtns = document.querySelectorAll(".mode-btn");
+// mode btns events
+modeBtns.forEach(btn => {
     btn.addEventListener("click", () => {
         if (btn.classList.contains("highlighted-button")) {
             btn.classList.remove("highlighted-button");
             UIupdater_1.sendPut("prismState/mode", "stop");
         }
         else {
-            mode_1.modeBtns.forEach(btn => btn.classList.remove("highlighted-button"));
+            modeBtns.forEach(btn => btn.classList.remove("highlighted-button"));
             btn.classList.add("highlighted-button");
             UIupdater_1.sendPut("prismState/mode", btn.id.split("-")[0]);
         }
     });
 });
-UIupdater_1.getCurrentState();
-//setUpUpdater();
-/* mode btns events
-
-liveBtn.addEventListener("click", () => {
-  if (currentMode === "live") {
-    liveBtn.classList.remove("highlighted-button");
-    sendMode("stand-by");
-  } else {
-    liveBtn.classList.add("highlighted-button");
-    sendMode("live");
-  }
-});
-
-captureBtn.addEventListener("click", () => {
-  if (currentMode === "capture") {
-    captureBtn.classList.remove("highlighted-button");
-    sendMode("stand-by");
-  } else {
-    captureBtn.classList.add("highlighted-button");
-    sendMode("capture");
-  }
-});
-
-stackBtn.addEventListener("click", () => {
-  if (currentMode === "stack") {
-    stackBtn.classList.remove("highlighted-button");
-    sendMode("stand-by");
-  } else {
-    stackBtn.classList.add("highlighted-button");
-    sendMode("stack");
-  }
-});
-
-/*UI scanning parameters settings */
-/*last item in focus
-let lastFocus: HTMLInputElement = undefined;
-
-/*store last parameters input in focus
-UIparameters.forEach(param => {
-  param.addEventListener("touchstart", () => {
-    removeHighlithBoder();
-    lastFocus = param;
-    param.value = "";
-    param.classList.add("highlighted");
-  });
-});
-
-/*remove highlight border only when touching something excluding numpad and selectred parameter
-document.body.addEventListener("click", function(e) {
-  if (lastFocus != null) {
-    if (numPad.filter(numBtn => numBtn === e.target).length == 0) {
-      if (e.target !== delBtn && e.target !== dotBtn)
-        if (UIparameters.filter(param => param === e.target).length == 0) {
-          removeHighlithBoder();
-          sendParamChange(lastFocus);
-          lastFocus = null;
+//last item in focus
+let lastFocus = undefined;
+//remove highlight border only when touching something excluding numpad and selectred parameter
+document.body.addEventListener("click", function (e) {
+    if (lastFocus != null) {
+        if (numpad_1.numPad.filter(numBtn => numBtn === e.target).length == 0) {
+            if (e.target !== numpad_1.delBtn && e.target !== numpad_1.dotBtn)
+                if (scanParameteres_1.UIparameters.filter(param => param === e.target).length == 0) {
+                    removeHighlithBoder();
+                    UIupdater_1.sendPut(`prismState/${lastFocus.id.replace("-", "/").replace("-", "/")}`, Number(lastFocus.value));
+                    lastFocus = null;
+                }
         }
     }
-  }
 });
-
+//store last parameters input in focus
+scanParameteres_1.UIparameters.forEach(param => {
+    param.addEventListener("touchstart", () => {
+        removeHighlithBoder();
+        lastFocus = param;
+        param.value = "";
+        param.classList.add("highlighted");
+    });
+});
+//add touched num in last focus element
+numpad_1.numPad.forEach((numBtn, i) => {
+    numBtn.addEventListener("click", () => {
+        if (lastFocus != null) {
+            lastFocus.classList.add("highlighted");
+            if (scanParameteres_1.limits.find(limit => limit.id == lastFocus.id).check(Number(lastFocus.value + i))) {
+                lastFocus.value += i;
+                UIupdater_1.sendPut(`prismState/${lastFocus.id.replace("-", "/").replace("-", "/")}`, Number(lastFocus.value));
+            }
+            else {
+                lastFocus.classList.add("limit");
+                setTimeout(() => lastFocus.classList.remove("limit"), 600);
+            }
+        }
+    });
+});
 function removeHighlithBoder() {
-  UIparameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));
+    scanParameteres_1.UIparameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));
 }
-
+UIupdater_1.getCurrentState();
+//setUpUpdater();
+/*UI scanning parameters settings */
 /*Laser boxes events */
 /*adds event to slider box for slider movement and on/off button
 laserUIBoxes.forEach(laserUIBox => {
@@ -110,27 +96,6 @@ laserUIBoxes.forEach(laserUIBox => {
 });
 
 /*Numpad events */
-/*add touched num in last focus element
-numPad.forEach((numBtn, i) => {
-  numBtn.addEventListener("click", () => {
-    if (lastFocus != null) {
-      lastFocus.classList.add("highlighted");
-      let lastFocusParamIndex = UIparameters.indexOf(lastFocus);
-
-      if (
-        Number(UIparameters[lastFocusParamIndex].value + i) > limits[lastFocusParamIndex].max ||
-        Number(UIparameters[lastFocusParamIndex].value + i) < limits[lastFocusParamIndex].min
-      ) {
-        lastFocus.classList.add("limit");
-        setTimeout(() => lastFocus.classList.remove("limit"), 600);
-      } else {
-        lastFocus.value += i;
-        sendParamChange(lastFocus);
-      }
-    }
-  });
-});
-
 /*add dot to last focus element when dot button pressed
 dotBtn.addEventListener("click", () => {
   if (lastFocus !== null && lastFocus.value.slice(-1) !== "." && lastFocus.value.length != 0) {

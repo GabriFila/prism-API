@@ -13,9 +13,9 @@
       <!--start button-->
       <div id="start-sector" class="sector">
         <div class="div-action-buttons">
-          <button id="live-btn" class="action-btn">L</button>
-          <button id="capture-btn" class="action-btn">C</button>
-          <button id="stack-btn" class="action-btn">S</button>
+          <button id="live-btn" class="mode-btn">L</button>
+          <button id="capture-btn" class="mode-btn">C</button>
+          <button id="stack-btn" class="mode-btn">S</button>
         </div>
       </div>
       <!--parameter selector-->
@@ -35,37 +35,37 @@
         <!-- offset-->
         <div class="param-row">
           <label class="left-param-label"> offset </label>
-          <input id="offset-x" type="text" class="param-input" disabled/>
-          <input id="offset-y" type="text" class="param-input" disabled/>
-          <input id="offset-z" type="text" class="param-input" disabled/>
+          <input id="scanParams-offset-x" type="text" class="param-input" disabled />
+          <input id="scanParams-offset-y" type="text" class="param-input" disabled />
+          <input id="scanParams-offset-z" type="text" class="param-input" disabled />
         </div>
         <!-- pixel number-->
         <div class="param-row">
           <label class="left-param-label"># pixel</label>
-          <input id="pixelNumber-x" type="text" class="param-input" disabled/>
-          <input id="pixelNumber-y" type="text" class="param-input" disabled/>
-          <input id="pixelNumber-z" type="text" class="param-input" disabled/>
+          <input id="scanParams-pixelNumber-x" type="text" class="param-input" disabled />
+          <input id="scanParams-pixelNumber-y" type="text" class="param-input" disabled />
+          <input id="scanParams-pixelNumber-z" type="text" class="param-input" disabled />
         </div>
         <!-- range-->
         <div class="param-row">
           <label class="left-param-label">range</label>
-          <input id="range-x" type="text" class="param-input" disabled/>
-          <input id="range-y" type="text" class="param-input" disabled/>
-          <input id="range-z" type="text" class="param-input" disabled/>
+          <input id="scanParams-range-x" type="text" class="param-input" disabled />
+          <input id="scanParams-range-y" type="text" class="param-input" disabled />
+          <input id="scanParams-range-z" type="text" class="param-input" disabled />
         </div>
         <!-- pixel size-->
         <div class="param-row">
           <label class="left-param-label ">px-size</label>
-          <input id="pixel-size-x" type="text" class="param-input grayed-out" disabled/>
-          <input id="pixel-size-y" type="text" class="param-input grayed-out" disabled/>
-          <input id="pixel-size-z" type="text" class="param-input grayed-out" disabled/>
+          <input id="pixel-size-x" type="text" class="param-input grayed-out" disabled />
+          <input id="pixel-size-y" type="text" class="param-input grayed-out" disabled />
+          <input id="pixel-size-z" type="text" class="param-input grayed-out" disabled />
         </div>
         <!-- time parameters-->
         <div class="param-row">
           <label class="left-param-label">dwell time</label>
-          <input id="dwellTime" type="number" class="param-input" disabled/>
+          <input id="scanParams-dwellTime" type="number" class="param-input" disabled />
           <label class="left-param-label">total time</label>
-          <input id="totalTime" type="number" class="param-input grayed-out" disabled/>
+          <input id="totalTime" type="number" class="param-input grayed-out" disabled />
         </div>
       </div>
     </div>

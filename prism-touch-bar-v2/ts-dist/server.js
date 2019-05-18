@@ -9,7 +9,6 @@ const prismState_route_1 = require("./middlewares/routes/prismState-route");
 const bodyChecker_1 = require("./middlewares/bodyChecker");
 const limitsChecker_1 = require("./middlewares/limitsChecker");
 const responseSender_1 = require("./middlewares/responseSender");
-const prismMotors_route_1 = require("./middlewares/routes/prismMotors-route");
 const server = express();
 updates_route_1.setUpObserver();
 //json parser middlware
@@ -17,7 +16,6 @@ server.use(bodyParser.json());
 server.use(bodyChecker_1.bodyChecker);
 //routes
 server.use("/prismState", prismState_route_1.prismState);
-server.use("/prismMotors", prismMotors_route_1.prismMotors);
 server.use("/updates", updates_route_2.updates);
 server.use(limitsChecker_1.limitsChecker);
 server.use(responseSender_1.responseSender);

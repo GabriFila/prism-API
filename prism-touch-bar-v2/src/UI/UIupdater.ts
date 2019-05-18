@@ -72,8 +72,10 @@ export function setUpUpdater() {
 
 */
 
-export function sendPut(resoruce: string, newValue: string | boolean | number) {
-  fetch(`/${resoruce}`, {
+export function sendPut(resource: string, newValue: string | boolean | number) {
+  console.log("resource: " + resource);
+  
+  fetch(`/${resource}`, {
     method: "PUT",
     body: JSON.stringify({ newValue }),
     headers: {
@@ -121,10 +123,11 @@ function updateUIParameters(scanParams: ScanParams) {
       (document.getElementById((scanParams as any)[prop].y.name) as HTMLInputElement).value = (scanParams as any)[prop].y.value.toString();
       (document.getElementById((scanParams as any)[prop].z.name) as HTMLInputElement).value = (scanParams as any)[prop].z.value.toString();
     });
-  (document.getElementById("dwellTime") as HTMLInputElement).value = scanParams.dwellTime.value.toString();
+  (document.getElementById("scanParams-dwellTime") as HTMLInputElement).value = scanParams.dwellTime.value.toString();
 }
 
 function updateLimits(scanParams: ScanParams) {
+
   let props = Object.keys(scanParams);
   props
     .filter(prop => {
@@ -141,5 +144,5 @@ function updateLimits(scanParams: ScanParams) {
       limits.find(limit => limit.id == (scanParams as any)[prop].z.name).max = (scanParams as any)[prop].z.max;
       limits.find(limit => limit.id == (scanParams as any)[prop].z.name).min = (scanParams as any)[prop].z.min;
     });
-  limits.find(limit => limit.id == "dwellTime").max = scanParams.dwellTime.max;
+  limits.find(limit => limit.id == "scanParams-dwellTime").max = scanParams.dwellTime.max;
 }

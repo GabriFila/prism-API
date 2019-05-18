@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /*
 import { updateUILasersFromLasers, updateUILasersFromState } from "./UIparts/lasers";
 import { updateMode } from "./UIparts/mode";
@@ -73,18 +72,10 @@ export function setUpUpdater() {
 
 
 */
-function sendMode(newMode) {
-    fetch("/prismState/mode", {
-        method: "PUT",
-        body: JSON.stringify({ newValue: newMode }),
-        headers: {
-            "Content-type": "application/json"
-        }
-    });
-}
-exports.sendMode = sendMode;
-function sendPut(resoruce, newValue) {
-    fetch(`/${resoruce}`, {
+Object.defineProperty(exports, "__esModule", { value: true });
+function sendPut(resource, newValue) {
+    console.log("resource: " + resource);
+    fetch(`/${resource}`, {
         method: "PUT",
         body: JSON.stringify({ newValue }),
         headers: {
@@ -127,7 +118,7 @@ function updateUIParameters(scanParams) {
         document.getElementById(scanParams[prop].y.name).value = scanParams[prop].y.value.toString();
         document.getElementById(scanParams[prop].z.name).value = scanParams[prop].z.value.toString();
     });
-    document.getElementById("dwellTime").value = scanParams.dwellTime.value.toString();
+    document.getElementById("scanParams-dwellTime").value = scanParams.dwellTime.value.toString();
 }
 function updateLimits(scanParams) {
     let props = Object.keys(scanParams);
@@ -144,6 +135,6 @@ function updateLimits(scanParams) {
         scanParameteres_1.limits.find(limit => limit.id == scanParams[prop].z.name).max = scanParams[prop].z.max;
         scanParameteres_1.limits.find(limit => limit.id == scanParams[prop].z.name).min = scanParams[prop].z.min;
     });
-    scanParameteres_1.limits.find(limit => limit.id == "dwellTime").max = scanParams.dwellTime.max;
+    scanParameteres_1.limits.find(limit => limit.id == "scanParams-dwellTime").max = scanParams.dwellTime.max;
 }
 //# sourceMappingURL=UIupdater.js.map
