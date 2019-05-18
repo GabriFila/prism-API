@@ -1,79 +1,23 @@
-/*
-import { updateUILasersFromLasers, updateUILasersFromState } from "./UIparts/lasers";
-import { updateMode } from "./UIparts/mode";
-import { MicroState } from "../model";
-
 const source = new EventSource("/updates");
 
 export function setUpUpdater() {
-  source.addEventListener("updated-offset-x", (event: any) => {
-    UIparameters[0].value = JSON.parse(event.data).newValue;
+  source.addEventListener("update", (event: any) => {
+    let resource: Resource = event.data.resource;
+    let idEls: string[] = resource.name.split("-");
+    switch (idEls[0]) {
+      case "scanParams":
+        (document.getElementById(resource.name) as HTMLInputElement).value = resource.value.toString();
+        break;
+      case "laser":
+        break;
+      case "motor":
+        break;
+    }
     lookSurface.leftRelPos = (Number(UIparameters[0].value) * lookSurface.areaWidth) / limits[0].max;
-  });
-  source.addEventListener("updated-offset-y", (event: any) => {
-    UIparameters[1].value = JSON.parse(event.data).newValue;
-    lookSurface.topRelPos = (Number(UIparameters[1].value) * lookSurface.areaHeight) / limits[1].max;
-  });
-  source.addEventListener("updated-offset-z", (event: any) => {
-    UIparameters[2].value = JSON.parse(event.data).newValue;
-  });
-
-  source.addEventListener("updated-pixelNumber-x", (event: any) => {
-    UIparameters[3].value = JSON.parse(event.data).newValue;
-  });
-  source.addEventListener("updated-pixelNumber-y", (event: any) => {
-    UIparameters[4].value = JSON.parse(event.data).newValue;
-  });
-  source.addEventListener("updated-pixelNumber-z", (event: any) => {
-    UIparameters[5].value = JSON.parse(event.data).newValue;
-  });
-
-  source.addEventListener("updated-range-x", (event: any) => {
-    UIparameters[6].value = JSON.parse(event.data).newValue;
-    lookSurface.elWidth = (Number(UIparameters[6].value) * lookSurface.areaWidth) / limits[6].max;
-  });
-  source.addEventListener("updated-range-y", (event: any) => {
-    UIparameters[7].value = JSON.parse(event.data).newValue;
-    lookSurface.elHeight = (Number(UIparameters[7].value) * lookSurface.areaHeight) / limits[7].max;
-  });
-  source.addEventListener("updated-range-z", (event: any) => {
-    UIparameters[8].value = JSON.parse(event.data).newValue;
-  });
-
-  source.addEventListener("updated-dwellTime", (event: any) => {
-    UIparameters[9].value = JSON.parse(event.data).newValue;
-  });
-
-  source.addEventListener("limits-updated", (event: any) => {
-    let newState = JSON.parse(event.data);
-    updateLimits(newState);
-    updateUIPads(newState);
-  });
-
-  source.addEventListener("updated-lasers", (event: any) => {
-    updateUILasersFromLasers(JSON.parse(event.data));
-  });
-
-  source.addEventListener("updated-mode", (event: any) => {
-    updateMode(JSON.parse(event.data).newMode);
-  });
-
-  source.addEventListener("updated-state", (event: any) => {
-    let newState = JSON.parse(event.data).newState;
-    updateLimits(newState);
-    updateUIPads(newState);
-    updateUILasersFromState(newState);
-    updateUIParameters(newState);
   });
 }
 
-
-
-
-*/
-
 export function sendPut(resource: string, newValue: string | boolean | number) {
-
   fetch(`/${resource}`, {
     method: "PUT",
     body: JSON.stringify({ newValue }),
@@ -84,7 +28,7 @@ export function sendPut(resource: string, newValue: string | boolean | number) {
 }
 
 import { UIparameters, limits } from "./UIparts/scanParameteres";
-import { MicroState, ScanParams } from "../model";
+import { MicroState, ScanParams, Resource } from "../model";
 export function getCurrentState() {
   fetch("/prismState/")
     .then(res => res.json())

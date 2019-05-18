@@ -165,14 +165,17 @@
   "motors": {
     "x": {
       "value": 0,
+      "name": "motor-x",
       "unit": "steps"
     },
     "y": {
       "value": 0,
+      "name": "motor-y",
       "unit": "steps"
     },
     "z": {
       "value": 0,
+      "name": "motor-z",
       "unit": "steps"
     }
   }

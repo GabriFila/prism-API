@@ -21,13 +21,13 @@ updates.get("/", (req, res) => {
 
   observer.subscribe(this, "API-update", (who: any, resource: Resource) => {
     //function sendUpdateToPrism(`updated-${resource.name}`, resource.value)
-    SSEwrite(resource.value, `updated-${resource.name}`);
+    SSEwrite(resource);
     console.log("Sent SSE");
   });
 
-  function SSEwrite(newValue: number | boolean, event: string) {
-    res.write(`data: ${JSON.stringify({ newValue })} \n`);
-    res.write(`event: ${event}\n`);
+  function SSEwrite(resource: Resource) {
+    res.write(`data: ${JSON.stringify({ resource })} \n`);
+    res.write(`event: update\n`);
     res.write(`\n`);
   }
 });
