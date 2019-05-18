@@ -2,15 +2,27 @@ const source = new EventSource("/updates");
 
 export function setUpUpdater() {
   source.addEventListener("update", (event: any) => {
-    let resource: Resource = event.data.resource;
+    let resource: Resource = JSON.parse(event.data).resource;
+    console.log("data: " + event.data);
     let idEls: string[] = resource.name.split("-");
     switch (idEls[0]) {
       case "scanParams":
         (document.getElementById(resource.name) as HTMLInputElement).value = resource.value.toString();
         break;
       case "laser":
+        let targetLaserRow = laserUIRows.find(laserRow => laserRow.waveLength == Number(idEls[1]));
+        switch (idEls[3]) {
+          case "isOn":
+            targetLaserRow.isOn = resource.value as boolean;
+            break;
+          case "power":
+            targetLaserRow.power = resource.value as number;
+            break;
+          default:
+            break;
+        }
         break;
-      case "motor":
+      default:
         break;
     }
     lookSurface.leftRelPos = (Number(UIparameters[0].value) * lookSurface.areaWidth) / limits[0].max;
@@ -41,7 +53,8 @@ export function getCurrentState() {
 }
 
 import { lookSurface } from "./mainUI";
-import { updateUILasersFromLasers } from "./UIparts/lasers";
+import { updateUILasersFromLasers, laserUIRows } from "./UIparts/lasers";
+import { isNullOrUndefined } from "util";
 
 function updateUIPads(scanParams: ScanParams) {
   lookSurface.leftRelPos =

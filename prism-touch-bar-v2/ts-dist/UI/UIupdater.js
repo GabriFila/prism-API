@@ -3,13 +3,25 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const source = new EventSource("/updates");
 function setUpUpdater() {
     source.addEventListener("update", (event) => {
-        let resource = event.data.resource;
+        let resource = JSON.parse(event.data).resource;
+        console.log("data: " + event.data);
         let idEls = resource.name.split("-");
         switch (idEls[0]) {
             case "scanParams":
                 document.getElementById(resource.name).value = resource.value.toString();
                 break;
             case "laser":
+                let targetLaserRow = lasers_1.laserUIRows.find(laserRow => laserRow.waveLength == Number(idEls[1]));
+                switch (idEls[3]) {
+                    case "isOn":
+                        targetLaserRow.isOn = resource.value;
+                        break;
+                    case "power":
+                        targetLaserRow.power = resource.value;
+                        break;
+                    default:
+                        break;
+                }
                 break;
             case "motor":
                 break;

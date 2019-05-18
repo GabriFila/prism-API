@@ -26,6 +26,11 @@ class LaserUIRow {
   public get power(): number {
     return Number(this.powerLabel.innerHTML.slice(0, -1));
   }
+  public set power(value: number) {
+    this._power = value;
+    this.powerLabel.innerHTML = value.toString() + "%";
+    this.slider.value = value.toString();
+  }
 
   constructor(
     box: HTMLDivElement,

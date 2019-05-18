@@ -449,6 +449,11 @@ class LaserUIRow {
     get power() {
         return Number(this.powerLabel.innerHTML.slice(0, -1));
     }
+    set power(value) {
+        this._power = value;
+        this.powerLabel.innerHTML = value.toString() + "%";
+        this.slider.value = value.toString();
+    }
     constructor(box, waveLengthLabel, slider, btn, powerLabel, visible, position) {
         this.box = box;
         this.waveLengthLabel = waveLengthLabel;
@@ -557,13 +562,25 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const source = new EventSource("/updates");
 function setUpUpdater() {
     source.addEventListener("update", (event) => {
-        let resource = event.data.resource;
+        let resource = JSON.parse(event.data).resource;
+        console.log("data: " + event.data);
         let idEls = resource.name.split("-");
         switch (idEls[0]) {
             case "scanParams":
                 document.getElementById(resource.name).value = resource.value.toString();
                 break;
             case "laser":
+                let targetLaserRow = lasers_1.laserUIRows.find(laserRow => laserRow.waveLength == Number(idEls[1]));
+                switch (idEls[3]) {
+                    case "isOn":
+                        targetLaserRow.isOn = resource.value;
+                        break;
+                    case "power":
+                        targetLaserRow.power = resource.value;
+                        break;
+                    default:
+                        break;
+                }
                 break;
             case "motor":
                 break;
@@ -658,7 +675,7 @@ const lasers_1 = require("./UIparts/lasers");
 /*get microscope state on UI start-up */
 const modeBtns = document.querySelectorAll(".mode-btn");
 UIupdater_1.getCurrentState();
-//setUpUpdater();
+UIupdater_1.setUpUpdater();
 // mode btns events
 modeBtns.forEach(btn => {
     btn.addEventListener("click", () => {

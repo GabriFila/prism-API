@@ -1,7 +1,6 @@
 import * as express from "express";
 import * as path from "path";
 import * as bodyParser from "body-parser";
-import { setUpObserver } from "./middlewares/routes/updates-route";
 
 import { updates } from "./middlewares/routes/updates-route";
 import { prismState } from "./middlewares/routes/prismState-route";
@@ -11,8 +10,6 @@ import { limitsChecker } from "./middlewares/limitsChecker";
 import { responseSender } from "./middlewares/responseSender";
 
 const server = express();
-
-setUpObserver();
 
 //json parser middlware
 server.use(bodyParser.json());

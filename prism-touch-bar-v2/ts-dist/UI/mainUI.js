@@ -17,7 +17,7 @@ const lasers_1 = require("./UIparts/lasers");
 /*get microscope state on UI start-up */
 const modeBtns = document.querySelectorAll(".mode-btn");
 UIupdater_1.getCurrentState();
-//setUpUpdater();
+UIupdater_1.setUpUpdater();
 // mode btns events
 modeBtns.forEach(btn => {
     btn.addEventListener("click", () => {

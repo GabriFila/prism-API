@@ -9,7 +9,7 @@ import { PinchObj } from "./UIparts/drag-pinch-joystick/pinchObj";
 /*circular joystick class*/
 import { CircJoystickObj } from "./UIparts/drag-pinch-joystick/circJoystick";
 /*UI SSE updater*/
-import { getCurrentState, sendPut } from "./UIupdater";
+import { getCurrentState, sendPut, setUpUpdater } from "./UIupdater";
 import { UIparameters, limits } from "./UIparts/scanParameteres";
 import { laserUIRows } from "./UIparts/lasers";
 import { Z_STREAM_END } from "zlib";
@@ -19,7 +19,7 @@ const modeBtns: NodeListOf<HTMLButtonElement> = document.querySelectorAll(".mode
 
 getCurrentState();
 
-//setUpUpdater();
+setUpUpdater();
 // mode btns events
 
 modeBtns.forEach(btn => {

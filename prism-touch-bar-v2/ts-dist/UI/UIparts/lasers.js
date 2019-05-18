@@ -17,6 +17,11 @@ class LaserUIRow {
     get power() {
         return Number(this.powerLabel.innerHTML.slice(0, -1));
     }
+    set power(value) {
+        this._power = value;
+        this.powerLabel.innerHTML = value.toString() + "%";
+        this.slider.value = value.toString();
+    }
     constructor(box, waveLengthLabel, slider, btn, powerLabel, visible, position) {
         this.box = box;
         this.waveLengthLabel = waveLengthLabel;
