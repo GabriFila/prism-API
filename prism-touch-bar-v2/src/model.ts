@@ -28,7 +28,7 @@ export let microState: MicroState = require("../resources.json");
 
 export interface Resource {
   name: string;
-  value: number;
+  value: number | boolean;
   unit?: string;
   min?: number;
   max?: number;

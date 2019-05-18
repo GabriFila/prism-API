@@ -24,8 +24,6 @@ scanParams.put("/:dim/:axis", (req, res, next) => {
   if (dim == "offset" || dim == "range" || dim == "pixelNumber" || dim == "offset") {
     if (axis == "x" || axis == "y" || axis == "z") {
       res.resource = microState.scanParams[dim][axis];
-      console.log("dim: " + dim);
-      console.log("axis: " + axis);
       next();
     } else res.status(400).json({ error: `${axis} is not a valid axis` });
   } else res.status(400).json({ error: `${dim} is not a valid dimension` });

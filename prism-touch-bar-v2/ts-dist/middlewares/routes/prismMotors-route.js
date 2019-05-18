@@ -6,7 +6,7 @@ const model_1 = require("../../model");
 exports.prismMotors = express.Router();
 exports.prismMotors.put("/:axis", (req, res, next) => {
     let axis = req.params.axis.toLowerCase();
-    if (axis == "x" || axis == "z" || axis == "z")
+    if (axis == "x" || axis == "y" || axis == "z")
         if (util_1.isNumber(req.body.newValue)) {
             res.resource = model_1.microState.motors[axis];
             next();

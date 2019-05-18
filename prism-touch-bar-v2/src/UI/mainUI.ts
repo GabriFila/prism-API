@@ -1,9 +1,5 @@
-/*laser elements*/
-//import { laserUIBoxes, grayOutLaserBox, lightUpLaserBox, sendLaserData } from "./UIparts/lasers";
 /*numpad element*/
 import { numPad, delBtn, dotBtn } from "./UIparts/numpad";
-/*parameters elements and methods*/
-//import { UIparameters, sendParamChange, limits, sendParamChangeSingle } from "./UIparts/scanParameteres";
 /*UI pads,joysticks objects */
 import { zSensBtn, zSenses, zThumb, zSlider, joyThumb, inspectArea, sampleArea, joyPad } from "./UIparts/drag-pinch-joystick/movObj";
 /*joystick capabilties*/
@@ -15,10 +11,15 @@ import { CircJoystickObj } from "./UIparts/drag-pinch-joystick/circJoystick";
 /*UI SSE updater*/
 import { getCurrentState, sendPut } from "./UIupdater";
 import { UIparameters, limits } from "./UIparts/scanParameteres";
+import { laserUIRows } from "./UIparts/lasers";
+import { Z_STREAM_END } from "zlib";
 
 /*get microscope state on UI start-up */
 const modeBtns: NodeListOf<HTMLButtonElement> = document.querySelectorAll(".mode-btn");
 
+getCurrentState();
+
+//setUpUpdater();
 // mode btns events
 
 modeBtns.forEach(btn => {
@@ -33,6 +34,8 @@ modeBtns.forEach(btn => {
     }
   });
 });
+
+/*UI scanning parameters settings */
 
 //last item in focus
 let lastFocus: HTMLInputElement = undefined;
@@ -61,6 +64,28 @@ UIparameters.forEach(param => {
   });
 });
 
+function removeHighlithBoder() {
+  UIparameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));
+}
+
+//adds event to slider box for slider movement and on/off button
+laserUIRows.forEach(laserUIRow => {
+  laserUIRow.slider.addEventListener("input", () => {
+    let tempValue = laserUIRow.slider.value;
+    laserUIRow.powerLabel.innerHTML = tempValue + "%";
+  });
+  laserUIRow.slider.addEventListener("touchend", () => {
+    let tempValue = laserUIRow.slider.value;
+    laserUIRow.powerLabel.innerHTML = tempValue + "%";
+    sendPut(`prismState/lasers/power?waveLength=${laserUIRow.waveLength}`, Number(laserUIRow.power));
+  });
+
+  laserUIRow.btn.addEventListener("click", () => {
+    laserUIRow.isOn = !laserUIRow.isOn;
+    sendPut(`prismState/lasers/isOn?waveLength=${laserUIRow.waveLength}`, laserUIRow.isOn);
+  });
+});
+
 //add touched num in last focus element
 numPad.forEach((numBtn, i) => {
   numBtn.addEventListener("click", () => {
@@ -78,39 +103,8 @@ numPad.forEach((numBtn, i) => {
   });
 });
 
-function removeHighlithBoder() {
-  UIparameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));
-}
-
-getCurrentState();
-//setUpUpdater();
-
-/*UI scanning parameters settings */
-
-/*Laser boxes events */
-
-/*adds event to slider box for slider movement and on/off button
-laserUIBoxes.forEach(laserUIBox => {
-  laserUIBox.slider.addEventListener("input", () => {
-    let tempValue = laserUIBox.slider.value;
-    laserUIBox.powerLabel.innerHTML = tempValue + "%";
-  });
-  laserUIBox.slider.addEventListener("touchend", () => {
-    let tempValue = laserUIBox.slider.value;
-    laserUIBox.powerLabel.innerHTML = tempValue + "%";
-    sendLaserData(laserUIBox);
-  });
-  laserUIBox.btn.addEventListener("click", () => {
-    laserUIBox.isOn = !laserUIBox.isOn;
-    if (laserUIBox.isOn) grayOutLaserBox(laserUIBox);
-    else lightUpLaserBox(laserUIBox);
-    sendLaserData(laserUIBox);
-  });
-});
-
 /*Numpad events */
-
-/*add dot to last focus element when dot button pressed 
+//add dot to last focus element when dot button pressed
 dotBtn.addEventListener("click", () => {
   if (lastFocus !== null && lastFocus.value.slice(-1) !== "." && lastFocus.value.length != 0) {
     lastFocus.classList.add("highlighted");
@@ -118,87 +112,72 @@ dotBtn.addEventListener("click", () => {
   }
 });
 
-/*delete number to last focus element when delete button pressed 
+//delete number to last focus element when delete button pressed
 delBtn.addEventListener("click", () => {
   if (lastFocus != null) {
     lastFocus.classList.add("highlighted");
-    lastFocus.value = lastFocus.value.slice(0, -1); /*remove last character 
-    sendParamChange(lastFocus);
+    lastFocus.value = lastFocus.value.slice(0, -1); //remove last character
+    sendPut(`prismState/${lastFocus.id.replace("-", "/").replace("-", "/")}`, Number(lastFocus.value));
   }
 });
 
-/*look surface events
+//look surface events
+export const lookSurface = new PinchObj(inspectArea, sampleArea, 20);
 
-
-/*update own UI parameters
+//update own UI parameters
 lookSurface.area.addEventListener("touchmove", () => {
-  UIparameters[0].value = String((lookSurface.leftRelPos * limits[0].max) / lookSurface.areaWidth);
-  UIparameters[1].value = String((lookSurface.topRelPos * limits[1].max) / lookSurface.areaHeight);
-  UIparameters[6].value = String((lookSurface.elWidth * limits[6].max) / lookSurface.areaWidth);
-  UIparameters[7].value = String((lookSurface.elHeight * limits[7].max) / lookSurface.areaHeight);
-});
+  (document.getElementById("scanParams-offset-x") as HTMLInputElement).value = String(
+    (lookSurface.leftRelPos * limits.find(limit => limit.id == "scanParams-offset-x").max) / lookSurface.areaWidth
+  );
 
-/*send parameter change when untouched
+  (document.getElementById("scanParams-offset-y") as HTMLInputElement).value = String(
+    (lookSurface.topRelPos * limits.find(limit => limit.id == "scanParams-offset-y").max) / lookSurface.areaHeight
+  );
+  (document.getElementById("scanParams-range-x") as HTMLInputElement).value = String(
+    (lookSurface.elWidth * limits.find(limit => limit.id == "scanParams-range-x").max) / lookSurface.areaWidth
+  );
+  (document.getElementById("scanParams-range-y") as HTMLInputElement).value = String(
+    (lookSurface.elHeight * limits.find(limit => limit.id == "scanParams-range-y").max) / lookSurface.areaHeight
+  );
+});
+//send parameter change when untouched
 lookSurface.area.addEventListener("touchend", () => {
-  sendParamChangeSingle("offset/x", Number(UIparameters[0].value));
-  sendParamChangeSingle("offset/y", Number(UIparameters[1].value));
-  sendParamChangeSingle("range/x", Number(UIparameters[6].value));
-  sendParamChangeSingle("range/y", Number(UIparameters[7].value));
+  sendPut("prismState/scanParams/offset/x", Number((document.getElementById("scanParams-offset-x") as HTMLInputElement).value));
+  sendPut("prismState/scanParams/offset/y", Number((document.getElementById("scanParams-offset-x") as HTMLInputElement).value));
+  sendPut("prismState/scanParams/range/x", Number((document.getElementById("scanParams-range-x") as HTMLInputElement).value));
+  sendPut("prismState/scanParams/range/y", Number((document.getElementById("scanParams-range-y") as HTMLInputElement).value));
 });
 
 /*motor sliders */
 
-/*joystick initializations
-let zMotor = new SliderJoystickObj(zThumb, zSlider);
 let xyMotor = new CircJoystickObj(joyThumb, joyPad);
-
-/*change z joystick sensibility when touched 
-zSensBtn.addEventListener("click", () => {
-  zSensBtn.innerHTML = zSenses[(zSenses.indexOf(zSensBtn.innerHTML) + 1) % zSenses.length];
-});
 
 let intervalCheckerXY: NodeJS.Timeout;
 
 xyMotor.element.addEventListener("touchstart", () => {
   intervalCheckerXY = setInterval(() => {
     if (xyMotor.mag > 0) {
-      fetch("/prismMotors/x", {
-        method: "PUT",
-        body: JSON.stringify({ steps: (xyMotor.mag * Math.cos(xyMotor.arg)) / xyMotor.maxMag }),
-        headers: {
-          "Content-Type": "application/json"
-        }
-      });
+      sendPut("prismState/motors/x", (xyMotor.mag * Math.cos(xyMotor.arg)) / xyMotor.maxMag);
+      sendPut("prismState/motors/y", (xyMotor.mag * Math.sin(xyMotor.arg)) / xyMotor.maxMag);
     }
-    fetch("/prismMotors/y", {
-      method: "PUT",
-      body: JSON.stringify({ steps: (xyMotor.mag * Math.sin(xyMotor.arg)) / xyMotor.maxMag }),
-      headers: {
-        "Content-Type": "application/json"
-      }
-    });
   }, 200);
 });
 
 xyMotor.element.addEventListener("touchend", () => clearInterval(intervalCheckerXY));
 
+let zMotor = new SliderJoystickObj(zThumb, zSlider);
 let intervalCheckerZ: NodeJS.Timeout;
 
 zMotor.element.addEventListener("touchstart", () => {
   intervalCheckerZ = setInterval(() => {
-    fetch("/prismMotors/z", {
-      method: "PUT",
-      body: JSON.stringify({ steps: zMotor.sliderValue }),
-      headers: {
-        "Content-Type": "application/json"
-      }
-    })
-      .then(res => res.json())
+    sendPut("prismState/motors/z", Number(zMotor.sliderValue) * Number(zSensBtn.innerHTML.slice(0, -1)));
   }, 200);
 });
 
 zMotor.element.addEventListener("touchend", () => clearInterval(intervalCheckerZ));
 
-*/
+//change z joystick sensibility when touched
 
-export const lookSurface = new PinchObj(inspectArea, sampleArea, 20);
+zSensBtn.addEventListener("click", () => {
+  zSensBtn.innerHTML = zSenses[(zSenses.indexOf(zSensBtn.innerHTML) + 1) % zSenses.length];
+});

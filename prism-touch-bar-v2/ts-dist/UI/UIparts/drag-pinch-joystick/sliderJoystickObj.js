@@ -78,7 +78,8 @@ class SliderJoystickObj extends movObj_1.MovObj {
         });
     }
     get sliderValue() {
-        return this.topRelPos - this.centerX;
+        console.log("center: " + this.centerY);
+        return (this.topRelPos - this.centerY) / this.centerY;
     }
     setCenter() {
         this.centerX = this.areaWidth / 2 - this.elWidth / 2 - this.areaBorderSize;

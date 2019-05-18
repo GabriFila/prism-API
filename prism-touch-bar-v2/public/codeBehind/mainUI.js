@@ -1,6 +1,104 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const dragObj_1 = require("./dragObj");
+class CircJoystickObj extends dragObj_1.DragObj {
+    constructor(element, area) {
+        super(element, area);
+        this.joyStart = (e) => {
+            if (e.target === this.element) {
+                this.joyActive = true;
+                //set start position
+                if (e.type === "touchstart") {
+                    let eTouch = e;
+                    if (eTouch.touches.length === 1) {
+                        this.initialX = eTouch.touches[0].clientX - this.relCenterX;
+                        this.initialY = eTouch.touches[0].clientY - this.relCenterY;
+                    }
+                }
+                else {
+                    this.initialX = e.clientX - this.relCenterX;
+                    this.initialY = e.clientY - this.relCenterY;
+                }
+                this.element.classList.remove("smooth-transition");
+            }
+        };
+        this.joyMove = (e) => {
+            //if user is touching
+            if (this.joyActive) {
+                let currentX;
+                let currentY;
+                e.preventDefault();
+                //set offset position relative to top-left of draggable area
+                if (e.type === "touchmove") {
+                    let eTouch = e;
+                    if (eTouch.touches.length === 1) {
+                        currentX = eTouch.touches[0].clientX - this.initialX;
+                        currentY = eTouch.touches[0].clientY - this.initialY;
+                    }
+                }
+                else {
+                    currentX = e.clientX - this.initialX;
+                    currentY = e.clientY - this.initialY;
+                }
+                this.setPolar(currentX, currentY);
+            }
+        };
+        this.joyEnd = (e) => {
+            this.moveToCenter();
+            this.joyActive = false;
+            this.element.classList.add("smooth-transition");
+        };
+        this.updateCenter();
+        this.moveToCenter();
+        this.updateMaxMag();
+        this.area.addEventListener("touchstart", this.joyStart);
+        this.area.addEventListener("mousedown", this.joyStart);
+        this.area.addEventListener("touchmove", this.joyMove);
+        this.area.addEventListener("mousemove", this.joyMove);
+        this.area.addEventListener("touchend", this.joyEnd);
+        this.area.addEventListener("mouseup", this.joyEnd);
+        window.addEventListener("resize", () => {
+            this.updateCenter();
+            this.moveToCenter();
+            this.updateMaxMag();
+        });
+    }
+    setPolar(left, top) {
+        let a = left - this.relCenterX;
+        let b = -(top - this.relCenterY);
+        this.mag = Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
+        if (a >= 0)
+            this.arg = Math.atan(b / a);
+        else
+            this.arg = Math.atan(b / a) + Math.PI;
+        if (this.mag >= this.maxMag)
+            this.mag = this.maxMag;
+        let newLeft = this.relCenterX + this.mag * Math.cos(this.arg);
+        let newTop = this.relCenterY - this.mag * Math.sin(this.arg);
+        this.leftRelPos = newLeft;
+        this.topRelPos = newTop;
+    }
+    updateCenter() {
+        this.relCenterX = this.areaWidth / 2 - this.elWidth / 2 - this.areaBorderSize;
+        this.relCenterY = this.areaHeight / 2 - this.elHeight / 2 - this.areaBorderSize;
+    }
+    moveToCenter() {
+        this.topRelPos = this.relCenterY;
+        this.leftRelPos = this.relCenterX;
+    }
+    updateMaxMag() {
+        if (this.areaWidth <= this.areaHeight)
+            this.maxMag = 0.9 * (this.areaWidth / 2 - this.elWidth / 2 - this.elBorderSize);
+        else
+            this.maxMag = 0.9 * (this.areaHeight / 2 - this.elHeight / 2 - this.elBorderSize);
+    }
+}
+exports.CircJoystickObj = CircJoystickObj;
+
+},{"./dragObj":2}],2:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const movObj_1 = require("./movObj");
 class DragObj extends movObj_1.MovObj {
     constructor(element, area) {
@@ -66,7 +164,7 @@ class DragObj extends movObj_1.MovObj {
 }
 exports.DragObj = DragObj;
 
-},{"./movObj":2}],2:[function(require,module,exports){
+},{"./movObj":3}],3:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class MovObj {
@@ -160,7 +258,7 @@ exports.joyThumb = document.querySelector("#joystick-thumb");
 exports.zSensBtn = document.querySelector("#z-sens-btn");
 exports.zSenses = ["0.1x", "0.5x", "1x"];
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const dragObj_1 = require("./dragObj");
@@ -237,7 +335,169 @@ class PinchObj extends dragObj_1.DragObj {
 }
 exports.PinchObj = PinchObj;
 
-},{"./dragObj":1}],4:[function(require,module,exports){
+},{"./dragObj":2}],5:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const movObj_1 = require("./movObj");
+class SliderJoystickObj extends movObj_1.MovObj {
+    constructor(element, area) {
+        super(element, area);
+        this.joyStart = (e) => {
+            if (e.target === this.element) {
+                this.joyActive = true;
+                //set start position
+                if (e.type === "touchstart") {
+                    let eTouch = e;
+                    if (eTouch.touches.length === 1) {
+                        this.initialX = eTouch.touches[0].clientX - this.centerX;
+                        this.initialY = eTouch.touches[0].clientY - this.centerY;
+                    }
+                }
+                else {
+                    this.initialX = e.clientX - this.centerX;
+                    this.initialY = e.clientY - this.centerY;
+                }
+                this.setCenter();
+                this.element.classList.remove("smooth-transition");
+            }
+        };
+        this.joyMove = (e) => {
+            //if user is touching
+            if (this.joyActive) {
+                let xOffset;
+                let yOffset;
+                e.preventDefault();
+                //set offset position relative to top-left of draggable area
+                if (e.type === "touchmove") {
+                    let eTouch = e;
+                    if (eTouch.touches.length === 1) {
+                        xOffset = eTouch.touches[0].clientX - this.initialX;
+                        yOffset = eTouch.touches[0].clientY - this.initialY;
+                    }
+                }
+                else {
+                    xOffset = e.clientX - this.initialX;
+                    yOffset = e.clientY - this.initialY;
+                }
+                //stops movable element from going outside the draggable area when dragging it
+                let areaWidth = this.areaWidth;
+                let dragElWidth = this.elWidth;
+                let areaHeight = this.areaHeight;
+                let dragElHeight = this.elHeight;
+                let padAreaBorderSize = this.areaBorderSize;
+                if (xOffset + dragElWidth + 2 * padAreaBorderSize > areaWidth)
+                    xOffset = areaWidth - dragElWidth - 2 * padAreaBorderSize;
+                if (xOffset < 0)
+                    xOffset = 0;
+                if (yOffset + dragElHeight + 2 * padAreaBorderSize > areaHeight)
+                    yOffset = areaHeight - dragElHeight - 2 * padAreaBorderSize;
+                if (yOffset < 0)
+                    yOffset = 0;
+                this.leftRelPos = xOffset;
+                this.topRelPos = yOffset;
+            }
+        };
+        this.joyEnd = (e) => {
+            this.moveToCenter();
+            this.joyActive = false;
+            this.element.classList.add("smooth-transition");
+        };
+        this.setCenter();
+        this.moveToCenter();
+        this.area.addEventListener("touchstart", this.joyStart);
+        this.area.addEventListener("mousedown", this.joyStart);
+        this.area.addEventListener("touchmove", this.joyMove);
+        this.area.addEventListener("mousemove", this.joyMove);
+        this.area.addEventListener("touchend", this.joyEnd);
+        this.area.addEventListener("mouseup", this.joyEnd);
+        window.addEventListener("resize", () => {
+            this.setCenter();
+            this.moveToCenter();
+        });
+    }
+    get sliderValue() {
+        console.log("center: " + this.centerY);
+        return (this.topRelPos - this.centerY) / this.centerY;
+    }
+    setCenter() {
+        this.centerX = this.areaWidth / 2 - this.elWidth / 2 - this.areaBorderSize;
+        this.centerY = this.areaHeight / 2 - this.elHeight / 2 - this.areaBorderSize;
+    }
+    moveToCenter() {
+        this.topRelPos = this.centerY;
+        this.leftRelPos = this.centerX;
+    }
+}
+exports.SliderJoystickObj = SliderJoystickObj;
+
+},{"./movObj":3}],6:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class LaserUIRow {
+    get isOn() {
+        return this._isOn;
+    }
+    set isOn(value) {
+        if (value)
+            this.lightUp();
+        else
+            this.grayOut();
+        this._isOn = value;
+    }
+    get waveLength() {
+        return Number(this.waveLengthLabel.innerHTML.slice(0, -1).slice(0, -1));
+    }
+    get power() {
+        return Number(this.powerLabel.innerHTML.slice(0, -1));
+    }
+    constructor(box, waveLengthLabel, slider, btn, powerLabel, visible, position) {
+        this.box = box;
+        this.waveLengthLabel = waveLengthLabel;
+        this.slider = slider;
+        this.btn = btn;
+        this.powerLabel = powerLabel;
+        this.visible = visible;
+        this.position = position;
+        this.isOn = false;
+    }
+    grayOut() {
+        this.slider.disabled = true;
+        this.box.classList.add("grayed-out");
+        this.btn.classList.remove("laser-btn-on");
+        this.btn.classList.add("laser-btn-off");
+    }
+    lightUp() {
+        this.slider.disabled = false;
+        this.box.classList.remove("grayed-out");
+        this.btn.classList.remove("laser-btn-off");
+        this.btn.classList.add("laser-btn-on");
+    }
+}
+const laserOnOffBtns = document.querySelectorAll(".laser-on-off-btn");
+const laserWaveLengths = document.querySelectorAll(".laser-type");
+const laserSliders = document.querySelectorAll(".slider");
+const laserPowers = document.querySelectorAll(".laser-power");
+const laserRows = document.querySelectorAll(".slider-row");
+exports.laserUIRows = [];
+laserRows.forEach((laserRow, i) => {
+    exports.laserUIRows.push(new LaserUIRow(laserRow, laserWaveLengths[i], laserSliders[i], laserOnOffBtns[i], laserPowers[i], true, i));
+});
+function updateUILasersFromLasers(lasers) {
+    exports.laserUIRows.forEach((laserUIBox, i) => {
+        //hide empty lasers
+        if (i >= lasers.length)
+            exports.laserUIRows[i].visible = false;
+        else {
+            exports.laserUIRows[i].powerLabel.innerHTML = lasers[i].power.value.toString() + "%";
+            exports.laserUIRows[i].slider.value = lasers[i].power.value.toString();
+            exports.laserUIRows[i].waveLengthLabel.innerHTML = lasers[i].waveLength.value.toString() + "nm";
+            exports.laserUIRows[i].isOn = lasers[i].isOn.value;
+        }
+    });
+}
+exports.updateUILasersFromLasers = updateUILasersFromLasers;
+
+},{}],7:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const btn0 = document.querySelector("#btn0");
@@ -254,7 +514,7 @@ exports.dotBtn = document.querySelector("#btnDot");
 exports.delBtn = document.querySelector("#btnDel");
 exports.numPad = [btn0, btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9];
 
-},{}],5:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class Limit {
@@ -264,10 +524,6 @@ class Limit {
         this.min = Number.NEGATIVE_INFINITY;
     }
     check(value) {
-        console.log("value: " + value);
-        console.log("max: " + this.max);
-        console.log("min: " + this.min);
-        console.log("check: " + (value <= this.max && value >= this.min));
         return value <= this.max && value >= this.min;
     }
 }
@@ -296,7 +552,7 @@ export class Preset {
 */
 //export const presets: Preset[] = [];
 
-},{}],6:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 "use strict";
 /*
 import { updateUILasersFromLasers, updateUILasersFromState } from "./UIparts/lasers";
@@ -373,7 +629,6 @@ export function setUpUpdater() {
 */
 Object.defineProperty(exports, "__esModule", { value: true });
 function sendPut(resource, newValue) {
-    console.log("resource: " + resource);
     fetch(`/${resource}`, {
         method: "PUT",
         body: JSON.stringify({ newValue }),
@@ -389,19 +644,21 @@ function getCurrentState() {
         .then(res => res.json())
         .then((newState) => {
         updateLimits(newState.scanParams);
-        //updateUILasersFromState(newState);
+        lasers_1.updateUILasersFromLasers(newState.lasers);
         updateUIParameters(newState.scanParams);
         updateUIPads(newState.scanParams);
     });
 }
 exports.getCurrentState = getCurrentState;
 const mainUI_1 = require("./mainUI");
+const lasers_1 = require("./UIparts/lasers");
 function updateUIPads(scanParams) {
     mainUI_1.lookSurface.leftRelPos =
         (scanParams.offset.x.value * mainUI_1.lookSurface.areaWidth) / scanParameteres_1.limits.find(limit => limit.id == scanParams.offset.x.name).max;
     mainUI_1.lookSurface.topRelPos =
         (scanParams.offset.y.value * mainUI_1.lookSurface.areaHeight) / scanParameteres_1.limits.find(limit => limit.id == scanParams.offset.y.name).max;
-    mainUI_1.lookSurface.elWidth = (scanParams.range.x.value * mainUI_1.lookSurface.areaWidth) / scanParameteres_1.limits.find(limit => limit.id == scanParams.range.x.name).max;
+    mainUI_1.lookSurface.elWidth =
+        (scanParams.range.x.value * mainUI_1.lookSurface.areaWidth) / scanParameteres_1.limits.find(limit => limit.id == scanParams.range.x.name).max;
     mainUI_1.lookSurface.elHeight =
         (scanParams.range.y.value * mainUI_1.lookSurface.areaHeight) / scanParameteres_1.limits.find(limit => limit.id == scanParams.range.y.name).max;
 }
@@ -437,24 +694,27 @@ function updateLimits(scanParams) {
     scanParameteres_1.limits.find(limit => limit.id == "scanParams-dwellTime").max = scanParams.dwellTime.max;
 }
 
-},{"./UIparts/scanParameteres":5,"./mainUI":7}],7:[function(require,module,exports){
+},{"./UIparts/lasers":6,"./UIparts/scanParameteres":8,"./mainUI":10}],10:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-/*laser elements*/
-//import { laserUIBoxes, grayOutLaserBox, lightUpLaserBox, sendLaserData } from "./UIparts/lasers";
 /*numpad element*/
 const numpad_1 = require("./UIparts/numpad");
-/*parameters elements and methods*/
-//import { UIparameters, sendParamChange, limits, sendParamChangeSingle } from "./UIparts/scanParameteres";
 /*UI pads,joysticks objects */
 const movObj_1 = require("./UIparts/drag-pinch-joystick/movObj");
+/*joystick capabilties*/
+const sliderJoystickObj_1 = require("./UIparts/drag-pinch-joystick/sliderJoystickObj");
 /*pinch class*/
 const pinchObj_1 = require("./UIparts/drag-pinch-joystick/pinchObj");
+/*circular joystick class*/
+const circJoystick_1 = require("./UIparts/drag-pinch-joystick/circJoystick");
 /*UI SSE updater*/
 const UIupdater_1 = require("./UIupdater");
 const scanParameteres_1 = require("./UIparts/scanParameteres");
+const lasers_1 = require("./UIparts/lasers");
 /*get microscope state on UI start-up */
 const modeBtns = document.querySelectorAll(".mode-btn");
+UIupdater_1.getCurrentState();
+//setUpUpdater();
 // mode btns events
 modeBtns.forEach(btn => {
     btn.addEventListener("click", () => {
@@ -469,6 +729,7 @@ modeBtns.forEach(btn => {
         }
     });
 });
+/*UI scanning parameters settings */
 //last item in focus
 let lastFocus = undefined;
 //remove highlight border only when touching something excluding numpad and selectred parameter
@@ -493,6 +754,25 @@ scanParameteres_1.UIparameters.forEach(param => {
         param.classList.add("highlighted");
     });
 });
+function removeHighlithBoder() {
+    scanParameteres_1.UIparameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));
+}
+//adds event to slider box for slider movement and on/off button
+lasers_1.laserUIRows.forEach(laserUIRow => {
+    laserUIRow.slider.addEventListener("input", () => {
+        let tempValue = laserUIRow.slider.value;
+        laserUIRow.powerLabel.innerHTML = tempValue + "%";
+    });
+    laserUIRow.slider.addEventListener("touchend", () => {
+        let tempValue = laserUIRow.slider.value;
+        laserUIRow.powerLabel.innerHTML = tempValue + "%";
+        UIupdater_1.sendPut(`prismState/lasers/power?waveLength=${laserUIRow.waveLength}`, Number(laserUIRow.power));
+    });
+    laserUIRow.btn.addEventListener("click", () => {
+        laserUIRow.isOn = !laserUIRow.isOn;
+        UIupdater_1.sendPut(`prismState/lasers/isOn?waveLength=${laserUIRow.waveLength}`, laserUIRow.isOn);
+    });
+});
 //add touched num in last focus element
 numpad_1.numPad.forEach((numBtn, i) => {
     numBtn.addEventListener("click", () => {
@@ -509,122 +789,61 @@ numpad_1.numPad.forEach((numBtn, i) => {
         }
     });
 });
-function removeHighlithBoder() {
-    scanParameteres_1.UIparameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));
-}
-UIupdater_1.getCurrentState();
-//setUpUpdater();
-/*UI scanning parameters settings */
-/*Laser boxes events */
-/*adds event to slider box for slider movement and on/off button
-laserUIBoxes.forEach(laserUIBox => {
-  laserUIBox.slider.addEventListener("input", () => {
-    let tempValue = laserUIBox.slider.value;
-    laserUIBox.powerLabel.innerHTML = tempValue + "%";
-  });
-  laserUIBox.slider.addEventListener("touchend", () => {
-    let tempValue = laserUIBox.slider.value;
-    laserUIBox.powerLabel.innerHTML = tempValue + "%";
-    sendLaserData(laserUIBox);
-  });
-  laserUIBox.btn.addEventListener("click", () => {
-    laserUIBox.isOn = !laserUIBox.isOn;
-    if (laserUIBox.isOn) grayOutLaserBox(laserUIBox);
-    else lightUpLaserBox(laserUIBox);
-    sendLaserData(laserUIBox);
-  });
-});
-
 /*Numpad events */
-/*add dot to last focus element when dot button pressed
-dotBtn.addEventListener("click", () => {
-  if (lastFocus !== null && lastFocus.value.slice(-1) !== "." && lastFocus.value.length != 0) {
-    lastFocus.classList.add("highlighted");
-    lastFocus.value += ".";
-  }
-});
-
-/*delete number to last focus element when delete button pressed
-delBtn.addEventListener("click", () => {
-  if (lastFocus != null) {
-    lastFocus.classList.add("highlighted");
-    lastFocus.value = lastFocus.value.slice(0, -1); /*remove last character
-    sendParamChange(lastFocus);
-  }
-});
-
-/*look surface events
-
-
-/*update own UI parameters
-lookSurface.area.addEventListener("touchmove", () => {
-  UIparameters[0].value = String((lookSurface.leftRelPos * limits[0].max) / lookSurface.areaWidth);
-  UIparameters[1].value = String((lookSurface.topRelPos * limits[1].max) / lookSurface.areaHeight);
-  UIparameters[6].value = String((lookSurface.elWidth * limits[6].max) / lookSurface.areaWidth);
-  UIparameters[7].value = String((lookSurface.elHeight * limits[7].max) / lookSurface.areaHeight);
-});
-
-/*send parameter change when untouched
-lookSurface.area.addEventListener("touchend", () => {
-  sendParamChangeSingle("offset/x", Number(UIparameters[0].value));
-  sendParamChangeSingle("offset/y", Number(UIparameters[1].value));
-  sendParamChangeSingle("range/x", Number(UIparameters[6].value));
-  sendParamChangeSingle("range/y", Number(UIparameters[7].value));
-});
-
-/*motor sliders */
-/*joystick initializations
-let zMotor = new SliderJoystickObj(zThumb, zSlider);
-let xyMotor = new CircJoystickObj(joyThumb, joyPad);
-
-/*change z joystick sensibility when touched
-zSensBtn.addEventListener("click", () => {
-  zSensBtn.innerHTML = zSenses[(zSenses.indexOf(zSensBtn.innerHTML) + 1) % zSenses.length];
-});
-
-let intervalCheckerXY: NodeJS.Timeout;
-
-xyMotor.element.addEventListener("touchstart", () => {
-  intervalCheckerXY = setInterval(() => {
-    if (xyMotor.mag > 0) {
-      fetch("/prismMotors/x", {
-        method: "PUT",
-        body: JSON.stringify({ steps: (xyMotor.mag * Math.cos(xyMotor.arg)) / xyMotor.maxMag }),
-        headers: {
-          "Content-Type": "application/json"
-        }
-      });
+//add dot to last focus element when dot button pressed
+numpad_1.dotBtn.addEventListener("click", () => {
+    if (lastFocus !== null && lastFocus.value.slice(-1) !== "." && lastFocus.value.length != 0) {
+        lastFocus.classList.add("highlighted");
+        lastFocus.value += ".";
     }
-    fetch("/prismMotors/y", {
-      method: "PUT",
-      body: JSON.stringify({ steps: (xyMotor.mag * Math.sin(xyMotor.arg)) / xyMotor.maxMag }),
-      headers: {
-        "Content-Type": "application/json"
-      }
-    });
-  }, 200);
 });
-
-xyMotor.element.addEventListener("touchend", () => clearInterval(intervalCheckerXY));
-
-let intervalCheckerZ: NodeJS.Timeout;
-
-zMotor.element.addEventListener("touchstart", () => {
-  intervalCheckerZ = setInterval(() => {
-    fetch("/prismMotors/z", {
-      method: "PUT",
-      body: JSON.stringify({ steps: zMotor.sliderValue }),
-      headers: {
-        "Content-Type": "application/json"
-      }
-    })
-      .then(res => res.json())
-  }, 200);
+//delete number to last focus element when delete button pressed
+numpad_1.delBtn.addEventListener("click", () => {
+    if (lastFocus != null) {
+        lastFocus.classList.add("highlighted");
+        lastFocus.value = lastFocus.value.slice(0, -1); //remove last character
+        UIupdater_1.sendPut(`prismState/${lastFocus.id.replace("-", "/").replace("-", "/")}`, Number(lastFocus.value));
+    }
 });
-
-zMotor.element.addEventListener("touchend", () => clearInterval(intervalCheckerZ));
-
-*/
+//look surface events
 exports.lookSurface = new pinchObj_1.PinchObj(movObj_1.inspectArea, movObj_1.sampleArea, 20);
+//update own UI parameters
+exports.lookSurface.area.addEventListener("touchmove", () => {
+    document.getElementById("scanParams-offset-x").value = String((exports.lookSurface.leftRelPos * scanParameteres_1.limits.find(limit => limit.id == "scanParams-offset-x").max) / exports.lookSurface.areaWidth);
+    document.getElementById("scanParams-offset-y").value = String((exports.lookSurface.topRelPos * scanParameteres_1.limits.find(limit => limit.id == "scanParams-offset-y").max) / exports.lookSurface.areaHeight);
+    document.getElementById("scanParams-range-x").value = String((exports.lookSurface.elWidth * scanParameteres_1.limits.find(limit => limit.id == "scanParams-range-x").max) / exports.lookSurface.areaWidth);
+    document.getElementById("scanParams-range-y").value = String((exports.lookSurface.elHeight * scanParameteres_1.limits.find(limit => limit.id == "scanParams-range-y").max) / exports.lookSurface.areaHeight);
+});
+//send parameter change when untouched
+exports.lookSurface.area.addEventListener("touchend", () => {
+    UIupdater_1.sendPut("prismState/scanParams/offset/x", Number(document.getElementById("scanParams-offset-x").value));
+    UIupdater_1.sendPut("prismState/scanParams/offset/y", Number(document.getElementById("scanParams-offset-x").value));
+    UIupdater_1.sendPut("prismState/scanParams/range/x", Number(document.getElementById("scanParams-range-x").value));
+    UIupdater_1.sendPut("prismState/scanParams/range/y", Number(document.getElementById("scanParams-range-y").value));
+});
+/*motor sliders */
+let xyMotor = new circJoystick_1.CircJoystickObj(movObj_1.joyThumb, movObj_1.joyPad);
+let intervalCheckerXY;
+xyMotor.element.addEventListener("touchstart", () => {
+    intervalCheckerXY = setInterval(() => {
+        if (xyMotor.mag > 0) {
+            UIupdater_1.sendPut("prismState/motors/x", (xyMotor.mag * Math.cos(xyMotor.arg)) / xyMotor.maxMag);
+            UIupdater_1.sendPut("prismState/motors/y", (xyMotor.mag * Math.sin(xyMotor.arg)) / xyMotor.maxMag);
+        }
+    }, 200);
+});
+xyMotor.element.addEventListener("touchend", () => clearInterval(intervalCheckerXY));
+let zMotor = new sliderJoystickObj_1.SliderJoystickObj(movObj_1.zThumb, movObj_1.zSlider);
+let intervalCheckerZ;
+zMotor.element.addEventListener("touchstart", () => {
+    intervalCheckerZ = setInterval(() => {
+        UIupdater_1.sendPut("prismState/motors/z", Number(zMotor.sliderValue) * Number(movObj_1.zSensBtn.innerHTML.slice(0, -1)));
+    }, 200);
+});
+zMotor.element.addEventListener("touchend", () => clearInterval(intervalCheckerZ));
+//change z joystick sensibility when touched
+movObj_1.zSensBtn.addEventListener("click", () => {
+    movObj_1.zSensBtn.innerHTML = movObj_1.zSenses[(movObj_1.zSenses.indexOf(movObj_1.zSensBtn.innerHTML) + 1) % movObj_1.zSenses.length];
+});
 
-},{"./UIparts/drag-pinch-joystick/movObj":2,"./UIparts/drag-pinch-joystick/pinchObj":3,"./UIparts/numpad":4,"./UIparts/scanParameteres":5,"./UIupdater":6}]},{},[7]);
+},{"./UIparts/drag-pinch-joystick/circJoystick":1,"./UIparts/drag-pinch-joystick/movObj":3,"./UIparts/drag-pinch-joystick/pinchObj":4,"./UIparts/drag-pinch-joystick/sliderJoystickObj":5,"./UIparts/lasers":6,"./UIparts/numpad":7,"./UIparts/scanParameteres":8,"./UIupdater":9}]},{},[10]);

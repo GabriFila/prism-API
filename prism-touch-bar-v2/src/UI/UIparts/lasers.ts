@@ -1,15 +1,31 @@
-/*
-import { State as MicroState, Laser } from "../../model";
+import { Laser } from "../../model";
 
-class LaserUIBox {
+class LaserUIRow {
   box: HTMLDivElement;
   waveLengthLabel: HTMLLabelElement;
   slider: HTMLInputElement;
   btn: HTMLButtonElement;
   powerLabel: HTMLLabelElement;
-  isOn: boolean;
+  private _isOn: boolean;
+  public get isOn(): boolean {
+    return this._isOn;
+  }
+  public set isOn(value: boolean) {
+    if (value) this.lightUp();
+    else this.grayOut();
+    this._isOn = value;
+  }
   visible: boolean;
   position: number;
+  private _waveLength: number;
+  public get waveLength(): number {
+    return Number(this.waveLengthLabel.innerHTML.slice(0, -1).slice(0, -1));
+  }
+
+  private _power: number;
+  public get power(): number {
+    return Number(this.powerLabel.innerHTML.slice(0, -1));
+  }
 
   constructor(
     box: HTMLDivElement,
@@ -29,98 +45,44 @@ class LaserUIBox {
     this.position = position;
     this.isOn = false;
   }
+
+  private grayOut() {
+    this.slider.disabled = true;
+    this.box.classList.add("grayed-out");
+    this.btn.classList.remove("laser-btn-on");
+    this.btn.classList.add("laser-btn-off");
+  }
+
+  private lightUp() {
+    this.slider.disabled = false;
+    this.box.classList.remove("grayed-out");
+    this.btn.classList.remove("laser-btn-off");
+    this.btn.classList.add("laser-btn-on");
+  }
 }
 
-const laserBox0: HTMLDivElement = document.querySelector("#slider-box-0");
-const laserBox1: HTMLDivElement = document.querySelector("#slider-box-1");
-const laserBox2: HTMLDivElement = document.querySelector("#slider-box-2");
-const laserBox3: HTMLDivElement = document.querySelector("#slider-box-3");
+const laserOnOffBtns: NodeListOf<HTMLButtonElement> = document.querySelectorAll(".laser-on-off-btn");
+const laserWaveLengths: NodeListOf<HTMLLabelElement> = document.querySelectorAll(".laser-type");
+const laserSliders: NodeListOf<HTMLInputElement> = document.querySelectorAll(".slider");
+const laserPowers: NodeListOf<HTMLLabelElement> = document.querySelectorAll(".laser-power");
+const laserRows: NodeListOf<HTMLDivElement> = document.querySelectorAll(".slider-row");
 
-const laserPower0: HTMLLabelElement = document.querySelector("#laser-power-0");
-const laserPower1: HTMLLabelElement = document.querySelector("#laser-power-1");
-const laserPower2: HTMLLabelElement = document.querySelector("#laser-power-2");
-const laserPower3: HTMLLabelElement = document.querySelector("#laser-power-3");
+export const laserUIRows: LaserUIRow[] = [];
 
-const laserSlider0: HTMLInputElement = document.querySelector("#slider-0");
-const laserSlider1: HTMLInputElement = document.querySelector("#slider-1");
-const laserSlider2: HTMLInputElement = document.querySelector("#slider-2");
-const laserSlider3: HTMLInputElement = document.querySelector("#slider-3");
-
-const laserOnOffBtn0: HTMLButtonElement = document.querySelector("#laser-on-off-btn-0");
-const laserOnOffBtn1: HTMLButtonElement = document.querySelector("#laser-on-off-btn-1");
-const laserOnOffBtn2: HTMLButtonElement = document.querySelector("#laser-on-off-btn-2");
-const laserOnOffBtn3: HTMLButtonElement = document.querySelector("#laser-on-off-btn-3");
-
-const laserWaveLength0: HTMLLabelElement = document.querySelector("#laser-type-0");
-const laserWaveLength1: HTMLLabelElement = document.querySelector("#laser-type-1");
-const laserWaveLength2: HTMLLabelElement = document.querySelector("#laser-type-2");
-const laserWaveLength3: HTMLLabelElement = document.querySelector("#laser-type-3");
-
-export const laserUIBoxes: LaserUIBox[] = [
-  new LaserUIBox(laserBox0, laserWaveLength0, laserSlider0, laserOnOffBtn0, laserPower0, true, 0),
-  new LaserUIBox(laserBox1, laserWaveLength1, laserSlider1, laserOnOffBtn1, laserPower1, true, 1),
-  new LaserUIBox(laserBox2, laserWaveLength2, laserSlider2, laserOnOffBtn2, laserPower2, true, 2),
-  new LaserUIBox(laserBox3, laserWaveLength3, laserSlider3, laserOnOffBtn3, laserPower3, true, 3)
-];
-
-export function grayOutLaserBox(laserBox: LaserUIBox) {
-  laserBox.slider.disabled = true;
-  laserBox.box.classList.add("grayed-out");
-  laserBox.btn.classList.remove("laser-btn-on");
-  laserBox.btn.classList.add("laser-btn-off");
-}
-
-export function lightUpLaserBox(laserBox: LaserUIBox) {
-  laserBox.slider.disabled = false;
-  laserBox.box.classList.remove("grayed-out");
-  laserBox.btn.classList.remove("laser-btn-off");
-  laserBox.btn.classList.add("laser-btn-on");
-}
-
-export function updateUILasersFromState(newState: MicroState) {
-  laserUIBoxes.forEach((laserUIBox, i) => {
-    //hide empty lasers
-    if (i >= newState.lasers.length) laserUIBoxes[i].visible = false;
-    else {
-      laserUIBoxes[i].powerLabel.innerHTML = newState.lasers[i].power.toString() + "%";
-      laserUIBoxes[i].slider.value = newState.lasers[i].power.toString();
-
-      laserUIBoxes[i].waveLengthLabel.innerHTML = newState.lasers[i].waveLength.toString() + "nm";
-      laserUIBoxes[i].isOn = newState.lasers[i].isOn;
-      if (newState.lasers[i].isOn) lightUpLaserBox(laserUIBoxes[i]);
-      else grayOutLaserBox(laserUIBoxes[i]);
-    }
-  });
-}
+laserRows.forEach((laserRow, i) => {
+  laserUIRows.push(new LaserUIRow(laserRow, laserWaveLengths[i], laserSliders[i], laserOnOffBtns[i], laserPowers[i], true, i));
+});
 
 export function updateUILasersFromLasers(lasers: Laser[]) {
-  laserUIBoxes.forEach((laserUIBox, i) => {
+  laserUIRows.forEach((laserUIBox, i) => {
     //hide empty lasers
-    if (i >= lasers.length) laserUIBoxes[i].visible = false;
+    if (i >= lasers.length) laserUIRows[i].visible = false;
     else {
-      laserUIBoxes[i].powerLabel.innerHTML = lasers[i].power.toString() + "%";
-      laserUIBoxes[i].slider.value = lasers[i].power.toString();
+      laserUIRows[i].powerLabel.innerHTML = lasers[i].power.value.toString() + "%";
+      laserUIRows[i].slider.value = lasers[i].power.value.toString();
 
-      laserUIBoxes[i].waveLengthLabel.innerHTML = lasers[i].waveLength.toString() + "nm";
-      laserUIBoxes[i].isOn = lasers[i].isOn;
-      if (lasers[i].isOn) lightUpLaserBox(laserUIBoxes[i]);
-      else grayOutLaserBox(laserUIBoxes[i]);
+      laserUIRows[i].waveLengthLabel.innerHTML = lasers[i].waveLength.value.toString() + "nm";
+      laserUIRows[i].isOn = lasers[i].isOn.value as boolean;
     }
   });
 }
-
-
-export function sendLaserData(laserBox: LaserUIBox) {
-  fetch(`prismState/lasers/${Number(laserBox.waveLengthLabel.innerHTML.slice(0, -1).slice(0, -1))}`, {
-    method: "PUT",
-    headers: {
-      "Content-type": "application/json"
-    },
-    body: JSON.stringify({
-      newPower: Number(laserBox.powerLabel.innerHTML.slice(0, -1)),
-      isOn: laserBox.isOn
-    })
-  }).then(res => res.json());
-}
-
-*/

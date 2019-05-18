@@ -73,8 +73,7 @@ export function setUpUpdater() {
 */
 
 export function sendPut(resource: string, newValue: string | boolean | number) {
-  console.log("resource: " + resource);
-  
+
   fetch(`/${resource}`, {
     method: "PUT",
     body: JSON.stringify({ newValue }),
@@ -91,24 +90,26 @@ export function getCurrentState() {
     .then(res => res.json())
     .then((newState: MicroState) => {
       updateLimits(newState.scanParams);
-      //updateUILasersFromState(newState);
+      updateUILasersFromLasers(newState.lasers);
       updateUIParameters(newState.scanParams);
       updateUIPads(newState.scanParams);
     });
 }
 
 import { lookSurface } from "./mainUI";
+import { updateUILasersFromLasers } from "./UIparts/lasers";
 
 function updateUIPads(scanParams: ScanParams) {
   lookSurface.leftRelPos =
-    (scanParams.offset.x.value * lookSurface.areaWidth) / limits.find(limit => limit.id == scanParams.offset.x.name).max;
+    ((scanParams.offset.x.value as number) * lookSurface.areaWidth) / limits.find(limit => limit.id == scanParams.offset.x.name).max;
 
   lookSurface.topRelPos =
-    (scanParams.offset.y.value * lookSurface.areaHeight) / limits.find(limit => limit.id == scanParams.offset.y.name).max;
+    ((scanParams.offset.y.value as number) * lookSurface.areaHeight) / limits.find(limit => limit.id == scanParams.offset.y.name).max;
 
-  lookSurface.elWidth = (scanParams.range.x.value * lookSurface.areaWidth) / limits.find(limit => limit.id == scanParams.range.x.name).max;
+  lookSurface.elWidth =
+    ((scanParams.range.x.value as number) * lookSurface.areaWidth) / limits.find(limit => limit.id == scanParams.range.x.name).max;
   lookSurface.elHeight =
-    (scanParams.range.y.value * lookSurface.areaHeight) / limits.find(limit => limit.id == scanParams.range.y.name).max;
+    ((scanParams.range.y.value as number) * lookSurface.areaHeight) / limits.find(limit => limit.id == scanParams.range.y.name).max;
 }
 
 function updateUIParameters(scanParams: ScanParams) {
@@ -127,7 +128,6 @@ function updateUIParameters(scanParams: ScanParams) {
 }
 
 function updateLimits(scanParams: ScanParams) {
-
   let props = Object.keys(scanParams);
   props
     .filter(prop => {

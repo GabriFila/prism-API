@@ -11,7 +11,7 @@ export class SliderJoystickObj extends MovObj {
 
   private _sliderValue: number;
   public get sliderValue(): number {
-    return this.topRelPos - this.centerX;
+    return (this.topRelPos - this.centerY) / this.centerY;
   }
 
   constructor(element: HTMLDivElement, area: HTMLDivElement) {

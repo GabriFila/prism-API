@@ -7,10 +7,6 @@ class Limit {
         this.min = Number.NEGATIVE_INFINITY;
     }
     check(value) {
-        console.log("value: " + value);
-        console.log("max: " + this.max);
-        console.log("min: " + this.min);
-        console.log("check: " + (value <= this.max && value >= this.min));
         return value <= this.max && value >= this.min;
     }
 }

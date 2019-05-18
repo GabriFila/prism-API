@@ -2,7 +2,6 @@ import * as express from "express";
 import * as observer from "node-observer";
 
 export function responseSender(req: express.Request, res: express.Response, next: express.NextFunction) {
-  console.info("Sending response");
 
   //check if there are errors in request
   if (req.method == "PUT") {

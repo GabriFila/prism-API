@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const observer = require("node-observer");
 function responseSender(req, res, next) {
-    console.info("Sending response");
     //check if there are errors in request
     if (req.method == "PUT") {
         res.resource.value = req.body.newValue;

@@ -13,7 +13,6 @@ lasers.put("/:param", (req, res, next) => {
   //there is newValue parameter in request
   if ("waveLength" in req.query) {
     let targetWL = req.query.waveLength;
-    console.info("waveLength: " + targetWL);
     if (microState.lasers.some(laser => laser.waveLength.value == targetWL)) {
       if (req.params.param == "isOn")
         if (isBoolean(req.body.newValue)) {
