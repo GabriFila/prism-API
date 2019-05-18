@@ -25,7 +25,6 @@ export function setUpUpdater() {
       default:
         break;
     }
-    lookSurface.leftRelPos = (Number(UIparameters[0].value) * lookSurface.areaWidth) / limits[0].max;
   });
 }
 
