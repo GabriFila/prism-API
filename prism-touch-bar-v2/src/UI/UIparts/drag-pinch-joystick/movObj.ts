@@ -69,6 +69,7 @@ export abstract class MovObj {
     this.updateWidthHeight();
     this.updateTopLeftRelPos();
   }
+
   private updateTopLeftRelPos() {
     this._topRelPos =
       this.element.getBoundingClientRect().top - this.element.parentElement.getBoundingClientRect().top - this.elBorderSize - 1;
@@ -90,9 +91,9 @@ export abstract class MovObj {
     this._elBorderSize = Number(regex.exec(str)[1]);
   }
   private updateAreaBorderSize() {
-    let elStyle = window.getComputedStyle(this.area);
+    let areaStyle = window.getComputedStyle(this.area);
     let regex = /([0-9]*)px[a-zA-Z0-9_ ]*/;
-    let str = elStyle.getPropertyValue("border"); //gets rid of "px" in border CSS property
+    let str = areaStyle.getPropertyValue("border"); //gets rid of "px" in border CSS property
     this._areaBorderSize = Number(regex.exec(str)[1]);
   }
 
@@ -100,14 +101,3 @@ export abstract class MovObj {
     el.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
   }
 }
-
-export const inspectArea: HTMLDivElement = document.querySelector("#inspect-area-0");
-export const zThumb: HTMLDivElement = document.querySelector("#z-thumb");
-export const sampleArea: HTMLDivElement = document.querySelector("#sample-area");
-export const zSlider: HTMLDivElement = document.querySelector("#z-slider");
-export const joyPad: HTMLDivElement = document.querySelector("#joystick-pad");
-export const joyThumb: HTMLDivElement = document.querySelector("#joystick-thumb");
-export const zSensBtn: HTMLButtonElement = document.querySelector("#z-sens-btn");
-
-export const zSenses: string[] = ["0.1x", "0.5x", "1x"];
-

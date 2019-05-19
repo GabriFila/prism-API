@@ -1,11 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const circJoystick_1 = require("./drag-pinch-joystick/circJoystick");
-const movObj_1 = require("./drag-pinch-joystick/movObj");
 const sliderJoystickObj_1 = require("./drag-pinch-joystick/sliderJoystickObj");
 const toFromAPI_1 = require("../toFromAPI");
+const zThumb = document.querySelector("#z-thumb");
+const zSlider = document.querySelector("#z-slider");
+const joyPad = document.querySelector("#joystick-pad");
+const joyThumb = document.querySelector("#joystick-thumb");
+const zSensBtn = document.querySelector("#z-sens-btn");
+exports.zSenses = ["0.1x", "0.5x", "1x"];
 function setUpMotorsControls() {
-    let xyMotor = new circJoystick_1.CircJoystickObj(movObj_1.joyThumb, movObj_1.joyPad);
+    let xyMotor = new circJoystick_1.CircJoystickObj(joyThumb, joyPad);
     let intervalCheckerXY;
     xyMotor.element.addEventListener("touchstart", () => {
         intervalCheckerXY = setInterval(() => {
@@ -17,17 +22,17 @@ function setUpMotorsControls() {
     });
     xyMotor.element.addEventListener("touchend", () => clearInterval(intervalCheckerXY));
     //x motor slider
-    let zMotor = new sliderJoystickObj_1.SliderJoystickObj(movObj_1.zThumb, movObj_1.zSlider);
+    let zMotor = new sliderJoystickObj_1.SliderJoystickObj(zThumb, zSlider);
     let intervalCheckerZ;
     zMotor.element.addEventListener("touchstart", () => {
         intervalCheckerZ = setInterval(() => {
-            toFromAPI_1.sendPut("prismState/motors/z", Number(zMotor.sliderValue) * Number(movObj_1.zSensBtn.innerHTML.slice(0, -1)));
+            toFromAPI_1.sendPut("prismState/motors/z", Number(zMotor.sliderValue) * Number(zSensBtn.innerHTML.slice(0, -1)));
         }, 200);
     });
     zMotor.element.addEventListener("touchend", () => clearInterval(intervalCheckerZ));
     //change z joystick sensibility when touched
-    movObj_1.zSensBtn.addEventListener("click", () => {
-        movObj_1.zSensBtn.innerHTML = movObj_1.zSenses[(movObj_1.zSenses.indexOf(movObj_1.zSensBtn.innerHTML) + 1) % movObj_1.zSenses.length];
+    zSensBtn.addEventListener("click", () => {
+        zSensBtn.innerHTML = exports.zSenses[(exports.zSenses.indexOf(zSensBtn.innerHTML) + 1) % exports.zSenses.length];
     });
 }
 exports.setUpMotorsControls = setUpMotorsControls;

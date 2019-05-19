@@ -4,7 +4,7 @@ import { getCurrentMicroState, sendPut, setUpUpdater } from "./toFromAPI";
 import { UIparameters } from "./UIparts/scanParameteres";
 import { setUpModeBtns } from "./UIparts/mode";
 import { setUpMotorsControls } from "./UIparts/motorsControls";
-import { setUpLookSurface } from "./UIparts/lookSurface";
+import { setUpLookSurface } from "./UIparts/scanArea";
 import { setUpLasers } from "./UIparts/lasers";
 
 /*get microscope state on UI start-up */

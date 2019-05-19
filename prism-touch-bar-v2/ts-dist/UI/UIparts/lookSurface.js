@@ -9,11 +9,15 @@ exports.lookSurface = new pinchObj_1.PinchObj(movObj_1.inspectArea, movObj_1.sam
 function setUpLookSurface() {
     //update own UI parameters
     exports.lookSurface.area.addEventListener("touchmove", () => {
-        scanParameteres_1.offsetX.value = ((exports.lookSurface.leftRelPos * limits_1.limits.find(limit => limit.id == "scanParams-offset-x").max) / exports.lookSurface.areaWidth).toPrecision(4);
-        scanParameteres_1.offsetY.value = ((exports.lookSurface.topRelPos * limits_1.limits.find(limit => limit.id == "scanParams-offset-y").max) / exports.lookSurface.areaHeight).toPrecision(4);
+        scanParameteres_1.offsetX.value = ((exports.lookSurface.leftRelPos * limits_1.limits.find(limit => limit.id == "scanParams-offset-x").max) /
+            exports.lookSurface.areaWidth).toPrecision(4);
+        scanParameteres_1.offsetY.value = ((exports.lookSurface.topRelPos * limits_1.limits.find(limit => limit.id == "scanParams-offset-y").max) /
+            exports.lookSurface.areaHeight).toPrecision(4);
         scanParameteres_1.rangeX.value = ((exports.lookSurface.elWidth * limits_1.limits.find(limit => limit.id == "scanParams-range-x").max) / exports.lookSurface.areaWidth).toPrecision(4);
-        scanParameteres_1.rangeY.value = ((exports.lookSurface.elHeight * limits_1.limits.find(limit => limit.id == "scanParams-range-y").max) / exports.lookSurface.areaHeight).toPrecision(4);
+        scanParameteres_1.rangeY.value = ((exports.lookSurface.elHeight * limits_1.limits.find(limit => limit.id == "scanParams-range-y").max) /
+            exports.lookSurface.areaHeight).toPrecision(4);
     });
+    window.addEventListener("resize", adatapLookSurface);
     //send parameter change when untouched
     exports.lookSurface.area.addEventListener("touchend", () => {
         toFromAPI_1.sendPut("prismState/scanParams/offset/x", Number(scanParameteres_1.offsetX.value));
@@ -23,4 +27,11 @@ function setUpLookSurface() {
     });
 }
 exports.setUpLookSurface = setUpLookSurface;
+function adatapLookSurface() {
+    exports.lookSurface.leftRelPos = (Number(scanParameteres_1.offsetX.value) * exports.lookSurface.areaWidth) / limits_1.limits.find(limit => limit.id == scanParameteres_1.offsetX.id).max;
+    exports.lookSurface.topRelPos = (Number(scanParameteres_1.offsetY.value) * exports.lookSurface.areaHeight) / limits_1.limits.find(limit => limit.id == scanParameteres_1.offsetY.id).max;
+    exports.lookSurface.elWidth = (Number(scanParameteres_1.rangeX.value) * exports.lookSurface.areaWidth) / limits_1.limits.find(limit => limit.id == scanParameteres_1.rangeX.id).max;
+    exports.lookSurface.elHeight = (Number(scanParameteres_1.rangeY.value) * exports.lookSurface.areaHeight) / limits_1.limits.find(limit => limit.id == scanParameteres_1.rangeY.id).max;
+}
+exports.adatapLookSurface = adatapLookSurface;
 //# sourceMappingURL=lookSurface.js.map

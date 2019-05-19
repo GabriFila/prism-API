@@ -6,7 +6,7 @@ const toFromAPI_1 = require("./toFromAPI");
 const scanParameteres_1 = require("./UIparts/scanParameteres");
 const mode_1 = require("./UIparts/mode");
 const motorsControls_1 = require("./UIparts/motorsControls");
-const lookSurface_1 = require("./UIparts/lookSurface");
+const scanArea_1 = require("./UIparts/scanArea");
 const lasers_1 = require("./UIparts/lasers");
 /*get microscope state on UI start-up */
 toFromAPI_1.getCurrentMicroState();
@@ -14,7 +14,7 @@ toFromAPI_1.setUpUpdater();
 mode_1.setUpModeBtns();
 lasers_1.setUpLasers();
 numpad_1.setUpNumPad();
-lookSurface_1.setUpLookSurface();
+scanArea_1.setUpLookSurface();
 motorsControls_1.setUpMotorsControls();
 //last item in focus
 exports.lastFocus = undefined;

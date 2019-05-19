@@ -1,8 +1,8 @@
-import { MicroState, ScanParams, Resource } from "../model";
+import { MicroState, Resource } from "../model";
 import { updateUILasersFromLasers, laserUIRows } from "./UIparts/lasers";
 import { updateLimits, limits } from "./UIparts/limits";
 import { updateUIParameters } from "./UIparts/scanParameteres";
-import { lookSurface } from "./UIparts/lookSurface";
+import { scanArea, adatapLookSurface } from "./UIparts/scanArea";
 
 const source = new EventSource("/updates");
 
@@ -52,36 +52,24 @@ export function getCurrentMicroState() {
       updateLimits(newState.scanParams);
       updateUILasersFromLasers(newState.lasers);
       updateUIParameters(newState.scanParams);
-      updateUIPads(newState.scanParams);
+      adatapLookSurface();
     });
 }
-
-function updateUIPads(scanParams: ScanParams) {
-  lookSurface.leftRelPos =
-    ((scanParams.offset.x.value as number) * lookSurface.areaWidth) / limits.find(limit => limit.id == scanParams.offset.x.name).max;
-  lookSurface.topRelPos =
-    ((scanParams.offset.y.value as number) * lookSurface.areaHeight) / limits.find(limit => limit.id == scanParams.offset.y.name).max;
-  lookSurface.elWidth =
-    ((scanParams.range.x.value as number) * lookSurface.areaWidth) / limits.find(limit => limit.id == scanParams.range.x.name).max;
-  lookSurface.elHeight =
-    ((scanParams.range.y.value as number) * lookSurface.areaHeight) / limits.find(limit => limit.id == scanParams.range.y.name).max;
-}
-
 function updatePadsFromResName(id: string) {
   let idEls = id.split("-");
   if (idEls[1] == "offset") {
     if (idEls[2] == "x")
-      lookSurface.leftRelPos =
-        (Number((document.getElementById(id) as HTMLInputElement).value) * lookSurface.areaWidth) /
+      scanArea.leftRelPos =
+        (Number((document.getElementById(id) as HTMLInputElement).value) * scanArea.areaWidth) /
         limits.find(limit => limit.id == id).max;
     else if (idEls[2] == "y")
-      lookSurface.topRelPos =
-        (Number((document.getElementById(id) as HTMLInputElement).value) * lookSurface.areaHeight) /
+      scanArea.topRelPos =
+        (Number((document.getElementById(id) as HTMLInputElement).value) * scanArea.areaHeight) /
         limits.find(limit => limit.id == id).max;
   } else if (idEls[2] == "x")
-    lookSurface.elWidth =
-      (Number((document.getElementById(id) as HTMLInputElement).value) * lookSurface.areaWidth) / limits.find(limit => limit.id == id).max;
+    scanArea.elWidth =
+      (Number((document.getElementById(id) as HTMLInputElement).value) * scanArea.areaWidth) / limits.find(limit => limit.id == id).max;
   else if (idEls[2] == "y")
-    lookSurface.elHeight =
-      (Number((document.getElementById(id) as HTMLInputElement).value) * lookSurface.areaHeight) / limits.find(limit => limit.id == id).max;
+    scanArea.elHeight =
+      (Number((document.getElementById(id) as HTMLInputElement).value) * scanArea.areaHeight) / limits.find(limit => limit.id == id).max;
 }

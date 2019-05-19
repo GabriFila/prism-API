@@ -239,9 +239,9 @@ class MovObj {
         this._elBorderSize = Number(regex.exec(str)[1]);
     }
     updateAreaBorderSize() {
-        let elStyle = window.getComputedStyle(this.area);
+        let areaStyle = window.getComputedStyle(this.area);
         let regex = /([0-9]*)px[a-zA-Z0-9_ ]*/;
-        let str = elStyle.getPropertyValue("border"); //gets rid of "px" in border CSS property
+        let str = areaStyle.getPropertyValue("border"); //gets rid of "px" in border CSS property
         this._areaBorderSize = Number(regex.exec(str)[1]);
     }
     translateToUI(xPos, yPos, el) {
@@ -249,14 +249,6 @@ class MovObj {
     }
 }
 exports.MovObj = MovObj;
-exports.inspectArea = document.querySelector("#inspect-area-0");
-exports.zThumb = document.querySelector("#z-thumb");
-exports.sampleArea = document.querySelector("#sample-area");
-exports.zSlider = document.querySelector("#z-slider");
-exports.joyPad = document.querySelector("#joystick-pad");
-exports.joyThumb = document.querySelector("#joystick-thumb");
-exports.zSensBtn = document.querySelector("#z-sens-btn");
-exports.zSenses = ["0.1x", "0.5x", "1x"];
 
 },{}],4:[function(require,module,exports){
 "use strict";
@@ -554,33 +546,6 @@ exports.updateLimits = updateLimits;
 },{"./scanParameteres":12}],8:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const pinchObj_1 = require("./drag-pinch-joystick/pinchObj");
-const movObj_1 = require("./drag-pinch-joystick/movObj");
-const limits_1 = require("./limits");
-const scanParameteres_1 = require("./scanParameteres");
-const toFromAPI_1 = require("../toFromAPI");
-exports.lookSurface = new pinchObj_1.PinchObj(movObj_1.inspectArea, movObj_1.sampleArea, 20);
-function setUpLookSurface() {
-    //update own UI parameters
-    exports.lookSurface.area.addEventListener("touchmove", () => {
-        scanParameteres_1.offsetX.value = ((exports.lookSurface.leftRelPos * limits_1.limits.find(limit => limit.id == "scanParams-offset-x").max) / exports.lookSurface.areaWidth).toPrecision(4);
-        scanParameteres_1.offsetY.value = ((exports.lookSurface.topRelPos * limits_1.limits.find(limit => limit.id == "scanParams-offset-y").max) / exports.lookSurface.areaHeight).toPrecision(4);
-        scanParameteres_1.rangeX.value = ((exports.lookSurface.elWidth * limits_1.limits.find(limit => limit.id == "scanParams-range-x").max) / exports.lookSurface.areaWidth).toPrecision(4);
-        scanParameteres_1.rangeY.value = ((exports.lookSurface.elHeight * limits_1.limits.find(limit => limit.id == "scanParams-range-y").max) / exports.lookSurface.areaHeight).toPrecision(4);
-    });
-    //send parameter change when untouched
-    exports.lookSurface.area.addEventListener("touchend", () => {
-        toFromAPI_1.sendPut("prismState/scanParams/offset/x", Number(scanParameteres_1.offsetX.value));
-        toFromAPI_1.sendPut("prismState/scanParams/offset/y", Number(scanParameteres_1.offsetY.value));
-        toFromAPI_1.sendPut("prismState/scanParams/range/x", Number(scanParameteres_1.rangeX.value));
-        toFromAPI_1.sendPut("prismState/scanParams/range/y", Number(scanParameteres_1.rangeY.value));
-    });
-}
-exports.setUpLookSurface = setUpLookSurface;
-
-},{"../toFromAPI":14,"./drag-pinch-joystick/movObj":3,"./drag-pinch-joystick/pinchObj":4,"./limits":7,"./scanParameteres":12}],9:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const toFromAPI_1 = require("../toFromAPI");
 const modeBtns = document.querySelectorAll(".mode-btn");
 function setUpModeBtns() {
@@ -601,15 +566,20 @@ function setUpModeBtns() {
 }
 exports.setUpModeBtns = setUpModeBtns;
 
-},{"../toFromAPI":14}],10:[function(require,module,exports){
+},{"../toFromAPI":14}],9:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const circJoystick_1 = require("./drag-pinch-joystick/circJoystick");
-const movObj_1 = require("./drag-pinch-joystick/movObj");
 const sliderJoystickObj_1 = require("./drag-pinch-joystick/sliderJoystickObj");
 const toFromAPI_1 = require("../toFromAPI");
+const zThumb = document.querySelector("#z-thumb");
+const zSlider = document.querySelector("#z-slider");
+const joyPad = document.querySelector("#joystick-pad");
+const joyThumb = document.querySelector("#joystick-thumb");
+const zSensBtn = document.querySelector("#z-sens-btn");
+exports.zSenses = ["0.1x", "0.5x", "1x"];
 function setUpMotorsControls() {
-    let xyMotor = new circJoystick_1.CircJoystickObj(movObj_1.joyThumb, movObj_1.joyPad);
+    let xyMotor = new circJoystick_1.CircJoystickObj(joyThumb, joyPad);
     let intervalCheckerXY;
     xyMotor.element.addEventListener("touchstart", () => {
         intervalCheckerXY = setInterval(() => {
@@ -621,22 +591,22 @@ function setUpMotorsControls() {
     });
     xyMotor.element.addEventListener("touchend", () => clearInterval(intervalCheckerXY));
     //x motor slider
-    let zMotor = new sliderJoystickObj_1.SliderJoystickObj(movObj_1.zThumb, movObj_1.zSlider);
+    let zMotor = new sliderJoystickObj_1.SliderJoystickObj(zThumb, zSlider);
     let intervalCheckerZ;
     zMotor.element.addEventListener("touchstart", () => {
         intervalCheckerZ = setInterval(() => {
-            toFromAPI_1.sendPut("prismState/motors/z", Number(zMotor.sliderValue) * Number(movObj_1.zSensBtn.innerHTML.slice(0, -1)));
+            toFromAPI_1.sendPut("prismState/motors/z", Number(zMotor.sliderValue) * Number(zSensBtn.innerHTML.slice(0, -1)));
         }, 200);
     });
     zMotor.element.addEventListener("touchend", () => clearInterval(intervalCheckerZ));
     //change z joystick sensibility when touched
-    movObj_1.zSensBtn.addEventListener("click", () => {
-        movObj_1.zSensBtn.innerHTML = movObj_1.zSenses[(movObj_1.zSenses.indexOf(movObj_1.zSensBtn.innerHTML) + 1) % movObj_1.zSenses.length];
+    zSensBtn.addEventListener("click", () => {
+        zSensBtn.innerHTML = exports.zSenses[(exports.zSenses.indexOf(zSensBtn.innerHTML) + 1) % exports.zSenses.length];
     });
 }
 exports.setUpMotorsControls = setUpMotorsControls;
 
-},{"../toFromAPI":14,"./drag-pinch-joystick/circJoystick":1,"./drag-pinch-joystick/movObj":3,"./drag-pinch-joystick/sliderJoystickObj":5}],11:[function(require,module,exports){
+},{"../toFromAPI":14,"./drag-pinch-joystick/circJoystick":1,"./drag-pinch-joystick/sliderJoystickObj":5}],10:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const mainUI_1 = require("../mainUI");
@@ -696,7 +666,46 @@ function setUpNumPad() {
 }
 exports.setUpNumPad = setUpNumPad;
 
-},{"../mainUI":13,"../toFromAPI":14,"./limits":7,"./scanParameteres":12}],12:[function(require,module,exports){
+},{"../mainUI":13,"../toFromAPI":14,"./limits":7,"./scanParameteres":12}],11:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const pinchObj_1 = require("./drag-pinch-joystick/pinchObj");
+const limits_1 = require("./limits");
+const scanParameteres_1 = require("./scanParameteres");
+const toFromAPI_1 = require("../toFromAPI");
+const inspectArea = document.querySelector("#scan-area");
+const sampleArea = document.querySelector("#total-area");
+exports.scanArea = new pinchObj_1.PinchObj(inspectArea, sampleArea, 20);
+function setUpLookSurface() {
+    //update own UI parameters
+    exports.scanArea.area.addEventListener("touchmove", () => {
+        scanParameteres_1.offsetX.value = ((exports.scanArea.leftRelPos * limits_1.limits.find(limit => limit.id == "scanParams-offset-x").max) /
+            exports.scanArea.areaWidth).toPrecision(4);
+        scanParameteres_1.offsetY.value = ((exports.scanArea.topRelPos * limits_1.limits.find(limit => limit.id == "scanParams-offset-y").max) /
+            exports.scanArea.areaHeight).toPrecision(4);
+        scanParameteres_1.rangeX.value = ((exports.scanArea.elWidth * limits_1.limits.find(limit => limit.id == "scanParams-range-x").max) / exports.scanArea.areaWidth).toPrecision(4);
+        scanParameteres_1.rangeY.value = ((exports.scanArea.elHeight * limits_1.limits.find(limit => limit.id == "scanParams-range-y").max) /
+            exports.scanArea.areaHeight).toPrecision(4);
+    });
+    window.addEventListener("resize", adatapLookSurface);
+    //send parameter change when untouched
+    exports.scanArea.area.addEventListener("touchend", () => {
+        toFromAPI_1.sendPut("prismState/scanParams/offset/x", Number(scanParameteres_1.offsetX.value));
+        toFromAPI_1.sendPut("prismState/scanParams/offset/y", Number(scanParameteres_1.offsetY.value));
+        toFromAPI_1.sendPut("prismState/scanParams/range/x", Number(scanParameteres_1.rangeX.value));
+        toFromAPI_1.sendPut("prismState/scanParams/range/y", Number(scanParameteres_1.rangeY.value));
+    });
+}
+exports.setUpLookSurface = setUpLookSurface;
+function adatapLookSurface() {
+    exports.scanArea.leftRelPos = (Number(scanParameteres_1.offsetX.value) * exports.scanArea.areaWidth) / limits_1.limits.find(limit => limit.id == scanParameteres_1.offsetX.id).max;
+    exports.scanArea.topRelPos = (Number(scanParameteres_1.offsetY.value) * exports.scanArea.areaHeight) / limits_1.limits.find(limit => limit.id == scanParameteres_1.offsetY.id).max;
+    exports.scanArea.elWidth = (Number(scanParameteres_1.rangeX.value) * exports.scanArea.areaWidth) / limits_1.limits.find(limit => limit.id == scanParameteres_1.rangeX.id).max;
+    exports.scanArea.elHeight = (Number(scanParameteres_1.rangeY.value) * exports.scanArea.areaHeight) / limits_1.limits.find(limit => limit.id == scanParameteres_1.rangeY.id).max;
+}
+exports.adatapLookSurface = adatapLookSurface;
+
+},{"../toFromAPI":14,"./drag-pinch-joystick/pinchObj":4,"./limits":7,"./scanParameteres":12}],12:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.offsetX = document.querySelector("#scanParams-offset-x");
@@ -758,7 +767,7 @@ const toFromAPI_1 = require("./toFromAPI");
 const scanParameteres_1 = require("./UIparts/scanParameteres");
 const mode_1 = require("./UIparts/mode");
 const motorsControls_1 = require("./UIparts/motorsControls");
-const lookSurface_1 = require("./UIparts/lookSurface");
+const scanArea_1 = require("./UIparts/scanArea");
 const lasers_1 = require("./UIparts/lasers");
 /*get microscope state on UI start-up */
 toFromAPI_1.getCurrentMicroState();
@@ -766,7 +775,7 @@ toFromAPI_1.setUpUpdater();
 mode_1.setUpModeBtns();
 lasers_1.setUpLasers();
 numpad_1.setUpNumPad();
-lookSurface_1.setUpLookSurface();
+scanArea_1.setUpLookSurface();
 motorsControls_1.setUpMotorsControls();
 //last item in focus
 exports.lastFocus = undefined;
@@ -797,13 +806,13 @@ function removeHighlithBoder() {
     scanParameteres_1.UIparameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));
 }
 
-},{"./UIparts/lasers":6,"./UIparts/lookSurface":8,"./UIparts/mode":9,"./UIparts/motorsControls":10,"./UIparts/numpad":11,"./UIparts/scanParameteres":12,"./toFromAPI":14}],14:[function(require,module,exports){
+},{"./UIparts/lasers":6,"./UIparts/mode":8,"./UIparts/motorsControls":9,"./UIparts/numpad":10,"./UIparts/scanArea":11,"./UIparts/scanParameteres":12,"./toFromAPI":14}],14:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const lasers_1 = require("./UIparts/lasers");
 const limits_1 = require("./UIparts/limits");
 const scanParameteres_1 = require("./UIparts/scanParameteres");
-const lookSurface_1 = require("./UIparts/lookSurface");
+const scanArea_1 = require("./UIparts/scanArea");
 const source = new EventSource("/updates");
 function setUpUpdater() {
     source.addEventListener("update", (event) => {
@@ -851,38 +860,28 @@ function getCurrentMicroState() {
         limits_1.updateLimits(newState.scanParams);
         lasers_1.updateUILasersFromLasers(newState.lasers);
         scanParameteres_1.updateUIParameters(newState.scanParams);
-        updateUIPads(newState.scanParams);
+        scanArea_1.adatapLookSurface();
     });
 }
 exports.getCurrentMicroState = getCurrentMicroState;
-function updateUIPads(scanParams) {
-    lookSurface_1.lookSurface.leftRelPos =
-        (scanParams.offset.x.value * lookSurface_1.lookSurface.areaWidth) / limits_1.limits.find(limit => limit.id == scanParams.offset.x.name).max;
-    lookSurface_1.lookSurface.topRelPos =
-        (scanParams.offset.y.value * lookSurface_1.lookSurface.areaHeight) / limits_1.limits.find(limit => limit.id == scanParams.offset.y.name).max;
-    lookSurface_1.lookSurface.elWidth =
-        (scanParams.range.x.value * lookSurface_1.lookSurface.areaWidth) / limits_1.limits.find(limit => limit.id == scanParams.range.x.name).max;
-    lookSurface_1.lookSurface.elHeight =
-        (scanParams.range.y.value * lookSurface_1.lookSurface.areaHeight) / limits_1.limits.find(limit => limit.id == scanParams.range.y.name).max;
-}
 function updatePadsFromResName(id) {
     let idEls = id.split("-");
     if (idEls[1] == "offset") {
         if (idEls[2] == "x")
-            lookSurface_1.lookSurface.leftRelPos =
-                (Number(document.getElementById(id).value) * lookSurface_1.lookSurface.areaWidth) /
+            scanArea_1.scanArea.leftRelPos =
+                (Number(document.getElementById(id).value) * scanArea_1.scanArea.areaWidth) /
                     limits_1.limits.find(limit => limit.id == id).max;
         else if (idEls[2] == "y")
-            lookSurface_1.lookSurface.topRelPos =
-                (Number(document.getElementById(id).value) * lookSurface_1.lookSurface.areaHeight) /
+            scanArea_1.scanArea.topRelPos =
+                (Number(document.getElementById(id).value) * scanArea_1.scanArea.areaHeight) /
                     limits_1.limits.find(limit => limit.id == id).max;
     }
     else if (idEls[2] == "x")
-        lookSurface_1.lookSurface.elWidth =
-            (Number(document.getElementById(id).value) * lookSurface_1.lookSurface.areaWidth) / limits_1.limits.find(limit => limit.id == id).max;
+        scanArea_1.scanArea.elWidth =
+            (Number(document.getElementById(id).value) * scanArea_1.scanArea.areaWidth) / limits_1.limits.find(limit => limit.id == id).max;
     else if (idEls[2] == "y")
-        lookSurface_1.lookSurface.elHeight =
-            (Number(document.getElementById(id).value) * lookSurface_1.lookSurface.areaHeight) / limits_1.limits.find(limit => limit.id == id).max;
+        scanArea_1.scanArea.elHeight =
+            (Number(document.getElementById(id).value) * scanArea_1.scanArea.areaHeight) / limits_1.limits.find(limit => limit.id == id).max;
 }
 
-},{"./UIparts/lasers":6,"./UIparts/limits":7,"./UIparts/lookSurface":8,"./UIparts/scanParameteres":12}]},{},[13]);
+},{"./UIparts/lasers":6,"./UIparts/limits":7,"./UIparts/scanArea":11,"./UIparts/scanParameteres":12}]},{},[13]);

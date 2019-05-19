@@ -1,7 +1,14 @@
 import { CircJoystickObj } from "./drag-pinch-joystick/circJoystick";
-import { joyThumb, joyPad, zThumb, zSlider, zSensBtn, zSenses } from "./drag-pinch-joystick/movObj";
 import { SliderJoystickObj } from "./drag-pinch-joystick/sliderJoystickObj";
 import { sendPut } from "../toFromAPI";
+
+const zThumb: HTMLDivElement = document.querySelector("#z-thumb");
+const zSlider: HTMLDivElement = document.querySelector("#z-slider");
+const joyPad: HTMLDivElement = document.querySelector("#joystick-pad");
+const joyThumb: HTMLDivElement = document.querySelector("#joystick-thumb");
+const zSensBtn: HTMLButtonElement = document.querySelector("#z-sens-btn");
+
+export const zSenses: string[] = ["0.1x", "0.5x", "1x"];
 
 export function setUpMotorsControls() {
   let xyMotor = new CircJoystickObj(joyThumb, joyPad);
