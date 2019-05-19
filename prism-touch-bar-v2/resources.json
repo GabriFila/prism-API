@@ -53,14 +53,14 @@
     "range": {
       "x": {
         "name": "scanParams-range-x",
-        "value": 100,
+        "value": 500,
         "max": 1000,
         "min": 0,
         "unit": "um"
       },
       "y": {
         "name": "scanParams-range-y",
-        "value": 100,
+        "value": 500,
         "max": 1000,
         "min": 0,
         "unit": "um"

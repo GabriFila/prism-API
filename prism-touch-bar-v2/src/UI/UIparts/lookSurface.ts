@@ -9,10 +9,10 @@ export const lookSurface = new PinchObj(inspectArea, sampleArea, 20);
 export function setUpLookSurface() {
   //update own UI parameters
   lookSurface.area.addEventListener("touchmove", () => {
-    offsetX.value = String((lookSurface.leftRelPos * limits.find(limit => limit.id == "scanParams-offset-x").max) / lookSurface.areaWidth);
-    offsetY.value = String((lookSurface.topRelPos * limits.find(limit => limit.id == "scanParams-offset-y").max) / lookSurface.areaHeight);
-    rangeX.value = String((lookSurface.elWidth * limits.find(limit => limit.id == "scanParams-range-x").max) / lookSurface.areaWidth);
-    rangeY.value = String((lookSurface.elHeight * limits.find(limit => limit.id == "scanParams-range-y").max) / lookSurface.areaHeight);
+    offsetX.value = ((lookSurface.leftRelPos * limits.find(limit => limit.id == "scanParams-offset-x").max) / lookSurface.areaWidth).toPrecision(4);
+    offsetY.value = ((lookSurface.topRelPos * limits.find(limit => limit.id == "scanParams-offset-y").max) / lookSurface.areaHeight).toPrecision(4);
+    rangeX.value = ((lookSurface.elWidth * limits.find(limit => limit.id == "scanParams-range-x").max) / lookSurface.areaWidth).toPrecision(4);
+    rangeY.value = ((lookSurface.elHeight * limits.find(limit => limit.id == "scanParams-range-y").max) / lookSurface.areaHeight).toPrecision(4);
   });
   //send parameter change when untouched
   lookSurface.area.addEventListener("touchend", () => {

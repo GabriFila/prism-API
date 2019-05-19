@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const toFromAPI_1 = require("./toFromAPI");
+const toFromAPI_1 = require("../toFromAPI");
 const modeBtns = document.querySelectorAll(".mode-btn");
 function setUpModeBtns() {
     // mode btns events

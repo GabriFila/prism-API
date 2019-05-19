@@ -10,6 +10,7 @@ exports.updates.get("/", (req, res) => {
         Connection: "keep-alive"
     });
     observer.subscribe(this, "API-updated", (who, resource) => {
+        console.log(resource.name);
         //function sendUpdateToPrism(`updated-${resource.name}`, resource.value)
         SSEwrite(resource);
     });

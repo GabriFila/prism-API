@@ -513,7 +513,7 @@ function setUpLasers() {
             laserUIRow.powerLabel.innerHTML = tempValue + "%";
             toFromAPI_1.sendPut(`prismState/lasers/power?waveLength=${laserUIRow.waveLength}`, Number(laserUIRow.power));
         });
-        laserUIRow.btn.addEventListener("click", () => {
+        laserUIRow.btn.addEventListener("mouseup", () => {
             laserUIRow.isOn = !laserUIRow.isOn;
             toFromAPI_1.sendPut(`prismState/lasers/isOn?waveLength=${laserUIRow.waveLength}`, laserUIRow.isOn);
         });
@@ -551,7 +551,7 @@ function updateLimits(scanParams) {
 }
 exports.updateLimits = updateLimits;
 
-},{"./scanParameteres":11}],8:[function(require,module,exports){
+},{"./scanParameteres":12}],8:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const pinchObj_1 = require("./drag-pinch-joystick/pinchObj");
@@ -563,10 +563,10 @@ exports.lookSurface = new pinchObj_1.PinchObj(movObj_1.inspectArea, movObj_1.sam
 function setUpLookSurface() {
     //update own UI parameters
     exports.lookSurface.area.addEventListener("touchmove", () => {
-        scanParameteres_1.offsetX.value = String((exports.lookSurface.leftRelPos * limits_1.limits.find(limit => limit.id == "scanParams-offset-x").max) / exports.lookSurface.areaWidth);
-        scanParameteres_1.offsetY.value = String((exports.lookSurface.topRelPos * limits_1.limits.find(limit => limit.id == "scanParams-offset-y").max) / exports.lookSurface.areaHeight);
-        scanParameteres_1.rangeX.value = String((exports.lookSurface.elWidth * limits_1.limits.find(limit => limit.id == "scanParams-range-x").max) / exports.lookSurface.areaWidth);
-        scanParameteres_1.rangeY.value = String((exports.lookSurface.elHeight * limits_1.limits.find(limit => limit.id == "scanParams-range-y").max) / exports.lookSurface.areaHeight);
+        scanParameteres_1.offsetX.value = ((exports.lookSurface.leftRelPos * limits_1.limits.find(limit => limit.id == "scanParams-offset-x").max) / exports.lookSurface.areaWidth).toPrecision(4);
+        scanParameteres_1.offsetY.value = ((exports.lookSurface.topRelPos * limits_1.limits.find(limit => limit.id == "scanParams-offset-y").max) / exports.lookSurface.areaHeight).toPrecision(4);
+        scanParameteres_1.rangeX.value = ((exports.lookSurface.elWidth * limits_1.limits.find(limit => limit.id == "scanParams-range-x").max) / exports.lookSurface.areaWidth).toPrecision(4);
+        scanParameteres_1.rangeY.value = ((exports.lookSurface.elHeight * limits_1.limits.find(limit => limit.id == "scanParams-range-y").max) / exports.lookSurface.areaHeight).toPrecision(4);
     });
     //send parameter change when untouched
     exports.lookSurface.area.addEventListener("touchend", () => {
@@ -578,7 +578,30 @@ function setUpLookSurface() {
 }
 exports.setUpLookSurface = setUpLookSurface;
 
-},{"../toFromAPI":14,"./drag-pinch-joystick/movObj":3,"./drag-pinch-joystick/pinchObj":4,"./limits":7,"./scanParameteres":11}],9:[function(require,module,exports){
+},{"../toFromAPI":14,"./drag-pinch-joystick/movObj":3,"./drag-pinch-joystick/pinchObj":4,"./limits":7,"./scanParameteres":12}],9:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const toFromAPI_1 = require("../toFromAPI");
+const modeBtns = document.querySelectorAll(".mode-btn");
+function setUpModeBtns() {
+    // mode btns events
+    modeBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+            if (btn.classList.contains("highlighted-button")) {
+                btn.classList.remove("highlighted-button");
+                toFromAPI_1.sendPut("prismState/mode", "stop");
+            }
+            else {
+                modeBtns.forEach(btn => btn.classList.remove("highlighted-button"));
+                btn.classList.add("highlighted-button");
+                toFromAPI_1.sendPut("prismState/mode", btn.id.split("-")[0]);
+            }
+        });
+    });
+}
+exports.setUpModeBtns = setUpModeBtns;
+
+},{"../toFromAPI":14}],10:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const circJoystick_1 = require("./drag-pinch-joystick/circJoystick");
@@ -613,25 +636,13 @@ function setUpMotorsControls() {
 }
 exports.setUpMotorsControls = setUpMotorsControls;
 
-},{"../toFromAPI":14,"./drag-pinch-joystick/circJoystick":1,"./drag-pinch-joystick/movObj":3,"./drag-pinch-joystick/sliderJoystickObj":5}],10:[function(require,module,exports){
+},{"../toFromAPI":14,"./drag-pinch-joystick/circJoystick":1,"./drag-pinch-joystick/movObj":3,"./drag-pinch-joystick/sliderJoystickObj":5}],11:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const mainUI_1 = require("../mainUI");
 const limits_1 = require("./limits");
 const toFromAPI_1 = require("../toFromAPI");
 const scanParameteres_1 = require("./scanParameteres");
-/*
-const btn0: HTMLButtonElement = document.querySelector("#btn0");
-const btn1: HTMLButtonElement = document.querySelector("#btn1");
-const btn2: HTMLButtonElement = document.querySelector("#btn2");
-const btn3: HTMLButtonElement = document.querySelector("#btn3");
-const btn4: HTMLButtonElement = document.querySelector("#btn4");
-const btn5: HTMLButtonElement = document.querySelector("#btn5");
-const btn6: HTMLButtonElement = document.querySelector("#btn6");
-const btn7: HTMLButtonElement = document.querySelector("#btn7");
-const btn8: HTMLButtonElement = document.querySelector("#btn8");
-const btn9: HTMLButtonElement = document.querySelector("#btn9");
-*/
 exports.dotBtn = document.querySelector("#btnDot");
 exports.delBtn = document.querySelector("#btnDel");
 //export const numPad = [btn0, btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9];
@@ -646,6 +657,7 @@ function setUpNumPad() {
                 mainUI_1.lastFocus.classList.add("highlighted");
                 if (limits_1.limits.find(limit => limit.id == mainUI_1.lastFocus.id).check(Number(mainUI_1.lastFocus.value) + Number(numBtn.innerHTML))) {
                     mainUI_1.lastFocus.value += Number(numBtn.innerHTML);
+                    adjustRange();
                     toFromAPI_1.sendPut(`prismState/${mainUI_1.lastFocus.id.replace("-", "/").replace("-", "/")}`, Number(mainUI_1.lastFocus.value));
                 }
                 else {
@@ -656,8 +668,14 @@ function setUpNumPad() {
         });
     });
     function adjustRange() {
-        if (Number(scanParameteres_1.offsetX.value) + Number(scanParameteres_1.rangeX.value) > limits_1.limits.find(limit => limit.id == scanParameteres_1.offsetX.id).max)
+        if (Number(scanParameteres_1.offsetX.value) + Number(scanParameteres_1.rangeX.value) > limits_1.limits.find(limit => limit.id == scanParameteres_1.offsetX.id).max) {
             scanParameteres_1.rangeX.value = (limits_1.limits.find(limit => limit.id == scanParameteres_1.offsetX.id).max - Number(scanParameteres_1.offsetX.value)).toString();
+            toFromAPI_1.sendPut(`prismState/scanParams/range/x`, Number(scanParameteres_1.rangeX.value));
+        }
+        if (Number(scanParameteres_1.offsetY.value) + Number(scanParameteres_1.rangeY.value) > limits_1.limits.find(limit => limit.id == scanParameteres_1.offsetY.id).max) {
+            scanParameteres_1.rangeY.value = (limits_1.limits.find(limit => limit.id == scanParameteres_1.offsetY.id).max - Number(scanParameteres_1.offsetY.value)).toString();
+            toFromAPI_1.sendPut(`prismState/scanParams/range/y`, Number(scanParameteres_1.rangeY.value));
+        }
     }
     /*Numpad events */
     //add dot to last focus element when dot button pressed
@@ -678,19 +696,19 @@ function setUpNumPad() {
 }
 exports.setUpNumPad = setUpNumPad;
 
-},{"../mainUI":12,"../toFromAPI":14,"./limits":7,"./scanParameteres":11}],11:[function(require,module,exports){
+},{"../mainUI":13,"../toFromAPI":14,"./limits":7,"./scanParameteres":12}],12:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.offsetX = document.querySelector("#offset-x");
-exports.offsetY = document.querySelector("#offset-y");
-const pixelNumberX = document.querySelector("#pixelNumber-x");
-const pixelNumberY = document.querySelector("#pixelNumber-y");
-const pixelNumberZ = document.querySelector("#pixelNumber-z");
-exports.rangeX = document.querySelector("#range-x");
-exports.rangeY = document.querySelector("#range-y");
-const rangeZ = document.querySelector("#range-z");
-const dwellTime = document.querySelector("#dwellTime");
-const totalTime = document.querySelector("#totalTime");
+exports.offsetX = document.querySelector("#scanParams-offset-x");
+exports.offsetY = document.querySelector("#scanParams-offset-y");
+const pixelNumberX = document.querySelector("#scanParams-pixelNumber-x");
+const pixelNumberY = document.querySelector("#scanParams-pixelNumber-y");
+const pixelNumberZ = document.querySelector("#scanParams-pixelNumber-z");
+exports.rangeX = document.querySelector("#scanParams-range-x");
+exports.rangeY = document.querySelector("#scanParams-range-y");
+const rangeZ = document.querySelector("#scanParams-range-z");
+const dwellTime = document.querySelector("#scanParams-dwellTime");
+const totalTime = document.querySelector("#scanParams-totalTime");
 const tempUIparams = document.querySelectorAll(".param-input");
 exports.UIparameters = [];
 //remove grayed out elemts from tempUIparameters
@@ -731,14 +749,14 @@ function updateUIParameters(scanParams) {
 }
 exports.updateUIParameters = updateUIParameters;
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /*numpad element*/
 const numpad_1 = require("./UIparts/numpad");
 const toFromAPI_1 = require("./toFromAPI");
 const scanParameteres_1 = require("./UIparts/scanParameteres");
-const mode_1 = require("./mode");
+const mode_1 = require("./UIparts/mode");
 const motorsControls_1 = require("./UIparts/motorsControls");
 const lookSurface_1 = require("./UIparts/lookSurface");
 const lasers_1 = require("./UIparts/lasers");
@@ -750,7 +768,6 @@ lasers_1.setUpLasers();
 numpad_1.setUpNumPad();
 lookSurface_1.setUpLookSurface();
 motorsControls_1.setUpMotorsControls();
-/*UI scanning parameters settings */
 //last item in focus
 exports.lastFocus = undefined;
 //remove highlight border only when touching something excluding numpad and selectred parameter
@@ -766,6 +783,7 @@ document.body.addEventListener("click", function (e) {
         }
     }
 });
+//setting up scanning parameters
 //store last parameters input in focus
 scanParameteres_1.UIparameters.forEach(param => {
     param.addEventListener("touchstart", () => {
@@ -779,30 +797,7 @@ function removeHighlithBoder() {
     scanParameteres_1.UIparameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));
 }
 
-},{"./UIparts/lasers":6,"./UIparts/lookSurface":8,"./UIparts/motorsControls":9,"./UIparts/numpad":10,"./UIparts/scanParameteres":11,"./mode":13,"./toFromAPI":14}],13:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const toFromAPI_1 = require("./toFromAPI");
-const modeBtns = document.querySelectorAll(".mode-btn");
-function setUpModeBtns() {
-    // mode btns events
-    modeBtns.forEach(btn => {
-        btn.addEventListener("click", () => {
-            if (btn.classList.contains("highlighted-button")) {
-                btn.classList.remove("highlighted-button");
-                toFromAPI_1.sendPut("prismState/mode", "stop");
-            }
-            else {
-                modeBtns.forEach(btn => btn.classList.remove("highlighted-button"));
-                btn.classList.add("highlighted-button");
-                toFromAPI_1.sendPut("prismState/mode", btn.id.split("-")[0]);
-            }
-        });
-    });
-}
-exports.setUpModeBtns = setUpModeBtns;
-
-},{"./toFromAPI":14}],14:[function(require,module,exports){
+},{"./UIparts/lasers":6,"./UIparts/lookSurface":8,"./UIparts/mode":9,"./UIparts/motorsControls":10,"./UIparts/numpad":11,"./UIparts/scanParameteres":12,"./toFromAPI":14}],14:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const lasers_1 = require("./UIparts/lasers");
@@ -890,4 +885,4 @@ function updatePadsFromResName(id) {
             (Number(document.getElementById(id).value) * lookSurface_1.lookSurface.areaHeight) / limits_1.limits.find(limit => limit.id == id).max;
 }
 
-},{"./UIparts/lasers":6,"./UIparts/limits":7,"./UIparts/lookSurface":8,"./UIparts/scanParameteres":11}]},{},[12]);
+},{"./UIparts/lasers":6,"./UIparts/limits":7,"./UIparts/lookSurface":8,"./UIparts/scanParameteres":12}]},{},[13]);

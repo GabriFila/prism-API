@@ -1,15 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.offsetX = document.querySelector("#offset-x");
-exports.offsetY = document.querySelector("#offset-y");
-const pixelNumberX = document.querySelector("#pixelNumber-x");
-const pixelNumberY = document.querySelector("#pixelNumber-y");
-const pixelNumberZ = document.querySelector("#pixelNumber-z");
-exports.rangeX = document.querySelector("#range-x");
-exports.rangeY = document.querySelector("#range-y");
-const rangeZ = document.querySelector("#range-z");
-const dwellTime = document.querySelector("#dwellTime");
-const totalTime = document.querySelector("#totalTime");
+exports.offsetX = document.querySelector("#scanParams-offset-x");
+exports.offsetY = document.querySelector("#scanParams-offset-y");
+const pixelNumberX = document.querySelector("#scanParams-pixelNumber-x");
+const pixelNumberY = document.querySelector("#scanParams-pixelNumber-y");
+const pixelNumberZ = document.querySelector("#scanParams-pixelNumber-z");
+exports.rangeX = document.querySelector("#scanParams-range-x");
+exports.rangeY = document.querySelector("#scanParams-range-y");
+const rangeZ = document.querySelector("#scanParams-range-z");
+const dwellTime = document.querySelector("#scanParams-dwellTime");
+const totalTime = document.querySelector("#scanParams-totalTime");
 const tempUIparams = document.querySelectorAll(".param-input");
 exports.UIparameters = [];
 //remove grayed out elemts from tempUIparameters

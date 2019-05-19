@@ -2,7 +2,7 @@
 import { numPad, delBtn, dotBtn, setUpNumPad } from "./UIparts/numpad";
 import { getCurrentMicroState, sendPut, setUpUpdater } from "./toFromAPI";
 import { UIparameters } from "./UIparts/scanParameteres";
-import { setUpModeBtns } from "./mode";
+import { setUpModeBtns } from "./UIparts/mode";
 import { setUpMotorsControls } from "./UIparts/motorsControls";
 import { setUpLookSurface } from "./UIparts/lookSurface";
 import { setUpLasers } from "./UIparts/lasers";

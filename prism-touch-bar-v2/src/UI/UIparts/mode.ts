@@ -1,4 +1,4 @@
-import { sendPut } from "./toFromAPI";
+import { sendPut } from "../toFromAPI";
 
 const modeBtns: NodeListOf<HTMLButtonElement> = document.querySelectorAll(".mode-btn");
 export function setUpModeBtns() {

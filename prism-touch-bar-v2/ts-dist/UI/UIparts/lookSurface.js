@@ -9,10 +9,10 @@ exports.lookSurface = new pinchObj_1.PinchObj(movObj_1.inspectArea, movObj_1.sam
 function setUpLookSurface() {
     //update own UI parameters
     exports.lookSurface.area.addEventListener("touchmove", () => {
-        scanParameteres_1.offsetX.value = String((exports.lookSurface.leftRelPos * limits_1.limits.find(limit => limit.id == "scanParams-offset-x").max) / exports.lookSurface.areaWidth);
-        scanParameteres_1.offsetY.value = String((exports.lookSurface.topRelPos * limits_1.limits.find(limit => limit.id == "scanParams-offset-y").max) / exports.lookSurface.areaHeight);
-        scanParameteres_1.rangeX.value = String((exports.lookSurface.elWidth * limits_1.limits.find(limit => limit.id == "scanParams-range-x").max) / exports.lookSurface.areaWidth);
-        scanParameteres_1.rangeY.value = String((exports.lookSurface.elHeight * limits_1.limits.find(limit => limit.id == "scanParams-range-y").max) / exports.lookSurface.areaHeight);
+        scanParameteres_1.offsetX.value = ((exports.lookSurface.leftRelPos * limits_1.limits.find(limit => limit.id == "scanParams-offset-x").max) / exports.lookSurface.areaWidth).toPrecision(4);
+        scanParameteres_1.offsetY.value = ((exports.lookSurface.topRelPos * limits_1.limits.find(limit => limit.id == "scanParams-offset-y").max) / exports.lookSurface.areaHeight).toPrecision(4);
+        scanParameteres_1.rangeX.value = ((exports.lookSurface.elWidth * limits_1.limits.find(limit => limit.id == "scanParams-range-x").max) / exports.lookSurface.areaWidth).toPrecision(4);
+        scanParameteres_1.rangeY.value = ((exports.lookSurface.elHeight * limits_1.limits.find(limit => limit.id == "scanParams-range-y").max) / exports.lookSurface.areaHeight).toPrecision(4);
     });
     //send parameter change when untouched
     exports.lookSurface.area.addEventListener("touchend", () => {

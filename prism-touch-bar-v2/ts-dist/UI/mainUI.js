@@ -4,7 +4,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const numpad_1 = require("./UIparts/numpad");
 const toFromAPI_1 = require("./toFromAPI");
 const scanParameteres_1 = require("./UIparts/scanParameteres");
-const mode_1 = require("./mode");
+const mode_1 = require("./UIparts/mode");
 const motorsControls_1 = require("./UIparts/motorsControls");
 const lookSurface_1 = require("./UIparts/lookSurface");
 const lasers_1 = require("./UIparts/lasers");
@@ -16,7 +16,6 @@ lasers_1.setUpLasers();
 numpad_1.setUpNumPad();
 lookSurface_1.setUpLookSurface();
 motorsControls_1.setUpMotorsControls();
-/*UI scanning parameters settings */
 //last item in focus
 exports.lastFocus = undefined;
 //remove highlight border only when touching something excluding numpad and selectred parameter
@@ -32,6 +31,7 @@ document.body.addEventListener("click", function (e) {
         }
     }
 });
+//setting up scanning parameters
 //store last parameters input in focus
 scanParameteres_1.UIparameters.forEach(param => {
     param.addEventListener("touchstart", () => {

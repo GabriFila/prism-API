@@ -1,15 +1,15 @@
 import { ScanParams } from "../../model";
 
-export const offsetX: HTMLInputElement = document.querySelector("#offset-x");
-export const offsetY: HTMLInputElement = document.querySelector("#offset-y");
-const pixelNumberX: HTMLInputElement = document.querySelector("#pixelNumber-x");
-const pixelNumberY: HTMLInputElement = document.querySelector("#pixelNumber-y");
-const pixelNumberZ: HTMLInputElement = document.querySelector("#pixelNumber-z");
-export const rangeX: HTMLInputElement = document.querySelector("#range-x");
-export const rangeY: HTMLInputElement = document.querySelector("#range-y");
-const rangeZ: HTMLInputElement = document.querySelector("#range-z");
-const dwellTime: HTMLInputElement = document.querySelector("#dwellTime");
-const totalTime: HTMLInputElement = document.querySelector("#totalTime");
+export const offsetX: HTMLInputElement = document.querySelector("#scanParams-offset-x");
+export const offsetY: HTMLInputElement = document.querySelector("#scanParams-offset-y");
+const pixelNumberX: HTMLInputElement = document.querySelector("#scanParams-pixelNumber-x");
+const pixelNumberY: HTMLInputElement = document.querySelector("#scanParams-pixelNumber-y");
+const pixelNumberZ: HTMLInputElement = document.querySelector("#scanParams-pixelNumber-z");
+export const rangeX: HTMLInputElement = document.querySelector("#scanParams-range-x");
+export const rangeY: HTMLInputElement = document.querySelector("#scanParams-range-y");
+const rangeZ: HTMLInputElement = document.querySelector("#scanParams-range-z");
+const dwellTime: HTMLInputElement = document.querySelector("#scanParams-dwellTime");
+const totalTime: HTMLInputElement = document.querySelector("#scanParams-totalTime");
 
 const tempUIparams: NodeListOf<HTMLInputElement> = document.querySelectorAll(".param-input");
 

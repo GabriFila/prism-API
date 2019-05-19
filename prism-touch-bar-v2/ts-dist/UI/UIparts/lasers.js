@@ -81,7 +81,7 @@ function setUpLasers() {
             laserUIRow.powerLabel.innerHTML = tempValue + "%";
             toFromAPI_1.sendPut(`prismState/lasers/power?waveLength=${laserUIRow.waveLength}`, Number(laserUIRow.power));
         });
-        laserUIRow.btn.addEventListener("click", () => {
+        laserUIRow.btn.addEventListener("mouseup", () => {
             laserUIRow.isOn = !laserUIRow.isOn;
             toFromAPI_1.sendPut(`prismState/lasers/isOn?waveLength=${laserUIRow.waveLength}`, laserUIRow.isOn);
         });

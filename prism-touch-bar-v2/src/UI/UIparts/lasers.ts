@@ -105,7 +105,7 @@ export function setUpLasers() {
       sendPut(`prismState/lasers/power?waveLength=${laserUIRow.waveLength}`, Number(laserUIRow.power));
     });
 
-    laserUIRow.btn.addEventListener("click", () => {
+    laserUIRow.btn.addEventListener("mouseup", () => {
       laserUIRow.isOn = !laserUIRow.isOn;
       sendPut(`prismState/lasers/isOn?waveLength=${laserUIRow.waveLength}`, laserUIRow.isOn);
     });
