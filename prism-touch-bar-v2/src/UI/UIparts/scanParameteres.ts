@@ -1,19 +1,18 @@
-class Limit {
-  id: string;
-  max: number;
-  min: number;
-  constructor(id: string) {
-    this.id = id;
-    this.max = Number.POSITIVE_INFINITY;
-    this.min = Number.NEGATIVE_INFINITY;
-  }
+import { ScanParams } from "../../model";
 
-  check(value: number): boolean {
-    return value <= this.max && value >= this.min;
-  }
-}
+export const offsetX: HTMLInputElement = document.querySelector("#offset-x");
+export const offsetY: HTMLInputElement = document.querySelector("#offset-y");
+const pixelNumberX: HTMLInputElement = document.querySelector("#pixelNumber-x");
+const pixelNumberY: HTMLInputElement = document.querySelector("#pixelNumber-y");
+const pixelNumberZ: HTMLInputElement = document.querySelector("#pixelNumber-z");
+export const rangeX: HTMLInputElement = document.querySelector("#range-x");
+export const rangeY: HTMLInputElement = document.querySelector("#range-y");
+const rangeZ: HTMLInputElement = document.querySelector("#range-z");
+const dwellTime: HTMLInputElement = document.querySelector("#dwellTime");
+const totalTime: HTMLInputElement = document.querySelector("#totalTime");
 
 const tempUIparams: NodeListOf<HTMLInputElement> = document.querySelectorAll(".param-input");
+
 export const UIparameters: HTMLInputElement[] = [];
 //remove grayed out elemts from tempUIparameters
 tempUIparams.forEach(param => {
@@ -23,8 +22,6 @@ tempUIparams.forEach(param => {
 });
 
 //initialize limit array
-export const limits: Limit[] = [];
-UIparameters.forEach(param => limits.push(new Limit(param.id)));
 
 export const addPresetBtn: HTMLButtonElement = document.querySelector("#add-preset-btn");
 export const presetSelector: HTMLSelectElement = document.querySelector("#preset-selector");
@@ -40,3 +37,21 @@ export class Preset {
 }
 */
 //export const presets: Preset[] = [];
+
+export function getXYZproperties(scanParams: ScanParams): string[] {
+  let props = Object.keys(scanParams);
+  return props.filter(prop => {
+    let innerProps = Object.keys((scanParams as any)[prop]);
+    return innerProps.includes("x") && innerProps.includes("y") && innerProps.includes("z");
+  });
+}
+
+
+export function updateUIParameters(scanParams: ScanParams) {
+  getXYZproperties(scanParams).forEach(prop => {
+    (document.getElementById((scanParams as any)[prop].x.name) as HTMLInputElement).value = (scanParams as any)[prop].x.value.toString();
+    (document.getElementById((scanParams as any)[prop].y.name) as HTMLInputElement).value = (scanParams as any)[prop].y.value.toString();
+    (document.getElementById((scanParams as any)[prop].z.name) as HTMLInputElement).value = (scanParams as any)[prop].z.value.toString();
+  });
+  (document.getElementById("scanParams-dwellTime") as HTMLInputElement).value = scanParams.dwellTime.value.toString();
+}

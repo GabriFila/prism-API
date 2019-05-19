@@ -1,15 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-class Limit {
-    constructor(id) {
-        this.id = id;
-        this.max = Number.POSITIVE_INFINITY;
-        this.min = Number.NEGATIVE_INFINITY;
-    }
-    check(value) {
-        return value <= this.max && value >= this.min;
-    }
-}
+exports.offsetX = document.querySelector("#offset-x");
+exports.offsetY = document.querySelector("#offset-y");
+const pixelNumberX = document.querySelector("#pixelNumber-x");
+const pixelNumberY = document.querySelector("#pixelNumber-y");
+const pixelNumberZ = document.querySelector("#pixelNumber-z");
+exports.rangeX = document.querySelector("#range-x");
+exports.rangeY = document.querySelector("#range-y");
+const rangeZ = document.querySelector("#range-z");
+const dwellTime = document.querySelector("#dwellTime");
+const totalTime = document.querySelector("#totalTime");
 const tempUIparams = document.querySelectorAll(".param-input");
 exports.UIparameters = [];
 //remove grayed out elemts from tempUIparameters
@@ -19,8 +19,6 @@ tempUIparams.forEach(param => {
     }
 });
 //initialize limit array
-exports.limits = [];
-exports.UIparameters.forEach(param => exports.limits.push(new Limit(param.id)));
 exports.addPresetBtn = document.querySelector("#add-preset-btn");
 exports.presetSelector = document.querySelector("#preset-selector");
 /*
@@ -34,4 +32,21 @@ export class Preset {
 }
 */
 //export const presets: Preset[] = [];
+function getXYZproperties(scanParams) {
+    let props = Object.keys(scanParams);
+    return props.filter(prop => {
+        let innerProps = Object.keys(scanParams[prop]);
+        return innerProps.includes("x") && innerProps.includes("y") && innerProps.includes("z");
+    });
+}
+exports.getXYZproperties = getXYZproperties;
+function updateUIParameters(scanParams) {
+    getXYZproperties(scanParams).forEach(prop => {
+        document.getElementById(scanParams[prop].x.name).value = scanParams[prop].x.value.toString();
+        document.getElementById(scanParams[prop].y.name).value = scanParams[prop].y.value.toString();
+        document.getElementById(scanParams[prop].z.name).value = scanParams[prop].z.value.toString();
+    });
+    document.getElementById("scanParams-dwellTime").value = scanParams.dwellTime.value.toString();
+}
+exports.updateUIParameters = updateUIParameters;
 //# sourceMappingURL=scanParameteres.js.map

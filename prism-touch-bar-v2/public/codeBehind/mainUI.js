@@ -432,6 +432,7 @@ exports.SliderJoystickObj = SliderJoystickObj;
 },{"./movObj":3}],6:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const toFromAPI_1 = require("../toFromAPI");
 class LaserUIRow {
     get isOn() {
         return this._isOn;
@@ -500,27 +501,30 @@ function updateUILasersFromLasers(lasers) {
     });
 }
 exports.updateUILasersFromLasers = updateUILasersFromLasers;
+function setUpLasers() {
+    //adds event to slider box for slider movement and on/off button
+    exports.laserUIRows.forEach(laserUIRow => {
+        laserUIRow.slider.addEventListener("input", () => {
+            let tempValue = laserUIRow.slider.value;
+            laserUIRow.powerLabel.innerHTML = tempValue + "%";
+        });
+        laserUIRow.slider.addEventListener("touchend", () => {
+            let tempValue = laserUIRow.slider.value;
+            laserUIRow.powerLabel.innerHTML = tempValue + "%";
+            toFromAPI_1.sendPut(`prismState/lasers/power?waveLength=${laserUIRow.waveLength}`, Number(laserUIRow.power));
+        });
+        laserUIRow.btn.addEventListener("click", () => {
+            laserUIRow.isOn = !laserUIRow.isOn;
+            toFromAPI_1.sendPut(`prismState/lasers/isOn?waveLength=${laserUIRow.waveLength}`, laserUIRow.isOn);
+        });
+    });
+}
+exports.setUpLasers = setUpLasers;
 
-},{}],7:[function(require,module,exports){
+},{"../toFromAPI":14}],7:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const btn0 = document.querySelector("#btn0");
-const btn1 = document.querySelector("#btn1");
-const btn2 = document.querySelector("#btn2");
-const btn3 = document.querySelector("#btn3");
-const btn4 = document.querySelector("#btn4");
-const btn5 = document.querySelector("#btn5");
-const btn6 = document.querySelector("#btn6");
-const btn7 = document.querySelector("#btn7");
-const btn8 = document.querySelector("#btn8");
-const btn9 = document.querySelector("#btn9");
-exports.dotBtn = document.querySelector("#btnDot");
-exports.delBtn = document.querySelector("#btnDel");
-exports.numPad = [btn0, btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9];
-
-},{}],8:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+const scanParameteres_1 = require("./scanParameteres");
 class Limit {
     constructor(id) {
         this.id = id;
@@ -531,6 +535,162 @@ class Limit {
         return value <= this.max && value >= this.min;
     }
 }
+exports.limits = [];
+scanParameteres_1.UIparameters.forEach(param => exports.limits.push(new Limit(param.id)));
+function updateLimits(scanParams) {
+    scanParameteres_1.getXYZproperties(scanParams).forEach(prop => {
+        //updates limit for each scanParam that as xyz
+        exports.limits.find(limit => limit.id == scanParams[prop].x.name).max = scanParams[prop].x.max;
+        exports.limits.find(limit => limit.id == scanParams[prop].x.name).min = scanParams[prop].x.min;
+        exports.limits.find(limit => limit.id == scanParams[prop].y.name).max = scanParams[prop].y.max;
+        exports.limits.find(limit => limit.id == scanParams[prop].y.name).min = scanParams[prop].y.min;
+        exports.limits.find(limit => limit.id == scanParams[prop].z.name).max = scanParams[prop].z.max;
+        exports.limits.find(limit => limit.id == scanParams[prop].z.name).min = scanParams[prop].z.min;
+    });
+    exports.limits.find(limit => limit.id == "scanParams-dwellTime").max = scanParams.dwellTime.max;
+}
+exports.updateLimits = updateLimits;
+
+},{"./scanParameteres":11}],8:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const pinchObj_1 = require("./drag-pinch-joystick/pinchObj");
+const movObj_1 = require("./drag-pinch-joystick/movObj");
+const limits_1 = require("./limits");
+const scanParameteres_1 = require("./scanParameteres");
+const toFromAPI_1 = require("../toFromAPI");
+exports.lookSurface = new pinchObj_1.PinchObj(movObj_1.inspectArea, movObj_1.sampleArea, 20);
+function setUpLookSurface() {
+    //update own UI parameters
+    exports.lookSurface.area.addEventListener("touchmove", () => {
+        scanParameteres_1.offsetX.value = String((exports.lookSurface.leftRelPos * limits_1.limits.find(limit => limit.id == "scanParams-offset-x").max) / exports.lookSurface.areaWidth);
+        scanParameteres_1.offsetY.value = String((exports.lookSurface.topRelPos * limits_1.limits.find(limit => limit.id == "scanParams-offset-y").max) / exports.lookSurface.areaHeight);
+        scanParameteres_1.rangeX.value = String((exports.lookSurface.elWidth * limits_1.limits.find(limit => limit.id == "scanParams-range-x").max) / exports.lookSurface.areaWidth);
+        scanParameteres_1.rangeY.value = String((exports.lookSurface.elHeight * limits_1.limits.find(limit => limit.id == "scanParams-range-y").max) / exports.lookSurface.areaHeight);
+    });
+    //send parameter change when untouched
+    exports.lookSurface.area.addEventListener("touchend", () => {
+        toFromAPI_1.sendPut("prismState/scanParams/offset/x", Number(scanParameteres_1.offsetX.value));
+        toFromAPI_1.sendPut("prismState/scanParams/offset/y", Number(scanParameteres_1.offsetY.value));
+        toFromAPI_1.sendPut("prismState/scanParams/range/x", Number(scanParameteres_1.rangeX.value));
+        toFromAPI_1.sendPut("prismState/scanParams/range/y", Number(scanParameteres_1.rangeY.value));
+    });
+}
+exports.setUpLookSurface = setUpLookSurface;
+
+},{"../toFromAPI":14,"./drag-pinch-joystick/movObj":3,"./drag-pinch-joystick/pinchObj":4,"./limits":7,"./scanParameteres":11}],9:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const circJoystick_1 = require("./drag-pinch-joystick/circJoystick");
+const movObj_1 = require("./drag-pinch-joystick/movObj");
+const sliderJoystickObj_1 = require("./drag-pinch-joystick/sliderJoystickObj");
+const toFromAPI_1 = require("../toFromAPI");
+function setUpMotorsControls() {
+    let xyMotor = new circJoystick_1.CircJoystickObj(movObj_1.joyThumb, movObj_1.joyPad);
+    let intervalCheckerXY;
+    xyMotor.element.addEventListener("touchstart", () => {
+        intervalCheckerXY = setInterval(() => {
+            if (xyMotor.mag > 0) {
+                toFromAPI_1.sendPut("prismState/motors/x", (xyMotor.mag * Math.cos(xyMotor.arg)) / xyMotor.maxMag);
+                toFromAPI_1.sendPut("prismState/motors/y", (xyMotor.mag * Math.sin(xyMotor.arg)) / xyMotor.maxMag);
+            }
+        }, 200);
+    });
+    xyMotor.element.addEventListener("touchend", () => clearInterval(intervalCheckerXY));
+    //x motor slider
+    let zMotor = new sliderJoystickObj_1.SliderJoystickObj(movObj_1.zThumb, movObj_1.zSlider);
+    let intervalCheckerZ;
+    zMotor.element.addEventListener("touchstart", () => {
+        intervalCheckerZ = setInterval(() => {
+            toFromAPI_1.sendPut("prismState/motors/z", Number(zMotor.sliderValue) * Number(movObj_1.zSensBtn.innerHTML.slice(0, -1)));
+        }, 200);
+    });
+    zMotor.element.addEventListener("touchend", () => clearInterval(intervalCheckerZ));
+    //change z joystick sensibility when touched
+    movObj_1.zSensBtn.addEventListener("click", () => {
+        movObj_1.zSensBtn.innerHTML = movObj_1.zSenses[(movObj_1.zSenses.indexOf(movObj_1.zSensBtn.innerHTML) + 1) % movObj_1.zSenses.length];
+    });
+}
+exports.setUpMotorsControls = setUpMotorsControls;
+
+},{"../toFromAPI":14,"./drag-pinch-joystick/circJoystick":1,"./drag-pinch-joystick/movObj":3,"./drag-pinch-joystick/sliderJoystickObj":5}],10:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const mainUI_1 = require("../mainUI");
+const limits_1 = require("./limits");
+const toFromAPI_1 = require("../toFromAPI");
+const scanParameteres_1 = require("./scanParameteres");
+/*
+const btn0: HTMLButtonElement = document.querySelector("#btn0");
+const btn1: HTMLButtonElement = document.querySelector("#btn1");
+const btn2: HTMLButtonElement = document.querySelector("#btn2");
+const btn3: HTMLButtonElement = document.querySelector("#btn3");
+const btn4: HTMLButtonElement = document.querySelector("#btn4");
+const btn5: HTMLButtonElement = document.querySelector("#btn5");
+const btn6: HTMLButtonElement = document.querySelector("#btn6");
+const btn7: HTMLButtonElement = document.querySelector("#btn7");
+const btn8: HTMLButtonElement = document.querySelector("#btn8");
+const btn9: HTMLButtonElement = document.querySelector("#btn9");
+*/
+exports.dotBtn = document.querySelector("#btnDot");
+exports.delBtn = document.querySelector("#btnDel");
+//export const numPad = [btn0, btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9];
+const tempNumPad = document.querySelectorAll(".numpad-btn");
+//convert numpad list to array to make filtering possible
+exports.numPad = [];
+tempNumPad.forEach(btn => exports.numPad.push(btn));
+function setUpNumPad() {
+    exports.numPad.forEach(numBtn => {
+        numBtn.addEventListener("click", () => {
+            if (mainUI_1.lastFocus != null) {
+                mainUI_1.lastFocus.classList.add("highlighted");
+                if (limits_1.limits.find(limit => limit.id == mainUI_1.lastFocus.id).check(Number(mainUI_1.lastFocus.value) + Number(numBtn.innerHTML))) {
+                    mainUI_1.lastFocus.value += Number(numBtn.innerHTML);
+                    toFromAPI_1.sendPut(`prismState/${mainUI_1.lastFocus.id.replace("-", "/").replace("-", "/")}`, Number(mainUI_1.lastFocus.value));
+                }
+                else {
+                    mainUI_1.lastFocus.classList.add("limit");
+                    setTimeout(() => mainUI_1.lastFocus.classList.remove("limit"), 600);
+                }
+            }
+        });
+    });
+    function adjustRange() {
+        if (Number(scanParameteres_1.offsetX.value) + Number(scanParameteres_1.rangeX.value) > limits_1.limits.find(limit => limit.id == scanParameteres_1.offsetX.id).max)
+            scanParameteres_1.rangeX.value = (limits_1.limits.find(limit => limit.id == scanParameteres_1.offsetX.id).max - Number(scanParameteres_1.offsetX.value)).toString();
+    }
+    /*Numpad events */
+    //add dot to last focus element when dot button pressed
+    exports.dotBtn.addEventListener("click", () => {
+        if (mainUI_1.lastFocus !== null && mainUI_1.lastFocus.value.slice(-1) !== "." && mainUI_1.lastFocus.value.length != 0) {
+            mainUI_1.lastFocus.classList.add("highlighted");
+            mainUI_1.lastFocus.value += ".";
+        }
+    });
+    //delete number to last focus element when delete button pressed
+    exports.delBtn.addEventListener("click", () => {
+        if (mainUI_1.lastFocus != null) {
+            mainUI_1.lastFocus.classList.add("highlighted");
+            mainUI_1.lastFocus.value = mainUI_1.lastFocus.value.slice(0, -1); //remove last character
+            toFromAPI_1.sendPut(`prismState/${mainUI_1.lastFocus.id.replace("-", "/").replace("-", "/")}`, Number(mainUI_1.lastFocus.value));
+        }
+    });
+}
+exports.setUpNumPad = setUpNumPad;
+
+},{"../mainUI":12,"../toFromAPI":14,"./limits":7,"./scanParameteres":11}],11:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.offsetX = document.querySelector("#offset-x");
+exports.offsetY = document.querySelector("#offset-y");
+const pixelNumberX = document.querySelector("#pixelNumber-x");
+const pixelNumberY = document.querySelector("#pixelNumber-y");
+const pixelNumberZ = document.querySelector("#pixelNumber-z");
+exports.rangeX = document.querySelector("#range-x");
+exports.rangeY = document.querySelector("#range-y");
+const rangeZ = document.querySelector("#range-z");
+const dwellTime = document.querySelector("#dwellTime");
+const totalTime = document.querySelector("#totalTime");
 const tempUIparams = document.querySelectorAll(".param-input");
 exports.UIparameters = [];
 //remove grayed out elemts from tempUIparameters
@@ -540,8 +700,6 @@ tempUIparams.forEach(param => {
     }
 });
 //initialize limit array
-exports.limits = [];
-exports.UIparameters.forEach(param => exports.limits.push(new Limit(param.id)));
 exports.addPresetBtn = document.querySelector("#add-preset-btn");
 exports.presetSelector = document.querySelector("#preset-selector");
 /*
@@ -555,10 +713,102 @@ export class Preset {
 }
 */
 //export const presets: Preset[] = [];
+function getXYZproperties(scanParams) {
+    let props = Object.keys(scanParams);
+    return props.filter(prop => {
+        let innerProps = Object.keys(scanParams[prop]);
+        return innerProps.includes("x") && innerProps.includes("y") && innerProps.includes("z");
+    });
+}
+exports.getXYZproperties = getXYZproperties;
+function updateUIParameters(scanParams) {
+    getXYZproperties(scanParams).forEach(prop => {
+        document.getElementById(scanParams[prop].x.name).value = scanParams[prop].x.value.toString();
+        document.getElementById(scanParams[prop].y.name).value = scanParams[prop].y.value.toString();
+        document.getElementById(scanParams[prop].z.name).value = scanParams[prop].z.value.toString();
+    });
+    document.getElementById("scanParams-dwellTime").value = scanParams.dwellTime.value.toString();
+}
+exports.updateUIParameters = updateUIParameters;
 
-},{}],9:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/*numpad element*/
+const numpad_1 = require("./UIparts/numpad");
+const toFromAPI_1 = require("./toFromAPI");
+const scanParameteres_1 = require("./UIparts/scanParameteres");
+const mode_1 = require("./mode");
+const motorsControls_1 = require("./UIparts/motorsControls");
+const lookSurface_1 = require("./UIparts/lookSurface");
+const lasers_1 = require("./UIparts/lasers");
+/*get microscope state on UI start-up */
+toFromAPI_1.getCurrentMicroState();
+toFromAPI_1.setUpUpdater();
+mode_1.setUpModeBtns();
+lasers_1.setUpLasers();
+numpad_1.setUpNumPad();
+lookSurface_1.setUpLookSurface();
+motorsControls_1.setUpMotorsControls();
+/*UI scanning parameters settings */
+//last item in focus
+exports.lastFocus = undefined;
+//remove highlight border only when touching something excluding numpad and selectred parameter
+document.body.addEventListener("click", function (e) {
+    if (exports.lastFocus != null) {
+        if (numpad_1.numPad.filter(numBtn => numBtn === e.target).length == 0) {
+            if (e.target !== numpad_1.delBtn && e.target !== numpad_1.dotBtn)
+                if (scanParameteres_1.UIparameters.filter(param => param === e.target).length == 0) {
+                    removeHighlithBoder();
+                    toFromAPI_1.sendPut(`prismState/${exports.lastFocus.id.replace("-", "/").replace("-", "/")}`, Number(exports.lastFocus.value));
+                    exports.lastFocus = null;
+                }
+        }
+    }
+});
+//store last parameters input in focus
+scanParameteres_1.UIparameters.forEach(param => {
+    param.addEventListener("touchstart", () => {
+        removeHighlithBoder();
+        exports.lastFocus = param;
+        param.value = "";
+        param.classList.add("highlighted");
+    });
+});
+function removeHighlithBoder() {
+    scanParameteres_1.UIparameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));
+}
+
+},{"./UIparts/lasers":6,"./UIparts/lookSurface":8,"./UIparts/motorsControls":9,"./UIparts/numpad":10,"./UIparts/scanParameteres":11,"./mode":13,"./toFromAPI":14}],13:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const toFromAPI_1 = require("./toFromAPI");
+const modeBtns = document.querySelectorAll(".mode-btn");
+function setUpModeBtns() {
+    // mode btns events
+    modeBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+            if (btn.classList.contains("highlighted-button")) {
+                btn.classList.remove("highlighted-button");
+                toFromAPI_1.sendPut("prismState/mode", "stop");
+            }
+            else {
+                modeBtns.forEach(btn => btn.classList.remove("highlighted-button"));
+                btn.classList.add("highlighted-button");
+                toFromAPI_1.sendPut("prismState/mode", btn.id.split("-")[0]);
+            }
+        });
+    });
+}
+exports.setUpModeBtns = setUpModeBtns;
+
+},{"./toFromAPI":14}],14:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const lasers_1 = require("./UIparts/lasers");
+const limits_1 = require("./UIparts/limits");
+const scanParameteres_1 = require("./UIparts/scanParameteres");
+const lookSurface_1 = require("./UIparts/lookSurface");
 const source = new EventSource("/updates");
 function setUpUpdater() {
     source.addEventListener("update", (event) => {
@@ -568,6 +818,7 @@ function setUpUpdater() {
         switch (idEls[0]) {
             case "scanParams":
                 document.getElementById(resource.name).value = resource.value.toString();
+                updatePadsFromResName(resource.name);
                 break;
             case "laser":
                 let targetLaserRow = lasers_1.laserUIRows.find(laserRow => laserRow.waveLength == Number(idEls[1]));
@@ -582,10 +833,9 @@ function setUpUpdater() {
                         break;
                 }
                 break;
-            case "motor":
+            default:
                 break;
         }
-        mainUI_1.lookSurface.leftRelPos = (Number(scanParameteres_1.UIparameters[0].value) * mainUI_1.lookSurface.areaWidth) / scanParameteres_1.limits[0].max;
     });
 }
 exports.setUpUpdater = setUpUpdater;
@@ -599,212 +849,45 @@ function sendPut(resource, newValue) {
     });
 }
 exports.sendPut = sendPut;
-const scanParameteres_1 = require("./UIparts/scanParameteres");
-function getCurrentState() {
+function getCurrentMicroState() {
     fetch("/prismState/")
         .then(res => res.json())
         .then((newState) => {
-        updateLimits(newState.scanParams);
+        limits_1.updateLimits(newState.scanParams);
         lasers_1.updateUILasersFromLasers(newState.lasers);
-        updateUIParameters(newState.scanParams);
+        scanParameteres_1.updateUIParameters(newState.scanParams);
         updateUIPads(newState.scanParams);
     });
 }
-exports.getCurrentState = getCurrentState;
-const mainUI_1 = require("./mainUI");
-const lasers_1 = require("./UIparts/lasers");
+exports.getCurrentMicroState = getCurrentMicroState;
 function updateUIPads(scanParams) {
-    mainUI_1.lookSurface.leftRelPos =
-        (scanParams.offset.x.value * mainUI_1.lookSurface.areaWidth) / scanParameteres_1.limits.find(limit => limit.id == scanParams.offset.x.name).max;
-    mainUI_1.lookSurface.topRelPos =
-        (scanParams.offset.y.value * mainUI_1.lookSurface.areaHeight) / scanParameteres_1.limits.find(limit => limit.id == scanParams.offset.y.name).max;
-    mainUI_1.lookSurface.elWidth =
-        (scanParams.range.x.value * mainUI_1.lookSurface.areaWidth) / scanParameteres_1.limits.find(limit => limit.id == scanParams.range.x.name).max;
-    mainUI_1.lookSurface.elHeight =
-        (scanParams.range.y.value * mainUI_1.lookSurface.areaHeight) / scanParameteres_1.limits.find(limit => limit.id == scanParams.range.y.name).max;
+    lookSurface_1.lookSurface.leftRelPos =
+        (scanParams.offset.x.value * lookSurface_1.lookSurface.areaWidth) / limits_1.limits.find(limit => limit.id == scanParams.offset.x.name).max;
+    lookSurface_1.lookSurface.topRelPos =
+        (scanParams.offset.y.value * lookSurface_1.lookSurface.areaHeight) / limits_1.limits.find(limit => limit.id == scanParams.offset.y.name).max;
+    lookSurface_1.lookSurface.elWidth =
+        (scanParams.range.x.value * lookSurface_1.lookSurface.areaWidth) / limits_1.limits.find(limit => limit.id == scanParams.range.x.name).max;
+    lookSurface_1.lookSurface.elHeight =
+        (scanParams.range.y.value * lookSurface_1.lookSurface.areaHeight) / limits_1.limits.find(limit => limit.id == scanParams.range.y.name).max;
 }
-function updateUIParameters(scanParams) {
-    let props = Object.keys(scanParams);
-    props
-        .filter(prop => {
-        let innerProps = Object.keys(scanParams[prop]);
-        return innerProps.includes("x") && innerProps.includes("y") && innerProps.includes("z");
-    })
-        .forEach(prop => {
-        document.getElementById(scanParams[prop].x.name).value = scanParams[prop].x.value.toString();
-        document.getElementById(scanParams[prop].y.name).value = scanParams[prop].y.value.toString();
-        document.getElementById(scanParams[prop].z.name).value = scanParams[prop].z.value.toString();
-    });
-    document.getElementById("scanParams-dwellTime").value = scanParams.dwellTime.value.toString();
-}
-function updateLimits(scanParams) {
-    let props = Object.keys(scanParams);
-    props
-        .filter(prop => {
-        let innerProps = Object.keys(scanParams[prop]);
-        return innerProps.includes("x") && innerProps.includes("y") && innerProps.includes("z");
-    })
-        .forEach(prop => {
-        scanParameteres_1.limits.find(limit => limit.id == scanParams[prop].x.name).max = scanParams[prop].x.max;
-        scanParameteres_1.limits.find(limit => limit.id == scanParams[prop].x.name).min = scanParams[prop].x.min;
-        scanParameteres_1.limits.find(limit => limit.id == scanParams[prop].y.name).max = scanParams[prop].y.max;
-        scanParameteres_1.limits.find(limit => limit.id == scanParams[prop].y.name).min = scanParams[prop].y.min;
-        scanParameteres_1.limits.find(limit => limit.id == scanParams[prop].z.name).max = scanParams[prop].z.max;
-        scanParameteres_1.limits.find(limit => limit.id == scanParams[prop].z.name).min = scanParams[prop].z.min;
-    });
-    scanParameteres_1.limits.find(limit => limit.id == "scanParams-dwellTime").max = scanParams.dwellTime.max;
+function updatePadsFromResName(id) {
+    let idEls = id.split("-");
+    if (idEls[1] == "offset") {
+        if (idEls[2] == "x")
+            lookSurface_1.lookSurface.leftRelPos =
+                (Number(document.getElementById(id).value) * lookSurface_1.lookSurface.areaWidth) /
+                    limits_1.limits.find(limit => limit.id == id).max;
+        else if (idEls[2] == "y")
+            lookSurface_1.lookSurface.topRelPos =
+                (Number(document.getElementById(id).value) * lookSurface_1.lookSurface.areaHeight) /
+                    limits_1.limits.find(limit => limit.id == id).max;
+    }
+    else if (idEls[2] == "x")
+        lookSurface_1.lookSurface.elWidth =
+            (Number(document.getElementById(id).value) * lookSurface_1.lookSurface.areaWidth) / limits_1.limits.find(limit => limit.id == id).max;
+    else if (idEls[2] == "y")
+        lookSurface_1.lookSurface.elHeight =
+            (Number(document.getElementById(id).value) * lookSurface_1.lookSurface.areaHeight) / limits_1.limits.find(limit => limit.id == id).max;
 }
 
-},{"./UIparts/lasers":6,"./UIparts/scanParameteres":8,"./mainUI":10}],10:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-/*numpad element*/
-const numpad_1 = require("./UIparts/numpad");
-/*UI pads,joysticks objects */
-const movObj_1 = require("./UIparts/drag-pinch-joystick/movObj");
-/*joystick capabilties*/
-const sliderJoystickObj_1 = require("./UIparts/drag-pinch-joystick/sliderJoystickObj");
-/*pinch class*/
-const pinchObj_1 = require("./UIparts/drag-pinch-joystick/pinchObj");
-/*circular joystick class*/
-const circJoystick_1 = require("./UIparts/drag-pinch-joystick/circJoystick");
-/*UI SSE updater*/
-const UIupdater_1 = require("./UIupdater");
-const scanParameteres_1 = require("./UIparts/scanParameteres");
-const lasers_1 = require("./UIparts/lasers");
-/*get microscope state on UI start-up */
-const modeBtns = document.querySelectorAll(".mode-btn");
-UIupdater_1.getCurrentState();
-UIupdater_1.setUpUpdater();
-// mode btns events
-modeBtns.forEach(btn => {
-    btn.addEventListener("click", () => {
-        if (btn.classList.contains("highlighted-button")) {
-            btn.classList.remove("highlighted-button");
-            UIupdater_1.sendPut("prismState/mode", "stop");
-        }
-        else {
-            modeBtns.forEach(btn => btn.classList.remove("highlighted-button"));
-            btn.classList.add("highlighted-button");
-            UIupdater_1.sendPut("prismState/mode", btn.id.split("-")[0]);
-        }
-    });
-});
-/*UI scanning parameters settings */
-//last item in focus
-let lastFocus = undefined;
-//remove highlight border only when touching something excluding numpad and selectred parameter
-document.body.addEventListener("click", function (e) {
-    if (lastFocus != null) {
-        if (numpad_1.numPad.filter(numBtn => numBtn === e.target).length == 0) {
-            if (e.target !== numpad_1.delBtn && e.target !== numpad_1.dotBtn)
-                if (scanParameteres_1.UIparameters.filter(param => param === e.target).length == 0) {
-                    removeHighlithBoder();
-                    UIupdater_1.sendPut(`prismState/${lastFocus.id.replace("-", "/").replace("-", "/")}`, Number(lastFocus.value));
-                    lastFocus = null;
-                }
-        }
-    }
-});
-//store last parameters input in focus
-scanParameteres_1.UIparameters.forEach(param => {
-    param.addEventListener("touchstart", () => {
-        removeHighlithBoder();
-        lastFocus = param;
-        param.value = "";
-        param.classList.add("highlighted");
-    });
-});
-function removeHighlithBoder() {
-    scanParameteres_1.UIparameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));
-}
-//adds event to slider box for slider movement and on/off button
-lasers_1.laserUIRows.forEach(laserUIRow => {
-    laserUIRow.slider.addEventListener("input", () => {
-        let tempValue = laserUIRow.slider.value;
-        laserUIRow.powerLabel.innerHTML = tempValue + "%";
-    });
-    laserUIRow.slider.addEventListener("touchend", () => {
-        let tempValue = laserUIRow.slider.value;
-        laserUIRow.powerLabel.innerHTML = tempValue + "%";
-        UIupdater_1.sendPut(`prismState/lasers/power?waveLength=${laserUIRow.waveLength}`, Number(laserUIRow.power));
-    });
-    laserUIRow.btn.addEventListener("click", () => {
-        laserUIRow.isOn = !laserUIRow.isOn;
-        UIupdater_1.sendPut(`prismState/lasers/isOn?waveLength=${laserUIRow.waveLength}`, laserUIRow.isOn);
-    });
-});
-//add touched num in last focus element
-numpad_1.numPad.forEach((numBtn, i) => {
-    numBtn.addEventListener("click", () => {
-        if (lastFocus != null) {
-            lastFocus.classList.add("highlighted");
-            if (scanParameteres_1.limits.find(limit => limit.id == lastFocus.id).check(Number(lastFocus.value + i))) {
-                lastFocus.value += i;
-                UIupdater_1.sendPut(`prismState/${lastFocus.id.replace("-", "/").replace("-", "/")}`, Number(lastFocus.value));
-            }
-            else {
-                lastFocus.classList.add("limit");
-                setTimeout(() => lastFocus.classList.remove("limit"), 600);
-            }
-        }
-    });
-});
-/*Numpad events */
-//add dot to last focus element when dot button pressed
-numpad_1.dotBtn.addEventListener("click", () => {
-    if (lastFocus !== null && lastFocus.value.slice(-1) !== "." && lastFocus.value.length != 0) {
-        lastFocus.classList.add("highlighted");
-        lastFocus.value += ".";
-    }
-});
-//delete number to last focus element when delete button pressed
-numpad_1.delBtn.addEventListener("click", () => {
-    if (lastFocus != null) {
-        lastFocus.classList.add("highlighted");
-        lastFocus.value = lastFocus.value.slice(0, -1); //remove last character
-        UIupdater_1.sendPut(`prismState/${lastFocus.id.replace("-", "/").replace("-", "/")}`, Number(lastFocus.value));
-    }
-});
-//look surface events
-exports.lookSurface = new pinchObj_1.PinchObj(movObj_1.inspectArea, movObj_1.sampleArea, 20);
-//update own UI parameters
-exports.lookSurface.area.addEventListener("touchmove", () => {
-    document.getElementById("scanParams-offset-x").value = String((exports.lookSurface.leftRelPos * scanParameteres_1.limits.find(limit => limit.id == "scanParams-offset-x").max) / exports.lookSurface.areaWidth);
-    document.getElementById("scanParams-offset-y").value = String((exports.lookSurface.topRelPos * scanParameteres_1.limits.find(limit => limit.id == "scanParams-offset-y").max) / exports.lookSurface.areaHeight);
-    document.getElementById("scanParams-range-x").value = String((exports.lookSurface.elWidth * scanParameteres_1.limits.find(limit => limit.id == "scanParams-range-x").max) / exports.lookSurface.areaWidth);
-    document.getElementById("scanParams-range-y").value = String((exports.lookSurface.elHeight * scanParameteres_1.limits.find(limit => limit.id == "scanParams-range-y").max) / exports.lookSurface.areaHeight);
-});
-//send parameter change when untouched
-exports.lookSurface.area.addEventListener("touchend", () => {
-    UIupdater_1.sendPut("prismState/scanParams/offset/x", Number(document.getElementById("scanParams-offset-x").value));
-    UIupdater_1.sendPut("prismState/scanParams/offset/y", Number(document.getElementById("scanParams-offset-x").value));
-    UIupdater_1.sendPut("prismState/scanParams/range/x", Number(document.getElementById("scanParams-range-x").value));
-    UIupdater_1.sendPut("prismState/scanParams/range/y", Number(document.getElementById("scanParams-range-y").value));
-});
-/*motor sliders */
-let xyMotor = new circJoystick_1.CircJoystickObj(movObj_1.joyThumb, movObj_1.joyPad);
-let intervalCheckerXY;
-xyMotor.element.addEventListener("touchstart", () => {
-    intervalCheckerXY = setInterval(() => {
-        if (xyMotor.mag > 0) {
-            UIupdater_1.sendPut("prismState/motors/x", (xyMotor.mag * Math.cos(xyMotor.arg)) / xyMotor.maxMag);
-            UIupdater_1.sendPut("prismState/motors/y", (xyMotor.mag * Math.sin(xyMotor.arg)) / xyMotor.maxMag);
-        }
-    }, 200);
-});
-xyMotor.element.addEventListener("touchend", () => clearInterval(intervalCheckerXY));
-let zMotor = new sliderJoystickObj_1.SliderJoystickObj(movObj_1.zThumb, movObj_1.zSlider);
-let intervalCheckerZ;
-zMotor.element.addEventListener("touchstart", () => {
-    intervalCheckerZ = setInterval(() => {
-        UIupdater_1.sendPut("prismState/motors/z", Number(zMotor.sliderValue) * Number(movObj_1.zSensBtn.innerHTML.slice(0, -1)));
-    }, 200);
-});
-zMotor.element.addEventListener("touchend", () => clearInterval(intervalCheckerZ));
-//change z joystick sensibility when touched
-movObj_1.zSensBtn.addEventListener("click", () => {
-    movObj_1.zSensBtn.innerHTML = movObj_1.zSenses[(movObj_1.zSenses.indexOf(movObj_1.zSensBtn.innerHTML) + 1) % movObj_1.zSenses.length];
-});
-
-},{"./UIparts/drag-pinch-joystick/circJoystick":1,"./UIparts/drag-pinch-joystick/movObj":3,"./UIparts/drag-pinch-joystick/pinchObj":4,"./UIparts/drag-pinch-joystick/sliderJoystickObj":5,"./UIparts/lasers":6,"./UIparts/numpad":7,"./UIparts/scanParameteres":8,"./UIupdater":9}]},{},[10]);
+},{"./UIparts/lasers":6,"./UIparts/limits":7,"./UIparts/lookSurface":8,"./UIparts/scanParameteres":11}]},{},[12]);

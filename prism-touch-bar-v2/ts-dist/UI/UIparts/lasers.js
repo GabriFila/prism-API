@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const toFromAPI_1 = require("../toFromAPI");
 class LaserUIRow {
     get isOn() {
         return this._isOn;
@@ -68,4 +69,23 @@ function updateUILasersFromLasers(lasers) {
     });
 }
 exports.updateUILasersFromLasers = updateUILasersFromLasers;
+function setUpLasers() {
+    //adds event to slider box for slider movement and on/off button
+    exports.laserUIRows.forEach(laserUIRow => {
+        laserUIRow.slider.addEventListener("input", () => {
+            let tempValue = laserUIRow.slider.value;
+            laserUIRow.powerLabel.innerHTML = tempValue + "%";
+        });
+        laserUIRow.slider.addEventListener("touchend", () => {
+            let tempValue = laserUIRow.slider.value;
+            laserUIRow.powerLabel.innerHTML = tempValue + "%";
+            toFromAPI_1.sendPut(`prismState/lasers/power?waveLength=${laserUIRow.waveLength}`, Number(laserUIRow.power));
+        });
+        laserUIRow.btn.addEventListener("click", () => {
+            laserUIRow.isOn = !laserUIRow.isOn;
+            toFromAPI_1.sendPut(`prismState/lasers/isOn?waveLength=${laserUIRow.waveLength}`, laserUIRow.isOn);
+        });
+    });
+}
+exports.setUpLasers = setUpLasers;
 //# sourceMappingURL=lasers.js.map

@@ -1,4 +1,5 @@
 import { Laser } from "../../model";
+import { sendPut } from "../toFromAPI";
 
 class LaserUIRow {
   box: HTMLDivElement;
@@ -89,5 +90,24 @@ export function updateUILasersFromLasers(lasers: Laser[]) {
       laserUIRows[i].waveLengthLabel.innerHTML = lasers[i].waveLength.value.toString() + "nm";
       laserUIRows[i].isOn = lasers[i].isOn.value as boolean;
     }
+  });
+}
+export function setUpLasers() {
+  //adds event to slider box for slider movement and on/off button
+  laserUIRows.forEach(laserUIRow => {
+    laserUIRow.slider.addEventListener("input", () => {
+      let tempValue = laserUIRow.slider.value;
+      laserUIRow.powerLabel.innerHTML = tempValue + "%";
+    });
+    laserUIRow.slider.addEventListener("touchend", () => {
+      let tempValue = laserUIRow.slider.value;
+      laserUIRow.powerLabel.innerHTML = tempValue + "%";
+      sendPut(`prismState/lasers/power?waveLength=${laserUIRow.waveLength}`, Number(laserUIRow.power));
+    });
+
+    laserUIRow.btn.addEventListener("click", () => {
+      laserUIRow.isOn = !laserUIRow.isOn;
+      sendPut(`prismState/lasers/isOn?waveLength=${laserUIRow.waveLength}`, laserUIRow.isOn);
+    });
   });
 }
