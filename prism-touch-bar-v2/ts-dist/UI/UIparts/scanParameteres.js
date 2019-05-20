@@ -42,9 +42,9 @@ function getXYZproperties(scanParams) {
 exports.getXYZproperties = getXYZproperties;
 function updateUIParameters(scanParams) {
     getXYZproperties(scanParams).forEach(prop => {
-        document.getElementById(scanParams[prop].x.name).value = scanParams[prop].x.value.toString();
-        document.getElementById(scanParams[prop].y.name).value = scanParams[prop].y.value.toString();
-        document.getElementById(scanParams[prop].z.name).value = scanParams[prop].z.value.toString();
+        document.getElementById(scanParams[prop].x.id).value = scanParams[prop].x.value.toString();
+        document.getElementById(scanParams[prop].y.id).value = scanParams[prop].y.value.toString();
+        document.getElementById(scanParams[prop].z.id).value = scanParams[prop].z.value.toString();
     });
     document.getElementById("scanParams-dwellTime").value = scanParams.dwellTime.value.toString();
 }

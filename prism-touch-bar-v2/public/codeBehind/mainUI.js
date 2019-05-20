@@ -532,12 +532,13 @@ scanParameteres_1.UIparameters.forEach(param => exports.limits.push(new Limit(pa
 function updateLimits(scanParams) {
     scanParameteres_1.getXYZproperties(scanParams).forEach(prop => {
         //updates limit for each scanParam that as xyz
-        exports.limits.find(limit => limit.id == scanParams[prop].x.name).max = scanParams[prop].x.max;
-        exports.limits.find(limit => limit.id == scanParams[prop].x.name).min = scanParams[prop].x.min;
-        exports.limits.find(limit => limit.id == scanParams[prop].y.name).max = scanParams[prop].y.max;
-        exports.limits.find(limit => limit.id == scanParams[prop].y.name).min = scanParams[prop].y.min;
-        exports.limits.find(limit => limit.id == scanParams[prop].z.name).max = scanParams[prop].z.max;
-        exports.limits.find(limit => limit.id == scanParams[prop].z.name).min = scanParams[prop].z.min;
+        console.log(scanParams[prop]);
+        exports.limits.find(limit => limit.id == scanParams[prop].x.id).max = scanParams[prop].x.max;
+        exports.limits.find(limit => limit.id == scanParams[prop].x.id).min = scanParams[prop].x.min;
+        exports.limits.find(limit => limit.id == scanParams[prop].y.id).max = scanParams[prop].y.max;
+        exports.limits.find(limit => limit.id == scanParams[prop].y.id).min = scanParams[prop].y.min;
+        exports.limits.find(limit => limit.id == scanParams[prop].z.id).max = scanParams[prop].z.max;
+        exports.limits.find(limit => limit.id == scanParams[prop].z.id).min = scanParams[prop].z.min;
     });
     exports.limits.find(limit => limit.id == "scanParams-dwellTime").max = scanParams.dwellTime.max;
 }
@@ -759,9 +760,9 @@ function getXYZproperties(scanParams) {
 exports.getXYZproperties = getXYZproperties;
 function updateUIParameters(scanParams) {
     getXYZproperties(scanParams).forEach(prop => {
-        document.getElementById(scanParams[prop].x.name).value = scanParams[prop].x.value.toString();
-        document.getElementById(scanParams[prop].y.name).value = scanParams[prop].y.value.toString();
-        document.getElementById(scanParams[prop].z.name).value = scanParams[prop].z.value.toString();
+        document.getElementById(scanParams[prop].x.id).value = scanParams[prop].x.value.toString();
+        document.getElementById(scanParams[prop].y.id).value = scanParams[prop].y.value.toString();
+        document.getElementById(scanParams[prop].z.id).value = scanParams[prop].z.value.toString();
     });
     document.getElementById("scanParams-dwellTime").value = scanParams.dwellTime.value.toString();
 }
@@ -825,16 +826,17 @@ const scanArea_1 = require("./UIparts/scanArea");
 const mode_1 = require("./UIparts/mode");
 const source = new EventSource("/updates");
 function setUpUpdater() {
+    console.log("SSE opened");
     source.addEventListener("update", (event) => {
         let resource = JSON.parse(event.data).resource;
-        let idEls = resource.name.split("-");
+        let idEls = resource.id.split("-");
         switch (idEls[0]) {
             case "mode":
                 mode_1.updateModeBtns(resource.value);
                 break;
             case "scanParams":
-                document.getElementById(resource.name).value = resource.value.toString();
-                updatePadsFromResName(resource.name);
+                document.getElementById(resource.id).value = resource.value.toString();
+                updatePadsFromResName(resource.id);
                 break;
             case "laser":
                 let targetLaserRow = lasers_1.laserUIRows.find(laserRow => laserRow.waveLength == Number(idEls[1]));
@@ -881,12 +883,10 @@ function updatePadsFromResName(id) {
     if (idEls[1] == "offset") {
         if (idEls[2] == "x")
             scanArea_1.scanArea.leftRelPos =
-                (Number(document.getElementById(id).value) * scanArea_1.scanArea.areaWidth) /
-                    limits_1.limits.find(limit => limit.id == id).max;
+                (Number(document.getElementById(id).value) * scanArea_1.scanArea.areaWidth) / limits_1.limits.find(limit => limit.id == id).max;
         else if (idEls[2] == "y")
             scanArea_1.scanArea.topRelPos =
-                (Number(document.getElementById(id).value) * scanArea_1.scanArea.areaHeight) /
-                    limits_1.limits.find(limit => limit.id == id).max;
+                (Number(document.getElementById(id).value) * scanArea_1.scanArea.areaHeight) / limits_1.limits.find(limit => limit.id == id).max;
     }
     else if (idEls[2] == "x")
         scanArea_1.scanArea.elWidth =

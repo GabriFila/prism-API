@@ -4,15 +4,13 @@ const express = require("express");
 const observer = require("node-observer");
 exports.updates = express.Router();
 exports.updates.get("/", (req, res) => {
+    console.log("HERE");
     res.writeHead(200, {
         "Content-Type": "text/event-stream",
         "Cache-Control": "no-cache",
         Connection: "keep-alive"
     });
-    observer.subscribe(this, "API-updated", (who, resource) => {
-        SSEwrite(resource);
-    });
-    observer.subscribe(this, "micro-updated", (who, resource) => {
+    observer.subscribe(this, "update-to-UI", (who, resource) => {
         SSEwrite(resource);
     });
     function SSEwrite(resource) {

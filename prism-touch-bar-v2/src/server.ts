@@ -8,6 +8,7 @@ import { prismState } from "./middlewares/routes/prismState-route";
 import { bodyChecker } from "./middlewares/bodyChecker";
 import { limitsChecker } from "./middlewares/limitsChecker";
 import { responseSender } from "./middlewares/responseSender";
+import { setUpMicroCom } from "./toFromMicro";
 
 const server = express();
 
@@ -28,6 +29,8 @@ server.use("/public", express.static(path.join(__dirname + "/../public")));
 server.get("/", (req, res) => {
   res.sendFile(path.join(__dirname + "/../public/views/mainUI.html"));
 });
+
+setUpMicroCom();
 
 //Start server
 let port = process.env.PORT || 5000;

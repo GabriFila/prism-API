@@ -3,11 +3,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const observer = require("node-observer");
 const model_1 = require("./model");
 const SerialPort = require("serialport");
-observer.subscribe(this, "update-to-micro", (who, resource) => {
-    sendUpdateToPrism(resource);
-});
 const parser = new SerialPort.parsers.Readline({ delimiter: "\n", includeDelimiter: false });
 function setUpMicroCom() {
+    observer.subscribe(this, "update-to-micro", (who, resource) => {
+        console.log("update-to-micro");
+        sendUpdateToPrism(resource);
+    });
     SerialPort.list(function (err, ports) {
         ports.forEach(function (port) {
             if (port.vendorId == "2341") {
@@ -61,7 +62,7 @@ function updateMicroState(res) {
 }
 function sendUpdateToPrism(res) {
     let objTx = {
-        id: res.name,
+        id: res.id,
         newValue: res.value
     };
     parser.write(serializeData(objTx));
@@ -69,4 +70,4 @@ function sendUpdateToPrism(res) {
 function serializeData(obj) {
     return JSON.stringify(obj);
 }
-//# sourceMappingURL=toFromPrism.js.map
+//# sourceMappingURL=toFromMicro.js.map

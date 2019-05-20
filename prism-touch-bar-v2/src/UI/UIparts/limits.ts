@@ -1,5 +1,5 @@
 import { UIparameters, getXYZproperties } from "./scanParameteres";
-import { ScanParams } from "../../model";
+import { ScanParams, XYZ } from "../../model";
 
 class Limit {
   id: string;
@@ -22,14 +22,16 @@ UIparameters.forEach(param => limits.push(new Limit(param.id)));
 export function updateLimits(scanParams: ScanParams) {
   getXYZproperties(scanParams).forEach(prop => {
     //updates limit for each scanParam that as xyz
-    limits.find(limit => limit.id == (scanParams as any)[prop].x.name).max = (scanParams as any)[prop].x.max;
-    limits.find(limit => limit.id == (scanParams as any)[prop].x.name).min = (scanParams as any)[prop].x.min;
+    console.log(scanParams[prop]);
+    
+    limits.find(limit => limit.id == (scanParams[prop] as XYZ).x.id).max = (scanParams[prop] as XYZ).x.max;
+    limits.find(limit => limit.id == (scanParams[prop] as XYZ).x.id).min = (scanParams[prop] as XYZ).x.min;
 
-    limits.find(limit => limit.id == (scanParams as any)[prop].y.name).max = (scanParams as any)[prop].y.max;
-    limits.find(limit => limit.id == (scanParams as any)[prop].y.name).min = (scanParams as any)[prop].y.min;
+    limits.find(limit => limit.id == (scanParams[prop] as XYZ).y.id).max = (scanParams[prop] as XYZ).y.max;
+    limits.find(limit => limit.id == (scanParams[prop] as XYZ).y.id).min = (scanParams[prop] as XYZ).y.min;
 
-    limits.find(limit => limit.id == (scanParams as any)[prop].z.name).max = (scanParams as any)[prop].z.max;
-    limits.find(limit => limit.id == (scanParams as any)[prop].z.name).min = (scanParams as any)[prop].z.min;
+    limits.find(limit => limit.id == (scanParams[prop] as XYZ).z.id).max = (scanParams[prop] as XYZ).z.max;
+    limits.find(limit => limit.id == (scanParams[prop] as XYZ).z.id).min = (scanParams[prop] as XYZ).z.min;
   });
 
   limits.find(limit => limit.id == "scanParams-dwellTime").max = scanParams.dwellTime.max;

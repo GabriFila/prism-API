@@ -7,16 +7,17 @@ const scanArea_1 = require("./UIparts/scanArea");
 const mode_1 = require("./UIparts/mode");
 const source = new EventSource("/updates");
 function setUpUpdater() {
+    console.log("SSE opened");
     source.addEventListener("update", (event) => {
         let resource = JSON.parse(event.data).resource;
-        let idEls = resource.name.split("-");
+        let idEls = resource.id.split("-");
         switch (idEls[0]) {
             case "mode":
                 mode_1.updateModeBtns(resource.value);
                 break;
             case "scanParams":
-                document.getElementById(resource.name).value = resource.value.toString();
-                updatePadsFromResName(resource.name);
+                document.getElementById(resource.id).value = resource.value.toString();
+                updatePadsFromResName(resource.id);
                 break;
             case "laser":
                 let targetLaserRow = lasers_1.laserUIRows.find(laserRow => laserRow.waveLength == Number(idEls[1]));
@@ -63,12 +64,10 @@ function updatePadsFromResName(id) {
     if (idEls[1] == "offset") {
         if (idEls[2] == "x")
             scanArea_1.scanArea.leftRelPos =
-                (Number(document.getElementById(id).value) * scanArea_1.scanArea.areaWidth) /
-                    limits_1.limits.find(limit => limit.id == id).max;
+                (Number(document.getElementById(id).value) * scanArea_1.scanArea.areaWidth) / limits_1.limits.find(limit => limit.id == id).max;
         else if (idEls[2] == "y")
             scanArea_1.scanArea.topRelPos =
-                (Number(document.getElementById(id).value) * scanArea_1.scanArea.areaHeight) /
-                    limits_1.limits.find(limit => limit.id == id).max;
+                (Number(document.getElementById(id).value) * scanArea_1.scanArea.areaHeight) / limits_1.limits.find(limit => limit.id == id).max;
     }
     else if (idEls[2] == "x")
         scanArea_1.scanArea.elWidth =

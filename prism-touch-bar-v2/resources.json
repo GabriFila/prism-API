@@ -1,26 +1,26 @@
 {
   "mode": {
-    "name": "mode",
+    "id": "mode",
     "value": "stop"
   },
   "scanParams": {
     "offset": {
       "x": {
-        "name": "scanParams-offset-x",
+        "id": "scanParams-offset-x",
         "value": 500,
         "max": 1000,
         "min": 0,
         "unit": "um"
       },
       "y": {
-        "name": "scanParams-offset-y",
+        "id": "scanParams-offset-y",
         "value": 500,
         "max": 1000,
         "min": 0,
         "unit": "um"
       },
       "z": {
-        "name": "scanParams-offset-z",
+        "id": "scanParams-offset-z",
         "value": 500,
         "max": 1000,
         "min": 0,
@@ -29,21 +29,21 @@
     },
     "pixelNumber": {
       "x": {
-        "name": "scanParams-pixelNumber-x",
+        "id": "scanParams-pixelNumber-x",
         "value": 500,
         "max": 1000,
         "min": 0,
         "unit": "px"
       },
       "y": {
-        "name": "scanParams-pixelNumber-y",
+        "id": "scanParams-pixelNumber-y",
         "value": 500,
         "max": 1000,
         "min": 0,
         "unit": "px"
       },
       "z": {
-        "name": "scanParams-pixelNumber-z",
+        "id": "scanParams-pixelNumber-z",
         "value": 500,
         "max": 1000,
         "min": 0,
@@ -52,21 +52,21 @@
     },
     "range": {
       "x": {
-        "name": "scanParams-range-x",
+        "id": "scanParams-range-x",
         "value": 500,
         "max": 1000,
         "min": 0,
         "unit": "um"
       },
       "y": {
-        "name": "scanParams-range-y",
+        "id": "scanParams-range-y",
         "value": 500,
         "max": 1000,
         "min": 0,
         "unit": "um"
       },
       "z": {
-        "name": "scanParams-range-z",
+        "id": "scanParams-range-z",
         "value": 500,
         "max": 1000,
         "min": 0,
@@ -74,7 +74,7 @@
       }
     },
     "dwellTime": {
-      "name": "scanParams-dwellTime",
+      "id": "scanParams-dwellTime",
       "value": 40,
       "unit": "us",
       "min": 0
@@ -83,81 +83,81 @@
   "lasers": [
     {
       "waveLength": {
-        "name": "laser-100-nm-waveLength",
+        "id": "laser-100-nm-waveLength",
         "value": 100,
         "unit": "nm"
       },
       "power": {
-        "name": "laser-100-nm-power",
+        "id": "laser-100-nm-power",
         "value": 10,
         "unit": "%"
       },
       "isOn": {
-        "name": "laser-100-nm-isOn",
+        "id": "laser-100-nm-isOn",
         "value": true
       },
       "isPresent": {
-        "name": "laser-100-nm-isPresent",
+        "id": "laser-100-nm-isPresent",
         "value": true
       }
     },
     {
-      "name": "laser-200-nm-waveLength",
+      "id": "laser-200-nm-waveLength",
       "waveLength": {
         "value": 200,
         "unit": "nm"
       },
       "power": {
-        "name": "laser-200-nm-power",
+        "id": "laser-200-nm-power",
         "value": 20,
         "unit": "%"
       },
       "isOn": {
-        "name": "laser-200-nm-isOn",
+        "id": "laser-200-nm-isOn",
         "value": true
       },
       "isPresent": {
-        "name": "laser-200-nm-isPresent",
+        "id": "laser-200-nm-isPresent",
         "value": true
       }
     },
     {
       "waveLength": {
-        "name": "laser-300-nm-waveLength",
+        "id": "laser-300-nm-waveLength",
         "value": 300,
         "unit": "nm"
       },
       "power": {
-        "name": "laser-300-nm-power",
+        "id": "laser-300-nm-power",
         "value": 30,
         "unit": "%"
       },
       "isOn": {
-        "name": "laser-300-nm-isOn",
+        "id": "laser-300-nm-isOn",
         "value": false
       },
       "isPresent": {
-        "name": "laser-300-nm-isPresent",
+        "id": "laser-300-nm-isPresent",
         "value": true
       }
     },
     {
       "waveLength": {
-        "name": "laser-400-nm-waveLength",
+        "id": "laser-400-nm-waveLength",
         "value": 400,
         "unit": "nm"
       },
       "power": {
-        "name": "laser-400-nm-power",
+        "id": "laser-400-nm-power",
         "value": 40,
         "unit": "%"
       },
       "isOn": {
-        "name": "laser-400-nm-isOn",
+        "id": "laser-400-nm-isOn",
         "value": true
       },
       "isPresent": {
-        "name": "laser400-nm-isPresent",
+        "id": "laser400-nm-isPresent",
         "value": true
       }
     }
@@ -165,17 +165,17 @@
   "motors": {
     "x": {
       "value": 0,
-      "name": "motor-x",
+      "id": "motor-x",
       "unit": "steps"
     },
     "y": {
       "value": 0,
-      "name": "motor-y",
+      "id": "motor-y",
       "unit": "steps"
     },
     "z": {
       "value": 0,
-      "name": "motor-z",
+      "id": "motor-z",
       "unit": "steps"
     }
   }

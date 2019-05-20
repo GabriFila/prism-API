@@ -1,4 +1,4 @@
-import { ScanParams } from "../../model";
+import { ScanParams, XYZ } from "../../model";
 
 export const offsetX: HTMLInputElement = document.querySelector("#scanParams-offset-x");
 export const offsetY: HTMLInputElement = document.querySelector("#scanParams-offset-y");
@@ -46,12 +46,11 @@ export function getXYZproperties(scanParams: ScanParams): string[] {
   });
 }
 
-
 export function updateUIParameters(scanParams: ScanParams) {
   getXYZproperties(scanParams).forEach(prop => {
-    (document.getElementById((scanParams as any)[prop].x.name) as HTMLInputElement).value = (scanParams as any)[prop].x.value.toString();
-    (document.getElementById((scanParams as any)[prop].y.name) as HTMLInputElement).value = (scanParams as any)[prop].y.value.toString();
-    (document.getElementById((scanParams as any)[prop].z.name) as HTMLInputElement).value = (scanParams as any)[prop].z.value.toString();
+    (document.getElementById((scanParams[prop] as XYZ).x.id) as HTMLInputElement).value = (scanParams[prop] as XYZ).x.value.toString();
+    (document.getElementById((scanParams[prop] as XYZ).y.id) as HTMLInputElement).value = (scanParams[prop] as XYZ).y.value.toString();
+    (document.getElementById((scanParams[prop] as XYZ).z.id) as HTMLInputElement).value = (scanParams[prop] as XYZ).z.value.toString();
   });
   (document.getElementById("scanParams-dwellTime") as HTMLInputElement).value = scanParams.dwellTime.value.toString();
 }

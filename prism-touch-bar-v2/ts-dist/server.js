@@ -8,6 +8,7 @@ const prismState_route_1 = require("./middlewares/routes/prismState-route");
 const bodyChecker_1 = require("./middlewares/bodyChecker");
 const limitsChecker_1 = require("./middlewares/limitsChecker");
 const responseSender_1 = require("./middlewares/responseSender");
+const toFromMicro_1 = require("./toFromMicro");
 const server = express();
 //json parser middlware
 server.use(bodyParser.json());
@@ -23,6 +24,7 @@ server.use("/public", express.static(path.join(__dirname + "/../public")));
 server.get("/", (req, res) => {
     res.sendFile(path.join(__dirname + "/../public/views/mainUI.html"));
 });
+toFromMicro_1.setUpMicroCom();
 //Start server
 let port = process.env.PORT || 5000;
 server.listen(5000, () => console.log(`Listening from ${port}`));
