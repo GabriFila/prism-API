@@ -12,9 +12,10 @@ updates.get("/", (req, res) => {
   });
 
   observer.subscribe(this, "API-updated", (who: any, resource: Resource) => {
-    console.log(resource.name);
+    SSEwrite(resource);
+  });
 
-    //function sendUpdateToPrism(`updated-${resource.name}`, resource.value)
+  observer.subscribe(this, "micro-updated", (who: any, resource: Resource) => {
     SSEwrite(resource);
   });
 
