@@ -19,4 +19,13 @@ function setUpModeBtns() {
     });
 }
 exports.setUpModeBtns = setUpModeBtns;
+function updateModeBtns(newValue) {
+    console.log(newValue);
+    modeBtns.forEach(modeBtn => {
+        modeBtn.classList.remove("highlighted-button");
+        if (newValue != "stop")
+            document.getElementById(`${newValue}-btn`).classList.add("highlighted-button");
+    });
+}
+exports.updateModeBtns = updateModeBtns;
 //# sourceMappingURL=mode.js.map

@@ -1,3 +1,5 @@
+import { scanParams } from "./middlewares/routes/scanParams-route";
+
 export interface MicroState {
   scanParams: ScanParams;
   lasers: Laser[];
@@ -9,6 +11,8 @@ export interface ScanParams {
   pixelNumber: XYZ;
   range: XYZ;
   dwellTime: Resource;
+
+  [key : string] : XYZ | Resource;
 }
 
 export interface XYZ {
@@ -28,7 +32,7 @@ export let microState: MicroState = require("../resources.json");
 
 export interface Resource {
   name: string;
-  value: number | boolean;
+  value: number | boolean | string;
   unit?: string;
   min?: number;
   max?: number;

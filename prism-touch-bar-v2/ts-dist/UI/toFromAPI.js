@@ -4,13 +4,16 @@ const lasers_1 = require("./UIparts/lasers");
 const limits_1 = require("./UIparts/limits");
 const scanParameteres_1 = require("./UIparts/scanParameteres");
 const scanArea_1 = require("./UIparts/scanArea");
+const mode_1 = require("./UIparts/mode");
 const source = new EventSource("/updates");
 function setUpUpdater() {
     source.addEventListener("update", (event) => {
         let resource = JSON.parse(event.data).resource;
-        console.log("data: " + event.data);
         let idEls = resource.name.split("-");
         switch (idEls[0]) {
+            case "mode":
+                mode_1.updateModeBtns(resource.value);
+                break;
             case "scanParams":
                 document.getElementById(resource.name).value = resource.value.toString();
                 updatePadsFromResName(resource.name);

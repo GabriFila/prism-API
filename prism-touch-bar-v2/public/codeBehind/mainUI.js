@@ -565,6 +565,15 @@ function setUpModeBtns() {
     });
 }
 exports.setUpModeBtns = setUpModeBtns;
+function updateModeBtns(newValue) {
+    console.log(newValue);
+    modeBtns.forEach(modeBtn => {
+        modeBtn.classList.remove("highlighted-button");
+        if (newValue != "stop")
+            document.getElementById(`${newValue}-btn`).classList.add("highlighted-button");
+    });
+}
+exports.updateModeBtns = updateModeBtns;
 
 },{"../toFromAPI":14}],9:[function(require,module,exports){
 "use strict";
@@ -813,13 +822,16 @@ const lasers_1 = require("./UIparts/lasers");
 const limits_1 = require("./UIparts/limits");
 const scanParameteres_1 = require("./UIparts/scanParameteres");
 const scanArea_1 = require("./UIparts/scanArea");
+const mode_1 = require("./UIparts/mode");
 const source = new EventSource("/updates");
 function setUpUpdater() {
     source.addEventListener("update", (event) => {
         let resource = JSON.parse(event.data).resource;
-        console.log("data: " + event.data);
         let idEls = resource.name.split("-");
         switch (idEls[0]) {
+            case "mode":
+                mode_1.updateModeBtns(resource.value);
+                break;
             case "scanParams":
                 document.getElementById(resource.name).value = resource.value.toString();
                 updatePadsFromResName(resource.name);
@@ -884,4 +896,4 @@ function updatePadsFromResName(id) {
             (Number(document.getElementById(id).value) * scanArea_1.scanArea.areaHeight) / limits_1.limits.find(limit => limit.id == id).max;
 }
 
-},{"./UIparts/lasers":6,"./UIparts/limits":7,"./UIparts/scanArea":11,"./UIparts/scanParameteres":12}]},{},[13]);
+},{"./UIparts/lasers":6,"./UIparts/limits":7,"./UIparts/mode":8,"./UIparts/scanArea":11,"./UIparts/scanParameteres":12}]},{},[13]);

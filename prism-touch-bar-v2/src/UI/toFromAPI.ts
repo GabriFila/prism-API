@@ -3,15 +3,18 @@ import { updateUILasersFromLasers, laserUIRows } from "./UIparts/lasers";
 import { updateLimits, limits } from "./UIparts/limits";
 import { updateUIParameters } from "./UIparts/scanParameteres";
 import { scanArea, adatapLookSurface } from "./UIparts/scanArea";
+import { updateModeBtns } from "./UIparts/mode";
 
 const source = new EventSource("/updates");
 
 export function setUpUpdater() {
   source.addEventListener("update", (event: any) => {
     let resource: Resource = JSON.parse(event.data).resource;
-    console.log("data: " + event.data);
     let idEls: string[] = resource.name.split("-");
     switch (idEls[0]) {
+      case "mode":
+        updateModeBtns(resource.value as string)
+        break;
       case "scanParams":
         (document.getElementById(resource.name) as HTMLInputElement).value = resource.value.toString();
         updatePadsFromResName(resource.name);

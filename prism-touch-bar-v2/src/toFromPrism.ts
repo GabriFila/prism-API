@@ -1,12 +1,12 @@
 import * as observer from "node-observer";
-import { Resource } from "./model";
+import { Resource, microState } from "./model";
 import * as SerialPort from "serialport";
 
 observer.subscribe(this, "API-updated", (who: any, resource: Resource) => {
   sendUpdateToPrism(resource.name, resource.value);
 });
 
-function sendUpdateToPrism(resId: string, resValue: number | boolean) {}
+function sendUpdateToPrism(resId: string, resValue: number | boolean | string) {}
 
 export function setUpMicroCom() {}
 
@@ -47,6 +47,13 @@ function updateMicroState(res: Resource) {
   let idEls = res.name.split("-");
   switch (idEls[0]) {
     case "scanParams":
+      if (idEls[1] == "dwellTime") microState.scanParams.dwellTime.value = res.value;
+      else (microState.scanParams as any)[idEls[1]][idEls[2]].value = res.value;
+      break;
+    case "laser":
+      (microState.lasers.find(laser => laser.waveLength.value == Number(idEls[1])) as any)[idEls[3]].value = res.value;
+      break;
+    default:
       break;
   }
 }
