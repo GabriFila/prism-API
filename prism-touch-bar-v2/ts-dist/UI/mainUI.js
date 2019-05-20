@@ -25,7 +25,8 @@ document.body.addEventListener("click", function (e) {
             if (e.target !== numpad_1.delBtn && e.target !== numpad_1.dotBtn)
                 if (scanParameteres_1.UIparameters.filter(param => param === e.target).length == 0) {
                     removeHighlithBoder();
-                    //sendPut(`prismState/${lastFocus.id.replace("-", "/").replace("-", "/")}`, Number(lastFocus.value));
+                    toFromAPI_1.sendPut(`prismState/${exports.lastFocus.id.replace("-", "/").replace("-", "/")}`, Number(exports.lastFocus.value));
+                    console.log("here");
                     exports.lastFocus = null;
                 }
         }

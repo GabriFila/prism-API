@@ -7,7 +7,7 @@ export const delBtn: HTMLButtonElement = document.querySelector("#btnDel");
 
 //export const numPad = [btn0, btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9];
 
-const tempNumPad: NodeListOf<HTMLButtonElement> = document.querySelectorAll(".numpad-btn");
+const tempNumPad: NodeListOf<HTMLButtonElement> = document.querySelectorAll(".num-btn");
 //convert numpad list to array to make filtering possible
 export const numPad: HTMLButtonElement[] = [];
 tempNumPad.forEach(btn => numPad.push(btn));
@@ -17,7 +17,7 @@ export function setUpNumPad() {
     numBtn.addEventListener("click", () => {
       if (lastFocus != null) {
         lastFocus.classList.add("highlighted");
-        changeScanParam(lastFocus.id, Number(lastFocus.value + numBtn.innerHTML));
+        changeScanParam(lastFocus.id, numPadClick(lastFocus,Number(numBtn.innerHTML)))// Number(lastFocus.value) * 10 + Number(numBtn.innerHTML));
       }
     });
   });
@@ -36,8 +36,11 @@ export function setUpNumPad() {
     if (lastFocus != null) {
       lastFocus.classList.add("highlighted");
       changeScanParam(lastFocus.id, lastFocus.value.slice(0, -1));
-      //lastFocus.value = lastFocus.value.slice(0, -1); //remove last character
-      //sendPut(`prismState/${lastFocus.id.replace("-", "/").replace("-", "/")}`, Number(lastFocus.value));
     }
   });
+}
+
+function numPadClick(el: HTMLInputElement, input: number): number {
+  if (el.value.includes(".")) return Number(el.value + `${input}`);
+  else return Number(el.value) * 10 + input;
 }

@@ -60,30 +60,36 @@ function updateUIParameters(scanParams) {
         changeScanParam(scanParams[prop].y.id, scanParams[prop].y.value);
         changeScanParam(scanParams[prop].z.id, scanParams[prop].z.value);
     });
-    document.getElementById("scanParams-dwellTime").value = scanParams.dwellTime.value.toString();
+    document.getElementById("scanParams-dwellTime").value = scanParams.dwellTime.value.toString(4);
 }
 exports.updateUIParameters = updateUIParameters;
 function changeScanParam(id, value, sendPUT = true) {
+    console.log("value: " + value);
     let el = document.querySelector(`#${id}`);
     if (exports.limits.find(limit => limit.id == id).check(Number(value))) {
-        el.value = value.toString();
+        el.value = value.toPrecision(el.value.length + 1 < 5 ? el.value.length + 1 : 4);
         if (Number(exports.offsetX.value) + Number(exports.rangeX.value) > exports.limits.find(limit => limit.id == exports.offsetX.id).max) {
-            exports.rangeX.value = (exports.limits.find(limit => limit.id == exports.offsetX.id).max - Number(exports.offsetX.value)).toString();
+            exports.rangeX.value = (exports.limits.find(limit => limit.id == exports.offsetX.id).max - Number(exports.offsetX.value)).toPrecision(el.value.length + 1 < 5 ? el.value.length + 1 : 4);
             if (sendPUT)
                 toFromAPI_1.sendPut(`prismState/scanParams/range/x`, Number(exports.rangeX.value));
         }
         if (Number(exports.offsetY.value) + Number(exports.rangeY.value) > exports.limits.find(limit => limit.id == exports.offsetY.id).max) {
-            exports.rangeY.value = (exports.limits.find(limit => limit.id == exports.offsetY.id).max - Number(exports.offsetY.value)).toString();
+            exports.rangeY.value = (exports.limits.find(limit => limit.id == exports.offsetY.id).max - Number(exports.offsetY.value)).toPrecision(el.value.length + 1 < 5 ? el.value.length + 1 : 4);
             if (sendPUT)
                 toFromAPI_1.sendPut(`prismState/scanParams/range/y`, Number(exports.rangeY.value));
         }
         if (sendPUT)
             toFromAPI_1.sendPut(`prismState/${id.replace("-", "/").replace("-", "/")}`, Number(el.value));
-        pixelSizeX.value = (Number(exports.rangeX.value) / Number(pixelNumberX.value)).toString();
-        pixelSizeY.value = (Number(exports.rangeY.value) / Number(pixelNumberY.value)).toString();
-        pixelSizeZ.value = (Number(rangeZ.value) / Number(pixelNumberZ.value)).toString();
+        pixelSizeX.value = (Number(exports.rangeX.value) / Number(pixelNumberX.value)).toPrecision(el.value.length + 1 < 5 ? el.value.length + 1 : 4);
+        pixelSizeY.value = (Number(exports.rangeY.value) / Number(pixelNumberY.value)).toPrecision(el.value.length + 1 < 5 ? el.value.length + 1 : 4);
+        pixelSizeZ.value = (Number(rangeZ.value) / Number(pixelNumberZ.value)).toPrecision(el.value.length + 1 < 5 ? el.value.length + 1 : 4);
         totalTime.value = (Number(dwellTime.value) *
-            (Number(pixelNumberX.value) + Number(pixelNumberY.value) + Number(pixelNumberZ.value))).toString();
+            (Number(pixelNumberX.value) + Number(pixelNumberY.value) + Number(pixelNumberZ.value))).toPrecision(4);
+        exports.UIparameters.forEach(param => {
+            if (param.value.length > 5)
+                for (let i = 0; i < param.value.length - 5; i++)
+                    param.value = param.value.slice(0, -1);
+        });
     }
     else {
         let tempElLimit = el;

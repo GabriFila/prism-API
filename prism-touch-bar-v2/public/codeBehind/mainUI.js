@@ -593,7 +593,7 @@ const scanParameteres_1 = require("./scanParameteres");
 exports.dotBtn = document.querySelector("#btnDot");
 exports.delBtn = document.querySelector("#btnDel");
 //export const numPad = [btn0, btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9];
-const tempNumPad = document.querySelectorAll(".numpad-btn");
+const tempNumPad = document.querySelectorAll(".num-btn");
 //convert numpad list to array to make filtering possible
 exports.numPad = [];
 tempNumPad.forEach(btn => exports.numPad.push(btn));
@@ -602,7 +602,7 @@ function setUpNumPad() {
         numBtn.addEventListener("click", () => {
             if (mainUI_1.lastFocus != null) {
                 mainUI_1.lastFocus.classList.add("highlighted");
-                scanParameteres_1.changeScanParam(mainUI_1.lastFocus.id, Number(mainUI_1.lastFocus.value + numBtn.innerHTML));
+                scanParameteres_1.changeScanParam(mainUI_1.lastFocus.id, numPadClick(mainUI_1.lastFocus, Number(numBtn.innerHTML))); // Number(lastFocus.value) * 10 + Number(numBtn.innerHTML));
             }
         });
     });
@@ -619,12 +619,16 @@ function setUpNumPad() {
         if (mainUI_1.lastFocus != null) {
             mainUI_1.lastFocus.classList.add("highlighted");
             scanParameteres_1.changeScanParam(mainUI_1.lastFocus.id, mainUI_1.lastFocus.value.slice(0, -1));
-            //lastFocus.value = lastFocus.value.slice(0, -1); //remove last character
-            //sendPut(`prismState/${lastFocus.id.replace("-", "/").replace("-", "/")}`, Number(lastFocus.value));
         }
     });
 }
 exports.setUpNumPad = setUpNumPad;
+function numPadClick(el, input) {
+    if (el.value.includes("."))
+        return Number(el.value + `${input}`);
+    else
+        return Number(el.value) * 10 + input;
+}
 
 },{"../mainUI":12,"./scanParameteres":11}],10:[function(require,module,exports){
 "use strict";
@@ -642,16 +646,6 @@ function setUpLookSurface() {
         scanParameteres_1.changeScanParam(scanParameteres_1.offsetY.id, (exports.scanArea.topRelPos * scanParameteres_1.limits.find(limit => limit.id == scanParameteres_1.offsetY.id).max) / exports.scanArea.areaHeight, false);
         scanParameteres_1.changeScanParam(scanParameteres_1.rangeX.id, (exports.scanArea.elWidth * scanParameteres_1.limits.find(limit => limit.id == scanParameteres_1.rangeX.id).max) / exports.scanArea.areaWidth, false);
         scanParameteres_1.changeScanParam(scanParameteres_1.rangeY.id, (exports.scanArea.elHeight * scanParameteres_1.limits.find(limit => limit.id == scanParameteres_1.rangeY.id).max) / exports.scanArea.areaHeight, false);
-        /*
-        offsetX.value = ((scanArea.leftRelPos * limits.find(limit => limit.id == "scanParams-offset-x").max) / scanArea.areaWidth).toPrecision(
-          4
-        );
-        offsetY.value = ((scanArea.topRelPos * limits.find(limit => limit.id == "scanParams-offset-y").max) / scanArea.areaHeight).toPrecision(
-          4
-        );
-        rangeX.value = ((scanArea.elWidth * limits.find(limit => limit.id == "scanParams-range-x").max) / scanArea.areaWidth).toPrecision(4);
-        rangeY.value = ((scanArea.elHeight * limits.find(limit => limit.id == "scanParams-range-y").max) / scanArea.areaHeight).toPrecision(4);
-        */
     });
     window.addEventListener("resize", adatapLookSurface);
     //send parameter change when untouched
@@ -734,30 +728,36 @@ function updateUIParameters(scanParams) {
         changeScanParam(scanParams[prop].y.id, scanParams[prop].y.value);
         changeScanParam(scanParams[prop].z.id, scanParams[prop].z.value);
     });
-    document.getElementById("scanParams-dwellTime").value = scanParams.dwellTime.value.toString();
+    document.getElementById("scanParams-dwellTime").value = scanParams.dwellTime.value.toString(4);
 }
 exports.updateUIParameters = updateUIParameters;
 function changeScanParam(id, value, sendPUT = true) {
+    console.log("value: " + value);
     let el = document.querySelector(`#${id}`);
     if (exports.limits.find(limit => limit.id == id).check(Number(value))) {
-        el.value = value.toString();
+        el.value = value.toPrecision(el.value.length + 1 < 5 ? el.value.length + 1 : 4);
         if (Number(exports.offsetX.value) + Number(exports.rangeX.value) > exports.limits.find(limit => limit.id == exports.offsetX.id).max) {
-            exports.rangeX.value = (exports.limits.find(limit => limit.id == exports.offsetX.id).max - Number(exports.offsetX.value)).toString();
+            exports.rangeX.value = (exports.limits.find(limit => limit.id == exports.offsetX.id).max - Number(exports.offsetX.value)).toPrecision(el.value.length + 1 < 5 ? el.value.length + 1 : 4);
             if (sendPUT)
                 toFromAPI_1.sendPut(`prismState/scanParams/range/x`, Number(exports.rangeX.value));
         }
         if (Number(exports.offsetY.value) + Number(exports.rangeY.value) > exports.limits.find(limit => limit.id == exports.offsetY.id).max) {
-            exports.rangeY.value = (exports.limits.find(limit => limit.id == exports.offsetY.id).max - Number(exports.offsetY.value)).toString();
+            exports.rangeY.value = (exports.limits.find(limit => limit.id == exports.offsetY.id).max - Number(exports.offsetY.value)).toPrecision(el.value.length + 1 < 5 ? el.value.length + 1 : 4);
             if (sendPUT)
                 toFromAPI_1.sendPut(`prismState/scanParams/range/y`, Number(exports.rangeY.value));
         }
         if (sendPUT)
             toFromAPI_1.sendPut(`prismState/${id.replace("-", "/").replace("-", "/")}`, Number(el.value));
-        pixelSizeX.value = (Number(exports.rangeX.value) / Number(pixelNumberX.value)).toString();
-        pixelSizeY.value = (Number(exports.rangeY.value) / Number(pixelNumberY.value)).toString();
-        pixelSizeZ.value = (Number(rangeZ.value) / Number(pixelNumberZ.value)).toString();
+        pixelSizeX.value = (Number(exports.rangeX.value) / Number(pixelNumberX.value)).toPrecision(el.value.length + 1 < 5 ? el.value.length + 1 : 4);
+        pixelSizeY.value = (Number(exports.rangeY.value) / Number(pixelNumberY.value)).toPrecision(el.value.length + 1 < 5 ? el.value.length + 1 : 4);
+        pixelSizeZ.value = (Number(rangeZ.value) / Number(pixelNumberZ.value)).toPrecision(el.value.length + 1 < 5 ? el.value.length + 1 : 4);
         totalTime.value = (Number(dwellTime.value) *
-            (Number(pixelNumberX.value) + Number(pixelNumberY.value) + Number(pixelNumberZ.value))).toString();
+            (Number(pixelNumberX.value) + Number(pixelNumberY.value) + Number(pixelNumberZ.value))).toPrecision(4);
+        exports.UIparameters.forEach(param => {
+            if (param.value.length > 5)
+                for (let i = 0; i < param.value.length - 5; i++)
+                    param.value = param.value.slice(0, -1);
+        });
     }
     else {
         let tempElLimit = el;
@@ -811,7 +811,8 @@ document.body.addEventListener("click", function (e) {
             if (e.target !== numpad_1.delBtn && e.target !== numpad_1.dotBtn)
                 if (scanParameteres_1.UIparameters.filter(param => param === e.target).length == 0) {
                     removeHighlithBoder();
-                    //sendPut(`prismState/${lastFocus.id.replace("-", "/").replace("-", "/")}`, Number(lastFocus.value));
+                    toFromAPI_1.sendPut(`prismState/${exports.lastFocus.id.replace("-", "/").replace("-", "/")}`, Number(exports.lastFocus.value));
+                    console.log("here");
                     exports.lastFocus = null;
                 }
         }
@@ -840,7 +841,6 @@ const scanArea_1 = require("./UIparts/scanArea");
 const mode_1 = require("./UIparts/mode");
 const source = new EventSource("/updates");
 function setUpUpdater() {
-    console.log("HERE");
     source.addEventListener("update", (event) => {
         let resource = JSON.parse(event.data).resource;
         let idEls = resource.id.split("-");
@@ -892,22 +892,5 @@ function getCurrentMicroState() {
     });
 }
 exports.getCurrentMicroState = getCurrentMicroState;
-function updatePadsFromResName(id) {
-    let idEls = id.split("-");
-    if (idEls[1] == "offset") {
-        if (idEls[2] == "x")
-            scanArea_1.scanArea.leftRelPos =
-                (Number(document.getElementById(id).value) * scanArea_1.scanArea.areaWidth) / scanParameteres_1.limits.find(limit => limit.id == id).max;
-        else if (idEls[2] == "y")
-            scanArea_1.scanArea.topRelPos =
-                (Number(document.getElementById(id).value) * scanArea_1.scanArea.areaHeight) / scanParameteres_1.limits.find(limit => limit.id == id).max;
-    }
-    else if (idEls[2] == "x")
-        scanArea_1.scanArea.elWidth =
-            (Number(document.getElementById(id).value) * scanArea_1.scanArea.areaWidth) / scanParameteres_1.limits.find(limit => limit.id == id).max;
-    else if (idEls[2] == "y")
-        scanArea_1.scanArea.elHeight =
-            (Number(document.getElementById(id).value) * scanArea_1.scanArea.areaHeight) / scanParameteres_1.limits.find(limit => limit.id == id).max;
-}
 
 },{"./UIparts/lasers":6,"./UIparts/mode":7,"./UIparts/scanArea":10,"./UIparts/scanParameteres":11}]},{},[12]);

@@ -27,7 +27,7 @@ export interface Laser {
   isPresent: Resource;
 }
 
-export let microState: MicroState = require("../resources.json");
+export let microState: MicroState = require("../microState.json");
 
 export interface Resource {
   id: string;
