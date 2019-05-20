@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const mainUI_1 = require("../mainUI");
+//import { limits } from "./limits";
 const scanParameteres_1 = require("./scanParameteres");
 exports.dotBtn = document.querySelector("#btnDot");
 exports.delBtn = document.querySelector("#btnDel");
@@ -15,14 +16,6 @@ function setUpNumPad() {
             if (mainUI_1.lastFocus != null) {
                 mainUI_1.lastFocus.classList.add("highlighted");
                 scanParameteres_1.changeScanParam(mainUI_1.lastFocus.id, Number(mainUI_1.lastFocus.value + numBtn.innerHTML));
-                /*
-                if (limits.find(limit => limit.id == lastFocus.id).check(Number(lastFocus.value) + Number(numBtn.innerHTML))) {
-                  changeScanParam(lastFocus.id, (lastFocus.value += Number(numBtn.innerHTML)));
-                } else {
-                  lastFocus.classList.add("limit");
-                  setTimeout(() => lastFocus.classList.remove("limit"), 600);
-                }
-                */
             }
         });
     });

@@ -9,13 +9,20 @@ exports.scanArea = new pinchObj_1.PinchObj(inspectArea, sampleArea, 20);
 function setUpLookSurface() {
     //update own UI parameters
     exports.scanArea.area.addEventListener("touchmove", () => {
-        scanParameteres_1.offsetX.value = ((exports.scanArea.leftRelPos * scanParameteres_1.limits.find(limit => limit.id == "scanParams-offset-x").max) /
-            exports.scanArea.areaWidth).toPrecision(4);
-        scanParameteres_1.offsetY.value = ((exports.scanArea.topRelPos * scanParameteres_1.limits.find(limit => limit.id == "scanParams-offset-y").max) /
-            exports.scanArea.areaHeight).toPrecision(4);
-        scanParameteres_1.rangeX.value = ((exports.scanArea.elWidth * scanParameteres_1.limits.find(limit => limit.id == "scanParams-range-x").max) / exports.scanArea.areaWidth).toPrecision(4);
-        scanParameteres_1.rangeY.value = ((exports.scanArea.elHeight * scanParameteres_1.limits.find(limit => limit.id == "scanParams-range-y").max) /
-            exports.scanArea.areaHeight).toPrecision(4);
+        scanParameteres_1.changeScanParam(scanParameteres_1.offsetX.id, (exports.scanArea.leftRelPos * scanParameteres_1.limits.find(limit => limit.id == scanParameteres_1.offsetX.id).max) / exports.scanArea.areaWidth, false);
+        scanParameteres_1.changeScanParam(scanParameteres_1.offsetY.id, (exports.scanArea.topRelPos * scanParameteres_1.limits.find(limit => limit.id == scanParameteres_1.offsetY.id).max) / exports.scanArea.areaHeight, false);
+        scanParameteres_1.changeScanParam(scanParameteres_1.rangeX.id, (exports.scanArea.elWidth * scanParameteres_1.limits.find(limit => limit.id == scanParameteres_1.rangeX.id).max) / exports.scanArea.areaWidth, false);
+        scanParameteres_1.changeScanParam(scanParameteres_1.rangeY.id, (exports.scanArea.elHeight * scanParameteres_1.limits.find(limit => limit.id == scanParameteres_1.rangeY.id).max) / exports.scanArea.areaHeight, false);
+        /*
+        offsetX.value = ((scanArea.leftRelPos * limits.find(limit => limit.id == "scanParams-offset-x").max) / scanArea.areaWidth).toPrecision(
+          4
+        );
+        offsetY.value = ((scanArea.topRelPos * limits.find(limit => limit.id == "scanParams-offset-y").max) / scanArea.areaHeight).toPrecision(
+          4
+        );
+        rangeX.value = ((scanArea.elWidth * limits.find(limit => limit.id == "scanParams-range-x").max) / scanArea.areaWidth).toPrecision(4);
+        rangeY.value = ((scanArea.elHeight * limits.find(limit => limit.id == "scanParams-range-y").max) / scanArea.areaHeight).toPrecision(4);
+        */
     });
     window.addEventListener("resize", adatapLookSurface);
     //send parameter change when untouched

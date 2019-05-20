@@ -6,7 +6,6 @@ function responseSender(req, res, next) {
     if (req.method == "PUT") {
         res.resource.value = req.body.newValue;
         observer.send(this, "update-to-UI", res.resource);
-        console.log(res.resource.value);
         observer.send(this, "update-to-micro", res.resource);
         res.status(200).json({ newValue: res.resource.value });
     }

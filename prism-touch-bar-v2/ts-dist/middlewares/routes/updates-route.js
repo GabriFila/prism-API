@@ -4,7 +4,6 @@ const express = require("express");
 const observer = require("node-observer");
 exports.updates = express.Router();
 exports.updates.get("/", (req, res) => {
-    console.log("HERE");
     res.writeHead(200, {
         "Content-Type": "text/event-stream",
         "Cache-Control": "no-cache",

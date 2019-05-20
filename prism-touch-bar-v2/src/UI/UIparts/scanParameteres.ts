@@ -21,6 +21,9 @@ export const offsetY: HTMLInputElement = document.querySelector("#scanParams-off
 const pixelNumberX: HTMLInputElement = document.querySelector("#scanParams-pixelNumber-x");
 const pixelNumberY: HTMLInputElement = document.querySelector("#scanParams-pixelNumber-y");
 const pixelNumberZ: HTMLInputElement = document.querySelector("#scanParams-pixelNumber-z");
+const pixelSizeX: HTMLInputElement = document.querySelector("#scanParams-pixelSize-x");
+const pixelSizeY: HTMLInputElement = document.querySelector("#scanParams-pixelSize-y");
+const pixelSizeZ: HTMLInputElement = document.querySelector("#scanParams-pixelSize-z");
 export const rangeX: HTMLInputElement = document.querySelector("#scanParams-range-x");
 export const rangeY: HTMLInputElement = document.querySelector("#scanParams-range-y");
 const rangeZ: HTMLInputElement = document.querySelector("#scanParams-range-z");
@@ -67,35 +70,35 @@ export function updateUIParameters(scanParams: ScanParams) {
     changeScanParam((scanParams[prop] as XYZ).x.id, (scanParams[prop] as XYZ).x.value as number);
     changeScanParam((scanParams[prop] as XYZ).y.id, (scanParams[prop] as XYZ).y.value as number);
     changeScanParam((scanParams[prop] as XYZ).z.id, (scanParams[prop] as XYZ).z.value as number);
-    // (document.getElementById((scanParams[prop] as XYZ).x.id) as HTMLInputElement).value = (scanParams[prop] as XYZ).x.value.toString();
-    //(document.getElementById((scanParams[prop] as XYZ).y.id) as HTMLInputElement).value = (scanParams[prop] as XYZ).y.value.toString();
-    //(document.getElementById((scanParams[prop] as XYZ).z.id) as HTMLInputElement).value = (scanParams[prop] as XYZ).z.value.toString();
   });
   (document.getElementById("scanParams-dwellTime") as HTMLInputElement).value = scanParams.dwellTime.value.toString();
 }
 
-export function changeScanParam(id: string, value: string | number) {
+export function changeScanParam(id: string, value: string | number, sendPUT: boolean = true) {
+  
   let el: HTMLInputElement = document.querySelector(`#${id}`);
 
   if (limits.find(limit => limit.id == id).check(Number(value))) {
     el.value = value.toString();
 
     if (Number(offsetX.value) + Number(rangeX.value) > limits.find(limit => limit.id == offsetX.id).max) {
-      console.log("limit");
-
       rangeX.value = (limits.find(limit => limit.id == offsetX.id).max - Number(offsetX.value)).toString();
-      console.log(rangeX.value);
-
-      sendPut(`prismState/scanParams/range/x`, Number(rangeX.value));
+      if (sendPUT) sendPut(`prismState/scanParams/range/x`, Number(rangeX.value));
     }
     if (Number(offsetY.value) + Number(rangeY.value) > limits.find(limit => limit.id == offsetY.id).max) {
       rangeY.value = (limits.find(limit => limit.id == offsetY.id).max - Number(offsetY.value)).toString();
-      sendPut(`prismState/scanParams/range/y`, Number(rangeY.value));
+      if (sendPUT) sendPut(`prismState/scanParams/range/y`, Number(rangeY.value));
     }
+    if (sendPUT) sendPut(`prismState/${id.replace("-", "/").replace("-", "/")}`, Number(el.value));
 
-    sendPut(`prismState/${id.replace("-", "/").replace("-", "/")}`, Number(el.value));
+    pixelSizeX.value = (Number(rangeX.value) / Number(pixelNumberX.value)).toString();
+    pixelSizeY.value = (Number(rangeY.value) / Number(pixelNumberY.value)).toString();
+    pixelSizeZ.value = (Number(rangeZ.value) / Number(pixelNumberZ.value)).toString();
 
-    
+    totalTime.value = (
+      Number(dwellTime.value) *
+      (Number(pixelNumberX.value) + Number(pixelNumberY.value) + Number(pixelNumberZ.value))
+    ).toString();
   } else {
     let tempElLimit = el;
     tempElLimit.classList.add("limit");
@@ -111,8 +114,6 @@ UIparameters.forEach(param => limits.push(new Limit(param.id)));
 export function updateLimits(scanParams: ScanParams) {
   getXYZproperties(scanParams).forEach(prop => {
     //updates limit for each scanParam that as xyz
-    console.log(scanParams[prop]);
-
     limits.find(limit => limit.id == (scanParams[prop] as XYZ).x.id).max = (scanParams[prop] as XYZ).x.max;
     limits.find(limit => limit.id == (scanParams[prop] as XYZ).x.id).min = (scanParams[prop] as XYZ).x.min;
 

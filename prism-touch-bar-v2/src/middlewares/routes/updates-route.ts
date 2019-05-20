@@ -5,7 +5,6 @@ import { Resource } from "../../model";
 export const updates = express.Router();
 
 updates.get("/", (req, res) => {
-  console.log("HERE");
 
   res.writeHead(200, {
     "Content-Type": "text/event-stream",

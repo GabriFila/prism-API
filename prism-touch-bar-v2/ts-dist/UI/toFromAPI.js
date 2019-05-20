@@ -6,6 +6,7 @@ const scanArea_1 = require("./UIparts/scanArea");
 const mode_1 = require("./UIparts/mode");
 const source = new EventSource("/updates");
 function setUpUpdater() {
+    console.log("HERE");
     source.addEventListener("update", (event) => {
         let resource = JSON.parse(event.data).resource;
         let idEls = resource.id.split("-");
@@ -14,8 +15,8 @@ function setUpUpdater() {
                 mode_1.updateModeBtns(resource.value);
                 break;
             case "scanParams":
-                document.getElementById(resource.id).value = resource.value.toString();
-                updatePadsFromResName(resource.id);
+                scanParameteres_1.changeScanParam(resource.id, resource.value, false);
+                //(document.getElementById(resource.id) as HTMLInputElement).value = resource.value.toString();
                 break;
             case "laser":
                 let targetLaserRow = lasers_1.laserUIRows.find(laserRow => laserRow.waveLength == Number(idEls[1]));
