@@ -1,7 +1,6 @@
 import { lastFocus } from "../mainUI";
-import { limits } from "./limits";
-import { sendPut } from "../toFromAPI";
-import { offsetX, rangeX, offsetY, rangeY } from "./scanParameteres";
+//import { limits } from "./limits";
+import { changeScanParam } from "./scanParameteres";
 
 export const dotBtn: HTMLButtonElement = document.querySelector("#btnDot");
 export const delBtn: HTMLButtonElement = document.querySelector("#btnDel");
@@ -18,30 +17,10 @@ export function setUpNumPad() {
     numBtn.addEventListener("click", () => {
       if (lastFocus != null) {
         lastFocus.classList.add("highlighted");
-
-        if (limits.find(limit => limit.id == lastFocus.id).check(Number(lastFocus.value) + Number(numBtn.innerHTML))) {
-          lastFocus.value += Number(numBtn.innerHTML);
-          adjustRange();
-          sendPut(`prismState/${lastFocus.id.replace("-", "/").replace("-", "/")}`, Number(lastFocus.value));
-        } else {
-          lastFocus.classList.add("limit");
-          setTimeout(() => lastFocus.classList.remove("limit"), 600);
-        }
+        changeScanParam(lastFocus.id, Number(lastFocus.value + numBtn.innerHTML));
       }
     });
   });
-
-  function adjustRange() {
-    if (Number(offsetX.value) + Number(rangeX.value) > limits.find(limit => limit.id == offsetX.id).max) {
-      rangeX.value = (limits.find(limit => limit.id == offsetX.id).max - Number(offsetX.value)).toString();
-      sendPut(`prismState/scanParams/range/x`, Number(rangeX.value));
-    }
-    if (Number(offsetY.value) + Number(rangeY.value) > limits.find(limit => limit.id == offsetY.id).max) {
-      rangeY.value = (limits.find(limit => limit.id == offsetY.id).max - Number(offsetY.value)).toString();
-      sendPut(`prismState/scanParams/range/y`, Number(rangeY.value));
-
-    }
-  }
 
   /*Numpad events */
   //add dot to last focus element when dot button pressed
@@ -56,8 +35,9 @@ export function setUpNumPad() {
   delBtn.addEventListener("click", () => {
     if (lastFocus != null) {
       lastFocus.classList.add("highlighted");
-      lastFocus.value = lastFocus.value.slice(0, -1); //remove last character
-      sendPut(`prismState/${lastFocus.id.replace("-", "/").replace("-", "/")}`, Number(lastFocus.value));
+      changeScanParam(lastFocus.id, lastFocus.value.slice(0, -1));
+      //lastFocus.value = lastFocus.value.slice(0, -1); //remove last character
+      //sendPut(`prismState/${lastFocus.id.replace("-", "/").replace("-", "/")}`, Number(lastFocus.value));
     }
   });
 }

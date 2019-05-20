@@ -7,14 +7,14 @@
     "offset": {
       "x": {
         "id": "scanParams-offset-x",
-        "value": 500,
+        "value": 250,
         "max": 1000,
         "min": 0,
         "unit": "um"
       },
       "y": {
         "id": "scanParams-offset-y",
-        "value": 500,
+        "value": 250,
         "max": 1000,
         "min": 0,
         "unit": "um"

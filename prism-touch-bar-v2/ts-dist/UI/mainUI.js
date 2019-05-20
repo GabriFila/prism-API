@@ -1,13 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /*numpad element*/
-const numpad_1 = require("./UIparts/numpad");
-const toFromAPI_1 = require("./toFromAPI");
 const scanParameteres_1 = require("./UIparts/scanParameteres");
+const toFromAPI_1 = require("./toFromAPI");
 const mode_1 = require("./UIparts/mode");
 const motorsControls_1 = require("./UIparts/motorsControls");
 const scanArea_1 = require("./UIparts/scanArea");
 const lasers_1 = require("./UIparts/lasers");
+const numpad_1 = require("./UIparts/numpad");
 /*get microscope state on UI start-up */
 toFromAPI_1.getCurrentMicroState();
 toFromAPI_1.setUpUpdater();
@@ -25,7 +25,7 @@ document.body.addEventListener("click", function (e) {
             if (e.target !== numpad_1.delBtn && e.target !== numpad_1.dotBtn)
                 if (scanParameteres_1.UIparameters.filter(param => param === e.target).length == 0) {
                     removeHighlithBoder();
-                    toFromAPI_1.sendPut(`prismState/${exports.lastFocus.id.replace("-", "/").replace("-", "/")}`, Number(exports.lastFocus.value));
+                    //sendPut(`prismState/${lastFocus.id.replace("-", "/").replace("-", "/")}`, Number(lastFocus.value));
                     exports.lastFocus = null;
                 }
         }

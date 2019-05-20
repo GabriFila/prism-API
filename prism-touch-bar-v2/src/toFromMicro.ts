@@ -6,8 +6,6 @@ const parser = new SerialPort.parsers.Readline({ delimiter: "\n", includeDelimit
 
 export function setUpMicroCom() {
   observer.subscribe(this, "update-to-micro", (who: any, resource: Resource) => {
-    console.log("update-to-micro");
-
     sendUpdateToPrism(resource);
   });
 

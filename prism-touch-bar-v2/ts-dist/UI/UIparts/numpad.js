@@ -1,8 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const mainUI_1 = require("../mainUI");
-const limits_1 = require("./limits");
-const toFromAPI_1 = require("../toFromAPI");
 const scanParameteres_1 = require("./scanParameteres");
 exports.dotBtn = document.querySelector("#btnDot");
 exports.delBtn = document.querySelector("#btnDel");
@@ -16,28 +14,18 @@ function setUpNumPad() {
         numBtn.addEventListener("click", () => {
             if (mainUI_1.lastFocus != null) {
                 mainUI_1.lastFocus.classList.add("highlighted");
-                if (limits_1.limits.find(limit => limit.id == mainUI_1.lastFocus.id).check(Number(mainUI_1.lastFocus.value) + Number(numBtn.innerHTML))) {
-                    mainUI_1.lastFocus.value += Number(numBtn.innerHTML);
-                    adjustRange();
-                    toFromAPI_1.sendPut(`prismState/${mainUI_1.lastFocus.id.replace("-", "/").replace("-", "/")}`, Number(mainUI_1.lastFocus.value));
+                scanParameteres_1.changeScanParam(mainUI_1.lastFocus.id, Number(mainUI_1.lastFocus.value + numBtn.innerHTML));
+                /*
+                if (limits.find(limit => limit.id == lastFocus.id).check(Number(lastFocus.value) + Number(numBtn.innerHTML))) {
+                  changeScanParam(lastFocus.id, (lastFocus.value += Number(numBtn.innerHTML)));
+                } else {
+                  lastFocus.classList.add("limit");
+                  setTimeout(() => lastFocus.classList.remove("limit"), 600);
                 }
-                else {
-                    mainUI_1.lastFocus.classList.add("limit");
-                    setTimeout(() => mainUI_1.lastFocus.classList.remove("limit"), 600);
-                }
+                */
             }
         });
     });
-    function adjustRange() {
-        if (Number(scanParameteres_1.offsetX.value) + Number(scanParameteres_1.rangeX.value) > limits_1.limits.find(limit => limit.id == scanParameteres_1.offsetX.id).max) {
-            scanParameteres_1.rangeX.value = (limits_1.limits.find(limit => limit.id == scanParameteres_1.offsetX.id).max - Number(scanParameteres_1.offsetX.value)).toString();
-            toFromAPI_1.sendPut(`prismState/scanParams/range/x`, Number(scanParameteres_1.rangeX.value));
-        }
-        if (Number(scanParameteres_1.offsetY.value) + Number(scanParameteres_1.rangeY.value) > limits_1.limits.find(limit => limit.id == scanParameteres_1.offsetY.id).max) {
-            scanParameteres_1.rangeY.value = (limits_1.limits.find(limit => limit.id == scanParameteres_1.offsetY.id).max - Number(scanParameteres_1.offsetY.value)).toString();
-            toFromAPI_1.sendPut(`prismState/scanParams/range/y`, Number(scanParameteres_1.rangeY.value));
-        }
-    }
     /*Numpad events */
     //add dot to last focus element when dot button pressed
     exports.dotBtn.addEventListener("click", () => {
@@ -50,8 +38,9 @@ function setUpNumPad() {
     exports.delBtn.addEventListener("click", () => {
         if (mainUI_1.lastFocus != null) {
             mainUI_1.lastFocus.classList.add("highlighted");
-            mainUI_1.lastFocus.value = mainUI_1.lastFocus.value.slice(0, -1); //remove last character
-            toFromAPI_1.sendPut(`prismState/${mainUI_1.lastFocus.id.replace("-", "/").replace("-", "/")}`, Number(mainUI_1.lastFocus.value));
+            scanParameteres_1.changeScanParam(mainUI_1.lastFocus.id, mainUI_1.lastFocus.value.slice(0, -1));
+            //lastFocus.value = lastFocus.value.slice(0, -1); //remove last character
+            //sendPut(`prismState/${lastFocus.id.replace("-", "/").replace("-", "/")}`, Number(lastFocus.value));
         }
     });
 }

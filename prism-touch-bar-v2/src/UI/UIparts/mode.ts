@@ -18,11 +18,8 @@ export function setUpModeBtns() {
 }
 
 export function updateModeBtns(newValue: string) {
-  console.log(newValue);
-
   modeBtns.forEach(modeBtn => {
     modeBtn.classList.remove("highlighted-button");
     if (newValue != "stop") document.getElementById(`${newValue}-btn`).classList.add("highlighted-button");
-    
   });
 }

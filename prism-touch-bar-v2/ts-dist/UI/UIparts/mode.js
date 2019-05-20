@@ -20,7 +20,6 @@ function setUpModeBtns() {
 }
 exports.setUpModeBtns = setUpModeBtns;
 function updateModeBtns(newValue) {
-    console.log(newValue);
     modeBtns.forEach(modeBtn => {
         modeBtn.classList.remove("highlighted-button");
         if (newValue != "stop")

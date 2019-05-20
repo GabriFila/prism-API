@@ -1,6 +1,5 @@
 import { PinchObj } from "./drag-pinch-joystick/pinchObj";
-import { limits } from "./limits";
-import { offsetX, offsetY, rangeX, rangeY } from "./scanParameteres";
+import { offsetX, offsetY, rangeX, rangeY, limits } from "./scanParameteres";
 import { sendPut } from "../toFromAPI";
 
 

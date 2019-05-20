@@ -1,13 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const lasers_1 = require("./UIparts/lasers");
-const limits_1 = require("./UIparts/limits");
 const scanParameteres_1 = require("./UIparts/scanParameteres");
 const scanArea_1 = require("./UIparts/scanArea");
 const mode_1 = require("./UIparts/mode");
 const source = new EventSource("/updates");
 function setUpUpdater() {
-    console.log("SSE opened");
     source.addEventListener("update", (event) => {
         let resource = JSON.parse(event.data).resource;
         let idEls = resource.id.split("-");
@@ -52,7 +50,7 @@ function getCurrentMicroState() {
     fetch("/prismState/")
         .then(res => res.json())
         .then((newState) => {
-        limits_1.updateLimits(newState.scanParams);
+        scanParameteres_1.updateLimits(newState.scanParams);
         lasers_1.updateUILasersFromLasers(newState.lasers);
         scanParameteres_1.updateUIParameters(newState.scanParams);
         scanArea_1.adatapLookSurface();
@@ -64,16 +62,16 @@ function updatePadsFromResName(id) {
     if (idEls[1] == "offset") {
         if (idEls[2] == "x")
             scanArea_1.scanArea.leftRelPos =
-                (Number(document.getElementById(id).value) * scanArea_1.scanArea.areaWidth) / limits_1.limits.find(limit => limit.id == id).max;
+                (Number(document.getElementById(id).value) * scanArea_1.scanArea.areaWidth) / scanParameteres_1.limits.find(limit => limit.id == id).max;
         else if (idEls[2] == "y")
             scanArea_1.scanArea.topRelPos =
-                (Number(document.getElementById(id).value) * scanArea_1.scanArea.areaHeight) / limits_1.limits.find(limit => limit.id == id).max;
+                (Number(document.getElementById(id).value) * scanArea_1.scanArea.areaHeight) / scanParameteres_1.limits.find(limit => limit.id == id).max;
     }
     else if (idEls[2] == "x")
         scanArea_1.scanArea.elWidth =
-            (Number(document.getElementById(id).value) * scanArea_1.scanArea.areaWidth) / limits_1.limits.find(limit => limit.id == id).max;
+            (Number(document.getElementById(id).value) * scanArea_1.scanArea.areaWidth) / scanParameteres_1.limits.find(limit => limit.id == id).max;
     else if (idEls[2] == "y")
         scanArea_1.scanArea.elHeight =
-            (Number(document.getElementById(id).value) * scanArea_1.scanArea.areaHeight) / limits_1.limits.find(limit => limit.id == id).max;
+            (Number(document.getElementById(id).value) * scanArea_1.scanArea.areaHeight) / scanParameteres_1.limits.find(limit => limit.id == id).max;
 }
 //# sourceMappingURL=toFromAPI.js.map

@@ -513,38 +513,7 @@ function setUpLasers() {
 }
 exports.setUpLasers = setUpLasers;
 
-},{"../toFromAPI":14}],7:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const scanParameteres_1 = require("./scanParameteres");
-class Limit {
-    constructor(id) {
-        this.id = id;
-        this.max = Number.POSITIVE_INFINITY;
-        this.min = Number.NEGATIVE_INFINITY;
-    }
-    check(value) {
-        return value <= this.max && value >= this.min;
-    }
-}
-exports.limits = [];
-scanParameteres_1.UIparameters.forEach(param => exports.limits.push(new Limit(param.id)));
-function updateLimits(scanParams) {
-    scanParameteres_1.getXYZproperties(scanParams).forEach(prop => {
-        //updates limit for each scanParam that as xyz
-        console.log(scanParams[prop]);
-        exports.limits.find(limit => limit.id == scanParams[prop].x.id).max = scanParams[prop].x.max;
-        exports.limits.find(limit => limit.id == scanParams[prop].x.id).min = scanParams[prop].x.min;
-        exports.limits.find(limit => limit.id == scanParams[prop].y.id).max = scanParams[prop].y.max;
-        exports.limits.find(limit => limit.id == scanParams[prop].y.id).min = scanParams[prop].y.min;
-        exports.limits.find(limit => limit.id == scanParams[prop].z.id).max = scanParams[prop].z.max;
-        exports.limits.find(limit => limit.id == scanParams[prop].z.id).min = scanParams[prop].z.min;
-    });
-    exports.limits.find(limit => limit.id == "scanParams-dwellTime").max = scanParams.dwellTime.max;
-}
-exports.updateLimits = updateLimits;
-
-},{"./scanParameteres":12}],8:[function(require,module,exports){
+},{"../toFromAPI":13}],7:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const toFromAPI_1 = require("../toFromAPI");
@@ -567,7 +536,6 @@ function setUpModeBtns() {
 }
 exports.setUpModeBtns = setUpModeBtns;
 function updateModeBtns(newValue) {
-    console.log(newValue);
     modeBtns.forEach(modeBtn => {
         modeBtn.classList.remove("highlighted-button");
         if (newValue != "stop")
@@ -576,7 +544,7 @@ function updateModeBtns(newValue) {
 }
 exports.updateModeBtns = updateModeBtns;
 
-},{"../toFromAPI":14}],9:[function(require,module,exports){
+},{"../toFromAPI":13}],8:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const circJoystick_1 = require("./drag-pinch-joystick/circJoystick");
@@ -616,12 +584,10 @@ function setUpMotorsControls() {
 }
 exports.setUpMotorsControls = setUpMotorsControls;
 
-},{"../toFromAPI":14,"./drag-pinch-joystick/circJoystick":1,"./drag-pinch-joystick/sliderJoystickObj":5}],10:[function(require,module,exports){
+},{"../toFromAPI":13,"./drag-pinch-joystick/circJoystick":1,"./drag-pinch-joystick/sliderJoystickObj":5}],9:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const mainUI_1 = require("../mainUI");
-const limits_1 = require("./limits");
-const toFromAPI_1 = require("../toFromAPI");
 const scanParameteres_1 = require("./scanParameteres");
 exports.dotBtn = document.querySelector("#btnDot");
 exports.delBtn = document.querySelector("#btnDel");
@@ -635,28 +601,18 @@ function setUpNumPad() {
         numBtn.addEventListener("click", () => {
             if (mainUI_1.lastFocus != null) {
                 mainUI_1.lastFocus.classList.add("highlighted");
-                if (limits_1.limits.find(limit => limit.id == mainUI_1.lastFocus.id).check(Number(mainUI_1.lastFocus.value) + Number(numBtn.innerHTML))) {
-                    mainUI_1.lastFocus.value += Number(numBtn.innerHTML);
-                    adjustRange();
-                    toFromAPI_1.sendPut(`prismState/${mainUI_1.lastFocus.id.replace("-", "/").replace("-", "/")}`, Number(mainUI_1.lastFocus.value));
+                scanParameteres_1.changeScanParam(mainUI_1.lastFocus.id, Number(mainUI_1.lastFocus.value + numBtn.innerHTML));
+                /*
+                if (limits.find(limit => limit.id == lastFocus.id).check(Number(lastFocus.value) + Number(numBtn.innerHTML))) {
+                  changeScanParam(lastFocus.id, (lastFocus.value += Number(numBtn.innerHTML)));
+                } else {
+                  lastFocus.classList.add("limit");
+                  setTimeout(() => lastFocus.classList.remove("limit"), 600);
                 }
-                else {
-                    mainUI_1.lastFocus.classList.add("limit");
-                    setTimeout(() => mainUI_1.lastFocus.classList.remove("limit"), 600);
-                }
+                */
             }
         });
     });
-    function adjustRange() {
-        if (Number(scanParameteres_1.offsetX.value) + Number(scanParameteres_1.rangeX.value) > limits_1.limits.find(limit => limit.id == scanParameteres_1.offsetX.id).max) {
-            scanParameteres_1.rangeX.value = (limits_1.limits.find(limit => limit.id == scanParameteres_1.offsetX.id).max - Number(scanParameteres_1.offsetX.value)).toString();
-            toFromAPI_1.sendPut(`prismState/scanParams/range/x`, Number(scanParameteres_1.rangeX.value));
-        }
-        if (Number(scanParameteres_1.offsetY.value) + Number(scanParameteres_1.rangeY.value) > limits_1.limits.find(limit => limit.id == scanParameteres_1.offsetY.id).max) {
-            scanParameteres_1.rangeY.value = (limits_1.limits.find(limit => limit.id == scanParameteres_1.offsetY.id).max - Number(scanParameteres_1.offsetY.value)).toString();
-            toFromAPI_1.sendPut(`prismState/scanParams/range/y`, Number(scanParameteres_1.rangeY.value));
-        }
-    }
     /*Numpad events */
     //add dot to last focus element when dot button pressed
     exports.dotBtn.addEventListener("click", () => {
@@ -669,18 +625,18 @@ function setUpNumPad() {
     exports.delBtn.addEventListener("click", () => {
         if (mainUI_1.lastFocus != null) {
             mainUI_1.lastFocus.classList.add("highlighted");
-            mainUI_1.lastFocus.value = mainUI_1.lastFocus.value.slice(0, -1); //remove last character
-            toFromAPI_1.sendPut(`prismState/${mainUI_1.lastFocus.id.replace("-", "/").replace("-", "/")}`, Number(mainUI_1.lastFocus.value));
+            scanParameteres_1.changeScanParam(mainUI_1.lastFocus.id, mainUI_1.lastFocus.value.slice(0, -1));
+            //lastFocus.value = lastFocus.value.slice(0, -1); //remove last character
+            //sendPut(`prismState/${lastFocus.id.replace("-", "/").replace("-", "/")}`, Number(lastFocus.value));
         }
     });
 }
 exports.setUpNumPad = setUpNumPad;
 
-},{"../mainUI":13,"../toFromAPI":14,"./limits":7,"./scanParameteres":12}],11:[function(require,module,exports){
+},{"../mainUI":12,"./scanParameteres":11}],10:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const pinchObj_1 = require("./drag-pinch-joystick/pinchObj");
-const limits_1 = require("./limits");
 const scanParameteres_1 = require("./scanParameteres");
 const toFromAPI_1 = require("../toFromAPI");
 const inspectArea = document.querySelector("#scan-area");
@@ -689,12 +645,12 @@ exports.scanArea = new pinchObj_1.PinchObj(inspectArea, sampleArea, 20);
 function setUpLookSurface() {
     //update own UI parameters
     exports.scanArea.area.addEventListener("touchmove", () => {
-        scanParameteres_1.offsetX.value = ((exports.scanArea.leftRelPos * limits_1.limits.find(limit => limit.id == "scanParams-offset-x").max) /
+        scanParameteres_1.offsetX.value = ((exports.scanArea.leftRelPos * scanParameteres_1.limits.find(limit => limit.id == "scanParams-offset-x").max) /
             exports.scanArea.areaWidth).toPrecision(4);
-        scanParameteres_1.offsetY.value = ((exports.scanArea.topRelPos * limits_1.limits.find(limit => limit.id == "scanParams-offset-y").max) /
+        scanParameteres_1.offsetY.value = ((exports.scanArea.topRelPos * scanParameteres_1.limits.find(limit => limit.id == "scanParams-offset-y").max) /
             exports.scanArea.areaHeight).toPrecision(4);
-        scanParameteres_1.rangeX.value = ((exports.scanArea.elWidth * limits_1.limits.find(limit => limit.id == "scanParams-range-x").max) / exports.scanArea.areaWidth).toPrecision(4);
-        scanParameteres_1.rangeY.value = ((exports.scanArea.elHeight * limits_1.limits.find(limit => limit.id == "scanParams-range-y").max) /
+        scanParameteres_1.rangeX.value = ((exports.scanArea.elWidth * scanParameteres_1.limits.find(limit => limit.id == "scanParams-range-x").max) / exports.scanArea.areaWidth).toPrecision(4);
+        scanParameteres_1.rangeY.value = ((exports.scanArea.elHeight * scanParameteres_1.limits.find(limit => limit.id == "scanParams-range-y").max) /
             exports.scanArea.areaHeight).toPrecision(4);
     });
     window.addEventListener("resize", adatapLookSurface);
@@ -708,16 +664,17 @@ function setUpLookSurface() {
 }
 exports.setUpLookSurface = setUpLookSurface;
 function adatapLookSurface() {
-    exports.scanArea.leftRelPos = (Number(scanParameteres_1.offsetX.value) * exports.scanArea.areaWidth) / limits_1.limits.find(limit => limit.id == scanParameteres_1.offsetX.id).max;
-    exports.scanArea.topRelPos = (Number(scanParameteres_1.offsetY.value) * exports.scanArea.areaHeight) / limits_1.limits.find(limit => limit.id == scanParameteres_1.offsetY.id).max;
-    exports.scanArea.elWidth = (Number(scanParameteres_1.rangeX.value) * exports.scanArea.areaWidth) / limits_1.limits.find(limit => limit.id == scanParameteres_1.rangeX.id).max;
-    exports.scanArea.elHeight = (Number(scanParameteres_1.rangeY.value) * exports.scanArea.areaHeight) / limits_1.limits.find(limit => limit.id == scanParameteres_1.rangeY.id).max;
+    exports.scanArea.leftRelPos = (Number(scanParameteres_1.offsetX.value) * exports.scanArea.areaWidth) / scanParameteres_1.limits.find(limit => limit.id == scanParameteres_1.offsetX.id).max;
+    exports.scanArea.topRelPos = (Number(scanParameteres_1.offsetY.value) * exports.scanArea.areaHeight) / scanParameteres_1.limits.find(limit => limit.id == scanParameteres_1.offsetY.id).max;
+    exports.scanArea.elWidth = (Number(scanParameteres_1.rangeX.value) * exports.scanArea.areaWidth) / scanParameteres_1.limits.find(limit => limit.id == scanParameteres_1.rangeX.id).max;
+    exports.scanArea.elHeight = (Number(scanParameteres_1.rangeY.value) * exports.scanArea.areaHeight) / scanParameteres_1.limits.find(limit => limit.id == scanParameteres_1.rangeY.id).max;
 }
 exports.adatapLookSurface = adatapLookSurface;
 
-},{"../toFromAPI":14,"./drag-pinch-joystick/pinchObj":4,"./limits":7,"./scanParameteres":12}],12:[function(require,module,exports){
+},{"../toFromAPI":13,"./drag-pinch-joystick/pinchObj":4,"./scanParameteres":11}],11:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const toFromAPI_1 = require("../toFromAPI");
 exports.offsetX = document.querySelector("#scanParams-offset-x");
 exports.offsetY = document.querySelector("#scanParams-offset-y");
 const pixelNumberX = document.querySelector("#scanParams-pixelNumber-x");
@@ -760,25 +717,77 @@ function getXYZproperties(scanParams) {
 exports.getXYZproperties = getXYZproperties;
 function updateUIParameters(scanParams) {
     getXYZproperties(scanParams).forEach(prop => {
-        document.getElementById(scanParams[prop].x.id).value = scanParams[prop].x.value.toString();
-        document.getElementById(scanParams[prop].y.id).value = scanParams[prop].y.value.toString();
-        document.getElementById(scanParams[prop].z.id).value = scanParams[prop].z.value.toString();
+        changeScanParam(scanParams[prop].x.id, scanParams[prop].x.value);
+        changeScanParam(scanParams[prop].y.id, scanParams[prop].y.value);
+        changeScanParam(scanParams[prop].z.id, scanParams[prop].z.value);
+        // (document.getElementById((scanParams[prop] as XYZ).x.id) as HTMLInputElement).value = (scanParams[prop] as XYZ).x.value.toString();
+        //(document.getElementById((scanParams[prop] as XYZ).y.id) as HTMLInputElement).value = (scanParams[prop] as XYZ).y.value.toString();
+        //(document.getElementById((scanParams[prop] as XYZ).z.id) as HTMLInputElement).value = (scanParams[prop] as XYZ).z.value.toString();
     });
     document.getElementById("scanParams-dwellTime").value = scanParams.dwellTime.value.toString();
 }
 exports.updateUIParameters = updateUIParameters;
+function changeScanParam(id, value) {
+    let el = document.querySelector(`#${id}`);
+    if (exports.limits.find(limit => limit.id == id).check(Number(value))) {
+        el.value = value.toString();
+        if (Number(exports.offsetX.value) + Number(exports.rangeX.value) > exports.limits.find(limit => limit.id == exports.offsetX.id).max) {
+            console.log("limit");
+            exports.rangeX.value = (exports.limits.find(limit => limit.id == exports.offsetX.id).max - Number(exports.offsetX.value)).toString();
+            console.log(exports.rangeX.value);
+            toFromAPI_1.sendPut(`prismState/scanParams/range/x`, Number(exports.rangeX.value));
+        }
+        if (Number(exports.offsetY.value) + Number(exports.rangeY.value) > exports.limits.find(limit => limit.id == exports.offsetY.id).max) {
+            exports.rangeY.value = (exports.limits.find(limit => limit.id == exports.offsetY.id).max - Number(exports.offsetY.value)).toString();
+            toFromAPI_1.sendPut(`prismState/scanParams/range/y`, Number(exports.rangeY.value));
+        }
+        toFromAPI_1.sendPut(`prismState/${id.replace("-", "/").replace("-", "/")}`, Number(el.value));
+    }
+    else {
+        let tempElLimit = el;
+        tempElLimit.classList.add("limit");
+        setTimeout(() => tempElLimit.classList.remove("limit"), 600);
+    }
+}
+exports.changeScanParam = changeScanParam;
+class Limit {
+    constructor(id) {
+        this.id = id;
+        this.max = Number.POSITIVE_INFINITY;
+        this.min = Number.NEGATIVE_INFINITY;
+    }
+    check(value) {
+        return value <= this.max && value >= this.min;
+    }
+}
+exports.limits = [];
+exports.UIparameters.forEach(param => exports.limits.push(new Limit(param.id)));
+function updateLimits(scanParams) {
+    getXYZproperties(scanParams).forEach(prop => {
+        //updates limit for each scanParam that as xyz
+        console.log(scanParams[prop]);
+        exports.limits.find(limit => limit.id == scanParams[prop].x.id).max = scanParams[prop].x.max;
+        exports.limits.find(limit => limit.id == scanParams[prop].x.id).min = scanParams[prop].x.min;
+        exports.limits.find(limit => limit.id == scanParams[prop].y.id).max = scanParams[prop].y.max;
+        exports.limits.find(limit => limit.id == scanParams[prop].y.id).min = scanParams[prop].y.min;
+        exports.limits.find(limit => limit.id == scanParams[prop].z.id).max = scanParams[prop].z.max;
+        exports.limits.find(limit => limit.id == scanParams[prop].z.id).min = scanParams[prop].z.min;
+    });
+    exports.limits.find(limit => limit.id == "scanParams-dwellTime").max = scanParams.dwellTime.max;
+}
+exports.updateLimits = updateLimits;
 
-},{}],13:[function(require,module,exports){
+},{"../toFromAPI":13}],12:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /*numpad element*/
-const numpad_1 = require("./UIparts/numpad");
-const toFromAPI_1 = require("./toFromAPI");
 const scanParameteres_1 = require("./UIparts/scanParameteres");
+const toFromAPI_1 = require("./toFromAPI");
 const mode_1 = require("./UIparts/mode");
 const motorsControls_1 = require("./UIparts/motorsControls");
 const scanArea_1 = require("./UIparts/scanArea");
 const lasers_1 = require("./UIparts/lasers");
+const numpad_1 = require("./UIparts/numpad");
 /*get microscope state on UI start-up */
 toFromAPI_1.getCurrentMicroState();
 toFromAPI_1.setUpUpdater();
@@ -796,7 +805,7 @@ document.body.addEventListener("click", function (e) {
             if (e.target !== numpad_1.delBtn && e.target !== numpad_1.dotBtn)
                 if (scanParameteres_1.UIparameters.filter(param => param === e.target).length == 0) {
                     removeHighlithBoder();
-                    toFromAPI_1.sendPut(`prismState/${exports.lastFocus.id.replace("-", "/").replace("-", "/")}`, Number(exports.lastFocus.value));
+                    //sendPut(`prismState/${lastFocus.id.replace("-", "/").replace("-", "/")}`, Number(lastFocus.value));
                     exports.lastFocus = null;
                 }
         }
@@ -816,17 +825,15 @@ function removeHighlithBoder() {
     scanParameteres_1.UIparameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));
 }
 
-},{"./UIparts/lasers":6,"./UIparts/mode":8,"./UIparts/motorsControls":9,"./UIparts/numpad":10,"./UIparts/scanArea":11,"./UIparts/scanParameteres":12,"./toFromAPI":14}],14:[function(require,module,exports){
+},{"./UIparts/lasers":6,"./UIparts/mode":7,"./UIparts/motorsControls":8,"./UIparts/numpad":9,"./UIparts/scanArea":10,"./UIparts/scanParameteres":11,"./toFromAPI":13}],13:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const lasers_1 = require("./UIparts/lasers");
-const limits_1 = require("./UIparts/limits");
 const scanParameteres_1 = require("./UIparts/scanParameteres");
 const scanArea_1 = require("./UIparts/scanArea");
 const mode_1 = require("./UIparts/mode");
 const source = new EventSource("/updates");
 function setUpUpdater() {
-    console.log("SSE opened");
     source.addEventListener("update", (event) => {
         let resource = JSON.parse(event.data).resource;
         let idEls = resource.id.split("-");
@@ -871,7 +878,7 @@ function getCurrentMicroState() {
     fetch("/prismState/")
         .then(res => res.json())
         .then((newState) => {
-        limits_1.updateLimits(newState.scanParams);
+        scanParameteres_1.updateLimits(newState.scanParams);
         lasers_1.updateUILasersFromLasers(newState.lasers);
         scanParameteres_1.updateUIParameters(newState.scanParams);
         scanArea_1.adatapLookSurface();
@@ -883,17 +890,17 @@ function updatePadsFromResName(id) {
     if (idEls[1] == "offset") {
         if (idEls[2] == "x")
             scanArea_1.scanArea.leftRelPos =
-                (Number(document.getElementById(id).value) * scanArea_1.scanArea.areaWidth) / limits_1.limits.find(limit => limit.id == id).max;
+                (Number(document.getElementById(id).value) * scanArea_1.scanArea.areaWidth) / scanParameteres_1.limits.find(limit => limit.id == id).max;
         else if (idEls[2] == "y")
             scanArea_1.scanArea.topRelPos =
-                (Number(document.getElementById(id).value) * scanArea_1.scanArea.areaHeight) / limits_1.limits.find(limit => limit.id == id).max;
+                (Number(document.getElementById(id).value) * scanArea_1.scanArea.areaHeight) / scanParameteres_1.limits.find(limit => limit.id == id).max;
     }
     else if (idEls[2] == "x")
         scanArea_1.scanArea.elWidth =
-            (Number(document.getElementById(id).value) * scanArea_1.scanArea.areaWidth) / limits_1.limits.find(limit => limit.id == id).max;
+            (Number(document.getElementById(id).value) * scanArea_1.scanArea.areaWidth) / scanParameteres_1.limits.find(limit => limit.id == id).max;
     else if (idEls[2] == "y")
         scanArea_1.scanArea.elHeight =
-            (Number(document.getElementById(id).value) * scanArea_1.scanArea.areaHeight) / limits_1.limits.find(limit => limit.id == id).max;
+            (Number(document.getElementById(id).value) * scanArea_1.scanArea.areaHeight) / scanParameteres_1.limits.find(limit => limit.id == id).max;
 }
 
-},{"./UIparts/lasers":6,"./UIparts/limits":7,"./UIparts/mode":8,"./UIparts/scanArea":11,"./UIparts/scanParameteres":12}]},{},[13]);
+},{"./UIparts/lasers":6,"./UIparts/mode":7,"./UIparts/scanArea":10,"./UIparts/scanParameteres":11}]},{},[12]);

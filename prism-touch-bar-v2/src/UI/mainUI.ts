@@ -1,11 +1,11 @@
 /*numpad element*/
-import { numPad, delBtn, dotBtn, setUpNumPad } from "./UIparts/numpad";
-import { getCurrentMicroState, sendPut, setUpUpdater } from "./toFromAPI";
 import { UIparameters } from "./UIparts/scanParameteres";
+import { getCurrentMicroState, sendPut, setUpUpdater } from "./toFromAPI";
 import { setUpModeBtns } from "./UIparts/mode";
 import { setUpMotorsControls } from "./UIparts/motorsControls";
 import { setUpLookSurface } from "./UIparts/scanArea";
 import { setUpLasers } from "./UIparts/lasers";
+import { numPad, delBtn, dotBtn, setUpNumPad } from "./UIparts/numpad";
 
 /*get microscope state on UI start-up */
 
@@ -33,7 +33,7 @@ document.body.addEventListener("click", function(e) {
       if (e.target !== delBtn && e.target !== dotBtn)
         if (UIparameters.filter(param => param === e.target).length == 0) {
           removeHighlithBoder();
-          sendPut(`prismState/${lastFocus.id.replace("-", "/").replace("-", "/")}`, Number(lastFocus.value));
+          //sendPut(`prismState/${lastFocus.id.replace("-", "/").replace("-", "/")}`, Number(lastFocus.value));
           lastFocus = null;
         }
     }

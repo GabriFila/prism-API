@@ -6,7 +6,6 @@ const SerialPort = require("serialport");
 const parser = new SerialPort.parsers.Readline({ delimiter: "\n", includeDelimiter: false });
 function setUpMicroCom() {
     observer.subscribe(this, "update-to-micro", (who, resource) => {
-        console.log("update-to-micro");
         sendUpdateToPrism(resource);
     });
     SerialPort.list(function (err, ports) {
