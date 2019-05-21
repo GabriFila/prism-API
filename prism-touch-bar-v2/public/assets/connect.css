@@ -1,0 +1,50 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  /*cursor: none;*/
+}
+
+:root {
+  --base-color: #252525;
+  --dark-gray: rgb(121, 121, 121);
+  --light-gray: rgb(192, 192, 192);
+  --sky-blue: #2e83b3;
+  --white: white;
+  --slider-thumb: #5f5f5f;
+  --red-limit: #cf2828;
+}
+
+/*set width to 0 for flex adaptability*/
+input {
+  width: 0;
+}
+
+/*set height to 100% for flex adaptability*/
+html {
+  height: 100%;
+}
+
+body {
+  background-color: var(--base-color);
+  height: 100%;
+  color: var(--white);
+  display: flex;
+  flex-direction: column;
+  font-family: sans-serif;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.div-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+#btn {
+  width: 50%;
+  flex: 1;
+  font-size: 1.3em;
+}

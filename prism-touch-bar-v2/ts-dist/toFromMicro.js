@@ -4,38 +4,28 @@ const observer = require("node-observer");
 const model_1 = require("./model");
 const SerialPort = require("serialport");
 const parser = new SerialPort.parsers.Readline({ delimiter: "\n", includeDelimiter: false });
-function connectToMicro() {
-    let microConnected;
-    SerialPort.list(function (err, ports) {
-        if (ports.length == 0)
-            microConnected = false;
-        else {
-            ports.forEach(function (port) {
-                if (port.vendorId == "2341") {
-                    console.log("Found It");
-                    let portName = port.comName.toString();
-                    console.log(portName);
-                    port = new SerialPort(portName, {
-                        baudRate: 9600,
-                        autoOpen: false
-                    });
-                    port.open(() => console.log(`Serial port ${port.path} open`));
-                    port.pipe(parser);
-                    microConnected = true;
-                }
-                else
-                    microConnected = false;
+function tryToConnectToMicro() {
+    SerialPort.list().then(ports => {
+        if (ports.some(port => port.vendorId == "2341")) {
+            let portName = ports.find(port => port.vendorId == "2341").comName.toString();
+            console.log(portName);
+            let port = new SerialPort(portName, {
+                baudRate: 9600,
+                autoOpen: false
             });
+            observer.subscribe(this, "update-to-micro", (who, resource) => {
+                sendUpdateToPrism(resource);
+            });
+            observer.send(this, "micro-connected");
+            port.open(() => console.log(`Serial port ${port.path} open`));
+            port.pipe(parser);
+        }
+        else {
+            observer.send(this, "micro-not-connected");
         }
     });
-    if (!microConnected)
-        throw new Error("no micro attached");
-    else
-        observer.subscribe(this, "update-to-micro", (who, resource) => {
-            sendUpdateToPrism(resource);
-        });
 }
-exports.connectToMicro = connectToMicro;
+exports.tryToConnectToMicro = tryToConnectToMicro;
 //gets serial input and parses it
 parser.on("data", data => {
     try {
@@ -46,7 +36,7 @@ parser.on("data", data => {
         }
     }
     catch (s) {
-        console.log("Error on parsing serial input");
+        //console.log("Error on parsing serial input");
     }
 });
 function updateMicroState(res) {

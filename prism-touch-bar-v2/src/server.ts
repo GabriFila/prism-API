@@ -8,10 +8,12 @@ import { prismState } from "./middlewares/routes/prismState-route";
 import { bodyChecker } from "./middlewares/bodyChecker";
 import { limitsChecker } from "./middlewares/limitsChecker";
 import { responseSender } from "./middlewares/responseSender";
-import { connectToMicro } from "./toFromMicro";
+import { tryToConnectToMicro } from "./toFromMicro";
+
+import * as observer from "node-observer";
 
 const server = express();
-let microConnected: boolean = false;
+let isMicroConnected: boolean = false;
 
 //json parser middlware
 server.use(bodyParser.json());
@@ -28,16 +30,20 @@ server.use("/public", express.static(path.join(__dirname + "/../public")));
 
 //send web app UI
 server.get("/", (req, res) => {
-  if (microConnected) res.sendFile(path.join(__dirname + "/../public/views/mainUI.html"));
-  else res.sendFile(path.join(__dirname + "/../public/views/connect.html"));
+  if (isMicroConnected) {
+    res.sendFile(path.join(__dirname + "/../public/views/mainUI.html"));
+  } else res.sendFile(path.join(__dirname + "/../public/views/connect.html"));
 });
 
-try {
-  connectToMicro();
-  microConnected = true;
-} catch (e) {
-  microConnected = false;
-}
+observer.subscribe(this, "micro-not-connected", () => {
+  isMicroConnected = false;
+  setTimeout(tryToConnectToMicro, 1000);
+});
+observer.subscribe(this, "micro-connected", () => {
+  isMicroConnected = true;
+});
+
+tryToConnectToMicro();
 
 //Start server
 let port = process.env.PORT || 5000;

@@ -1,36 +1,31 @@
 import * as observer from "node-observer";
 import { Resource, microState, XYZ } from "./model";
 import * as SerialPort from "serialport";
+import { prismMotors } from "./middlewares/routes/prismMotors-route";
 
 const parser = new SerialPort.parsers.Readline({ delimiter: "\n", includeDelimiter: false });
 
-export function connectToMicro() {
-  let microConnected;
-  SerialPort.list(function(err, ports) {
-    if (ports.length == 0) microConnected = false;
-    else {
-      ports.forEach(function(port) {
-        if (port.vendorId == "2341") {
-          console.log("Found It");
-          let portName = port.comName.toString();
-          console.log(portName);
-          port = new SerialPort(portName, {
-            baudRate: 9600,
-            autoOpen: false
-          });
-          port.open(() => console.log(`Serial port ${port.path} open`));
-          port.pipe(parser);
-          microConnected = true;
-        } else microConnected = false;
+export function tryToConnectToMicro() {
+  SerialPort.list().then(ports => {
+    if (ports.some(port => port.vendorId == "2341")) {
+      let portName = ports.find(port => port.vendorId == "2341").comName.toString();
+      console.log(portName);
+      let port = new SerialPort(portName, {
+        baudRate: 9600,
+        autoOpen: false
       });
+
+      observer.subscribe(this, "update-to-micro", (who: any, resource: Resource) => {
+        sendUpdateToPrism(resource);
+      });
+
+      observer.send(this, "micro-connected");
+      port.open(() => console.log(`Serial port ${port.path} open`));
+      port.pipe(parser);
+    } else {
+      observer.send(this, "micro-not-connected");
     }
   });
-
-  if (!microConnected) throw new Error("no micro attached");
-  else
-    observer.subscribe(this, "update-to-micro", (who: any, resource: Resource) => {
-      sendUpdateToPrism(resource);
-    });
 }
 
 //gets serial input and parses it
@@ -42,7 +37,7 @@ parser.on("data", data => {
       observer.send(this, "update-to-UI");
     }
   } catch (s) {
-    console.log("Error on parsing serial input");
+    //console.log("Error on parsing serial input");
   }
 });
 

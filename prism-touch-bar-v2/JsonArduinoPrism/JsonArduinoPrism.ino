@@ -44,33 +44,38 @@ void setup() {
 }
 
 void loop() {
+  /*
+    if (Serial.available()) {
+      deserializeJson(objRx, Serial);
 
+      if (objRx["event"] == "updated-offset-x")
+        offX = objRx["data"]["newValue"];
+      if (objRx["event"] == "updated-offset-y")
+        offY = objRx["data"]["newValue"];
+      if (objRx["event"] == "updated-offset-z")
+        offZ = objRx["data"]["newValue"];
+
+      if (objRx["event"] == "updated-range-x")
+        rgX = objRx["data"]["newValue"];
+      if (objRx["event"] == "updated-range-y")
+        rgY = objRx["data"]["newValue"];
+      if (objRx["event"] == "updated-range-z")
+        rgZ = objRx["data"]["newValue"];
+
+      if (objRx["event"] == "updated-pixelNumber-x")
+        pnX = objRx["data"]["newValue"];
+      if (objRx["event"] == "updated-pixelNumber-y")
+        pnY = objRx["data"]["newValue"];
+      if (objRx["event"] == "updated-pixelNumber-z")
+        pnZ = objRx["data"]["newValue"];
+
+      if (objRx["event"] == "updated-dwellTime")
+        dt = objRx["data"]["newValue"];
+    }
+  */
   if (Serial.available()) {
     deserializeJson(objRx, Serial);
-
-    if (objRx["event"] == "updated-offset-x")
-      offX = objRx["data"]["newValue"];
-    if (objRx["event"] == "updated-offset-y")
-      offY = objRx["data"]["newValue"];
-    if (objRx["event"] == "updated-offset-z")
-      offZ = objRx["data"]["newValue"];
-
-    if (objRx["event"] == "updated-range-x")
-      rgX = objRx["data"]["newValue"];
-    if (objRx["event"] == "updated-range-y")
-      rgY = objRx["data"]["newValue"];
-    if (objRx["event"] == "updated-range-z")
-      rgZ = objRx["data"]["newValue"];
-
-    if (objRx["event"] == "updated-pixelNumber-x")
-      pnX = objRx["data"]["newValue"];
-    if (objRx["event"] == "updated-pixelNumber-y")
-      pnY = objRx["data"]["newValue"];
-    if (objRx["event"] == "updated-pixelNumber-z")
-      pnZ = objRx["data"]["newValue"];
-
-    if (objRx["event"] == "updated-dwellTime")
-      dt = objRx["data"]["newValue"];
+    serializeJson(objRx, Serial);
   }
 
 
