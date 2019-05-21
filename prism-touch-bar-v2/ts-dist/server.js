@@ -10,6 +10,7 @@ const limitsChecker_1 = require("./middlewares/limitsChecker");
 const responseSender_1 = require("./middlewares/responseSender");
 const toFromMicro_1 = require("./toFromMicro");
 const server = express();
+let microConnected = false;
 //json parser middlware
 server.use(bodyParser.json());
 server.use(bodyChecker_1.bodyChecker);
@@ -22,9 +23,18 @@ server.use(responseSender_1.responseSender);
 server.use("/public", express.static(path.join(__dirname + "/../public")));
 //send web app UI
 server.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname + "/../public/views/mainUI.html"));
+    if (microConnected)
+        res.sendFile(path.join(__dirname + "/../public/views/mainUI.html"));
+    else
+        res.sendFile(path.join(__dirname + "/../public/views/connect.html"));
 });
-toFromMicro_1.setUpMicroCom();
+try {
+    toFromMicro_1.connectToMicro();
+    microConnected = true;
+}
+catch (e) {
+    microConnected = false;
+}
 //Start server
 let port = process.env.PORT || 5000;
 server.listen(5000, () => console.log(`Listening from ${port}`));

@@ -4,29 +4,38 @@ const observer = require("node-observer");
 const model_1 = require("./model");
 const SerialPort = require("serialport");
 const parser = new SerialPort.parsers.Readline({ delimiter: "\n", includeDelimiter: false });
-function setUpMicroCom() {
-    observer.subscribe(this, "update-to-micro", (who, resource) => {
-        sendUpdateToPrism(resource);
-    });
+function connectToMicro() {
+    let microConnected;
     SerialPort.list(function (err, ports) {
-        ports.forEach(function (port) {
-            if (port.vendorId == "2341") {
-                console.log("Found It");
-                let portName = port.comName.toString();
-                console.log(portName);
-                port = new SerialPort(portName, {
-                    baudRate: 9600,
-                    autoOpen: false
-                });
-                port.open(() => console.log(`Serial port ${port.path} open`));
-                port.pipe(parser);
-            }
-            else
-                console.log("no microscope attached");
-        });
+        if (ports.length == 0)
+            microConnected = false;
+        else {
+            ports.forEach(function (port) {
+                if (port.vendorId == "2341") {
+                    console.log("Found It");
+                    let portName = port.comName.toString();
+                    console.log(portName);
+                    port = new SerialPort(portName, {
+                        baudRate: 9600,
+                        autoOpen: false
+                    });
+                    port.open(() => console.log(`Serial port ${port.path} open`));
+                    port.pipe(parser);
+                    microConnected = true;
+                }
+                else
+                    microConnected = false;
+            });
+        }
     });
+    if (!microConnected)
+        throw new Error("no micro attached");
+    else
+        observer.subscribe(this, "update-to-micro", (who, resource) => {
+            sendUpdateToPrism(resource);
+        });
 }
-exports.setUpMicroCom = setUpMicroCom;
+exports.connectToMicro = connectToMicro;
 //gets serial input and parses it
 parser.on("data", data => {
     try {
@@ -41,6 +50,17 @@ parser.on("data", data => {
     }
 });
 function updateMicroState(res) {
+    if (res.id == "lasers-change") {
+        let nLasers = res.newValue.length;
+        for (let i = 0; i < nLasers; i++) {
+            let newWaveLength;
+            model_1.microState.lasers[i].waveLength.value = res.newValue[i];
+            model_1.microState.lasers[i].waveLength.id = `laser-${newWaveLength}-nm-waveLength`;
+            model_1.microState.lasers[i].isOn.id = `laser-${newWaveLength}-nm-isOn`;
+            model_1.microState.lasers[i].power.id = `laser-${newWaveLength}-nm-power`;
+            model_1.microState.lasers[i].isPresent.id = `laser-${newWaveLength}-nm-isPresent`;
+        }
+    }
     let idEls = res.id.split("-");
     switch (idEls[0]) {
         case "scanParams":

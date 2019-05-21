@@ -4,26 +4,33 @@ import * as SerialPort from "serialport";
 
 const parser = new SerialPort.parsers.Readline({ delimiter: "\n", includeDelimiter: false });
 
-export function setUpMicroCom() {
-  observer.subscribe(this, "update-to-micro", (who: any, resource: Resource) => {
-    sendUpdateToPrism(resource);
+export function connectToMicro() {
+  let microConnected;
+  SerialPort.list(function(err, ports) {
+    if (ports.length == 0) microConnected = false;
+    else {
+      ports.forEach(function(port) {
+        if (port.vendorId == "2341") {
+          console.log("Found It");
+          let portName = port.comName.toString();
+          console.log(portName);
+          port = new SerialPort(portName, {
+            baudRate: 9600,
+            autoOpen: false
+          });
+          port.open(() => console.log(`Serial port ${port.path} open`));
+          port.pipe(parser);
+          microConnected = true;
+        } else microConnected = false;
+      });
+    }
   });
 
-  SerialPort.list(function(err, ports) {
-    ports.forEach(function(port) {
-      if (port.vendorId == "2341") {
-        console.log("Found It");
-        let portName = port.comName.toString();
-        console.log(portName);
-        port = new SerialPort(portName, {
-          baudRate: 9600,
-          autoOpen: false
-        });
-        port.open(() => console.log(`Serial port ${port.path} open`));
-        port.pipe(parser);
-      } else console.log("no microscope attached");
+  if (!microConnected) throw new Error("no micro attached");
+  else
+    observer.subscribe(this, "update-to-micro", (who: any, resource: Resource) => {
+      sendUpdateToPrism(resource);
     });
-  });
 }
 
 //gets serial input and parses it
@@ -40,17 +47,28 @@ parser.on("data", data => {
 });
 
 function updateMicroState(res: SerialData) {
+  if (res.id == "lasers-change") {
+    let nLasers = (res.newValue as number[]).length;
+    for (let i = 0; i < nLasers; i++) {
+      let newWaveLength;
+      microState.lasers[i].waveLength.value = (res.newValue as number[])[i];
+      microState.lasers[i].waveLength.id = `laser-${newWaveLength}-nm-waveLength`;
+      microState.lasers[i].isOn.id = `laser-${newWaveLength}-nm-isOn`;
+      microState.lasers[i].power.id = `laser-${newWaveLength}-nm-power`;
+      microState.lasers[i].isPresent.id = `laser-${newWaveLength}-nm-isPresent`;
+    }
+  }
   let idEls = res.id.split("-");
   switch (idEls[0]) {
     case "scanParams":
-      if (idEls[1] == "dwellTime") microState.scanParams.dwellTime.value = res.newValue;
-      else (microState.scanParams[idEls[1]] as XYZ)[idEls[2]].value = res.newValue;
+      if (idEls[1] == "dwellTime") microState.scanParams.dwellTime.value = res.newValue as number;
+      else (microState.scanParams[idEls[1]] as XYZ)[idEls[2]].value = res.newValue as number;
       break;
     case "laser":
       (microState.lasers.find(laser => laser.waveLength.value == Number(idEls[1])) as any)[idEls[3]].value = res.newValue;
       break;
     case "mode":
-      microState.mode.value = res.newValue;
+      microState.mode.value = res.newValue as string;
       break;
     default:
       break;
@@ -72,5 +90,5 @@ function serializeData(obj: object): string {
 
 interface SerialData {
   id: string;
-  newValue: number | string | boolean;
+  newValue: number | string | boolean | number[];
 }

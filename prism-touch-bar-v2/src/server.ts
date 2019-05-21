@@ -8,9 +8,10 @@ import { prismState } from "./middlewares/routes/prismState-route";
 import { bodyChecker } from "./middlewares/bodyChecker";
 import { limitsChecker } from "./middlewares/limitsChecker";
 import { responseSender } from "./middlewares/responseSender";
-import { setUpMicroCom } from "./toFromMicro";
+import { connectToMicro } from "./toFromMicro";
 
 const server = express();
+let microConnected: boolean = false;
 
 //json parser middlware
 server.use(bodyParser.json());
@@ -27,10 +28,16 @@ server.use("/public", express.static(path.join(__dirname + "/../public")));
 
 //send web app UI
 server.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname + "/../public/views/mainUI.html"));
+  if (microConnected) res.sendFile(path.join(__dirname + "/../public/views/mainUI.html"));
+  else res.sendFile(path.join(__dirname + "/../public/views/connect.html"));
 });
 
-setUpMicroCom();
+try {
+  connectToMicro();
+  microConnected = true;
+} catch (e) {
+  microConnected = false;
+}
 
 //Start server
 let port = process.env.PORT || 5000;
