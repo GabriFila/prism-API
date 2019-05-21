@@ -15,6 +15,7 @@ function setUpUpdater() {
                 break;
             case "scanParams":
                 scanParameteres_1.changeScanParam(resource.id, resource.value, false);
+                scanArea_1.adatapLookSurface();
                 //(document.getElementById(resource.id) as HTMLInputElement).value = resource.value.toString();
                 break;
             case "laser":

@@ -154,11 +154,6 @@ body {
   flex: 5;
 }
 
-.top-param-label {
-  flex: 2;
-  margin: auto 7px;
-}
-
 .left-param-label {
   flex: 4;
   font-size: 1.1em;
@@ -175,6 +170,11 @@ body {
   border-radius: 10%;
   text-align: right;
   font-size: 1.2em;
+}
+
+.top-param-label {
+  text-align: center;
+  border: none;
 }
 
 .highlighted {

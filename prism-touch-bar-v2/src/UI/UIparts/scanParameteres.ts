@@ -1,5 +1,6 @@
 import { ScanParams, XYZ } from "../../model";
 import { sendPut } from "../toFromAPI";
+import { adatapLookSurface } from "./scanArea";
 
 class Limit {
   id: string;
@@ -75,7 +76,6 @@ export function updateUIParameters(scanParams: ScanParams) {
 }
 
 export function changeScanParam(id: string, value: string | number, sendPUT: boolean = true) {
-  
   let el: HTMLInputElement = document.querySelector(`#${id}`);
 
   if (limits.find(limit => limit.id == id).check(Number(value))) {
@@ -100,9 +100,7 @@ export function changeScanParam(id: string, value: string | number, sendPUT: boo
       (Number(pixelNumberX.value) + Number(pixelNumberY.value) + Number(pixelNumberZ.value))
     ).toString();
 
-    UIparameters.forEach(param => {
-      if (param.value.length > 5) for (let i = 0; i < param.value.length - 5; i++) param.value = param.value.slice(0, -1);
-    });
+
   } else {
     let tempElLimit = el;
     tempElLimit.classList.add("limit");
@@ -130,5 +128,3 @@ export function updateLimits(scanParams: ScanParams) {
 
   limits.find(limit => limit.id == "scanParams-dwellTime").max = scanParams.dwellTime.max;
 }
-
-
