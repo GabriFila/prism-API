@@ -33,44 +33,58 @@ parser.on("data", data => {
     try {
         let objRx = JSON.parse(data);
         if (objRx != null) {
-            console.log(objRx);
+            //console.log(objRx);
             updateMicroState(objRx);
-            observer.send(this, "update-to-UI");
         }
     }
     catch (s) {
         console.log("Error on parsing serial input");
     }
 });
-function updateMicroState(res) {
-    console.log("updateing microsstate");
-    if (res.id == "lasers-change") {
-        let nLasers = res.newValue.length;
+function updateMicroState(newData) {
+    if (newData.id == "lasers-changed") {
+        console.log("arrived laser changed");
+        let nLasers = newData.newValue.length;
         for (let i = 0; i < nLasers; i++) {
-            let newWaveLength;
-            model_1.microState.lasers[i].waveLength.value = res.newValue[i];
+            let newLaser = newData.newValue[i];
+            let newWaveLength = newLaser.wL;
             model_1.microState.lasers[i].waveLength.id = `laser-${newWaveLength}-nm-waveLength`;
+            model_1.microState.lasers[i].waveLength.value = newLaser.wL;
             model_1.microState.lasers[i].isOn.id = `laser-${newWaveLength}-nm-isOn`;
+            model_1.microState.lasers[i].isOn.value = newLaser.isOn;
             model_1.microState.lasers[i].power.id = `laser-${newWaveLength}-nm-power`;
+            model_1.microState.lasers[i].power.value = newLaser.pw;
             model_1.microState.lasers[i].isPresent.id = `laser-${newWaveLength}-nm-isPresent`;
+            model_1.microState.lasers[i].isPresent.value = true;
         }
+        for (let i = nLasers; i < 4; i++) {
+            model_1.microState.lasers[i].waveLength.value = 0;
+            model_1.microState.lasers[i].waveLength.id = `no-laser`;
+            model_1.microState.lasers[i].isOn.id = `no-laser`;
+            model_1.microState.lasers[i].power.id = `no-laser`;
+            model_1.microState.lasers[i].isPresent.value = false;
+        }
+        observer.send(this, "lasers-changed");
     }
-    let idEls = res.id.split("-");
-    switch (idEls[0]) {
-        case "scanParams":
-            if (idEls[1] == "dwellTime")
-                model_1.microState.scanParams.dwellTime.value = res.newValue;
-            else
-                model_1.microState.scanParams[idEls[1]][idEls[2]].value = res.newValue;
-            break;
-        case "laser":
-            model_1.microState.lasers.find(laser => laser.waveLength.value == Number(idEls[1]))[idEls[3]].value = res.newValue;
-            break;
-        case "mode":
-            model_1.microState.mode.value = res.newValue;
-            break;
-        default:
-            break;
+    else {
+        let idEls = newData.id.split("-");
+        switch (idEls[0]) {
+            case "scanParams":
+                if (idEls[1] == "dwellTime")
+                    model_1.microState.scanParams.dwellTime.value = newData.newValue;
+                else
+                    model_1.microState.scanParams[idEls[1]][idEls[2]].value = newData.newValue;
+                break;
+            case "laser":
+                model_1.microState.lasers.find(laser => laser.waveLength.value == Number(idEls[1]))[idEls[3]].value = newData.newValue;
+                break;
+            case "mode":
+                model_1.microState.mode.value = newData.newValue;
+                break;
+            default:
+                break;
+        }
+        observer.send(this, "update-to-UI", { id: newData.id, value: newData.newValue });
     }
 }
 function sendUpdateToPrism(res) {
@@ -79,7 +93,6 @@ function sendUpdateToPrism(res) {
         newValue: res.value
     };
     sp.write(serializeData(objTx));
-    console.log("data sent");
 }
 function serializeData(obj) {
     return JSON.stringify(obj);

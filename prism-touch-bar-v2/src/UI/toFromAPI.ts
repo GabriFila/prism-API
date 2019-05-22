@@ -1,4 +1,4 @@
-import { MicroState, Resource } from "../model";
+import { MicroState, Resource, Laser } from "../model";
 import { updateUILasersFromLasers, laserUIRows } from "./UIparts/lasers";
 import { updateUIParameters, updateLimits, limits, changeScanParam } from "./UIparts/scanParameteres";
 import { scanArea, adatapLookSurface } from "./UIparts/scanArea";
@@ -7,6 +7,12 @@ import { updateModeBtns } from "./UIparts/mode";
 const source = new EventSource("/updates");
 
 export function setUpUpdater() {
+  source.addEventListener("lasers-changed", (event: any) => {
+    console.log("lasers-changed");
+    
+    let lasers: Laser[] = JSON.parse(event.data).lasers;
+    updateUILasersFromLasers(lasers);
+  });
   source.addEventListener("update", (event: any) => {
     let resource: Resource = JSON.parse(event.data).resource;
     let idEls: string[] = resource.id.split("-");
@@ -16,12 +22,13 @@ export function setUpUpdater() {
         break;
       case "scanParams":
         changeScanParam(resource.id, resource.value as number, false);
-    adatapLookSurface();
+        adatapLookSurface();
 
         //(document.getElementById(resource.id) as HTMLInputElement).value = resource.value.toString();
         break;
       case "laser":
         let targetLaserRow = laserUIRows.find(laserRow => laserRow.waveLength == Number(idEls[1]));
+        
         switch (idEls[3]) {
           case "isOn":
             targetLaserRow.isOn = resource.value as boolean;

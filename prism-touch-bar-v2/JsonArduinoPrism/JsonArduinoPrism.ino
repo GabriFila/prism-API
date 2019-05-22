@@ -2,7 +2,7 @@
 
 #define BUTTON 7
 StaticJsonDocument<300> objRx;
-StaticJsonDocument<300> objTx;
+StaticJsonDocument<400> laserChange;
 
 
 StaticJsonDocument<40> startObj;
@@ -26,9 +26,13 @@ void setup() {
   randomSeed(analogRead(0));
   Serial.begin(9600);
 
-  const char json[] = "{\"event\":\"prism-connected\"}";
-  deserializeJson(startObj, json);
-  delay(1000);
+  const char json2[] = "{\"event\":\"prism-connected\"}";
+  deserializeJson(startObj, json2);
+  delay(2000);
+  const char* json = "{\"id\":\"lasers-changed\",\"newValue\":[{\"pos\":1,\"wL\":300,\"isOn\":true,\"pw\":50},{\"pos\":1,\"wL\":400,\"isOn\":true,\"pw\":50}]}";
+  deserializeJson(laserChange, json);
+serializeJson(laserChange,Serial);
+Serial.println();
   /*
     Serial.print("event: ");
     const char * event= startObj["event"];
@@ -100,6 +104,7 @@ void loop() {
 
 
 void sendSomeData() {
+  /*
   byte choice = random(0, 9);
   //Serial.println("ENTEEEEERDDD");
   switch (choice) {
@@ -174,4 +179,5 @@ void sendSomeData() {
       Serial.println();
       break;
   }
+  */
 }

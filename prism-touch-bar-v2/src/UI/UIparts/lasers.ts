@@ -16,7 +16,17 @@ class LaserUIRow {
     else this.grayOut();
     this._isOn = value;
   }
-  visible: boolean;
+  private _visible: boolean;
+  public get visible(): boolean {
+    return this._visible;
+  }
+  public set visible(value: boolean) {
+    if (!value) 
+      this.box.style.display = "none";
+    
+
+    this._visible = value;
+  }
   position: number;
   private _waveLength: number;
   public get waveLength(): number {
@@ -82,8 +92,9 @@ laserRows.forEach((laserRow, i) => {
 export function updateUILasersFromLasers(lasers: Laser[]) {
   laserUIRows.forEach((laserUIBox, i) => {
     //hide empty lasers
-    if (i >= lasers.length) laserUIRows[i].visible = false;
+    if (!lasers[i].isPresent.value) laserUIBox.visible = false;
     else {
+      laserUIBox.visible = true;
       laserUIRows[i].powerLabel.innerHTML = lasers[i].power.value.toString() + "%";
       laserUIRows[i].slider.value = lasers[i].power.value.toString();
 
@@ -92,6 +103,7 @@ export function updateUILasersFromLasers(lasers: Laser[]) {
     }
   });
 }
+
 export function setUpLasers() {
   //adds event to slider box for slider movement and on/off button
   laserUIRows.forEach(laserUIRow => {

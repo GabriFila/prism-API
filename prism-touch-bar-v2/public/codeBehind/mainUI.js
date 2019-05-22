@@ -436,6 +436,14 @@ class LaserUIRow {
             this.grayOut();
         this._isOn = value;
     }
+    get visible() {
+        return this._visible;
+    }
+    set visible(value) {
+        if (!value)
+            this.box.style.display = "none";
+        this._visible = value;
+    }
     get waveLength() {
         return Number(this.waveLengthLabel.innerHTML.slice(0, -1).slice(0, -1));
     }
@@ -482,9 +490,10 @@ laserRows.forEach((laserRow, i) => {
 function updateUILasersFromLasers(lasers) {
     exports.laserUIRows.forEach((laserUIBox, i) => {
         //hide empty lasers
-        if (i >= lasers.length)
-            exports.laserUIRows[i].visible = false;
+        if (!lasers[i].isPresent.value)
+            laserUIBox.visible = false;
         else {
+            laserUIBox.visible = true;
             exports.laserUIRows[i].powerLabel.innerHTML = lasers[i].power.value.toString() + "%";
             exports.laserUIRows[i].slider.value = lasers[i].power.value.toString();
             exports.laserUIRows[i].waveLengthLabel.innerHTML = lasers[i].waveLength.value.toString() + "nm";
@@ -835,6 +844,11 @@ const scanArea_1 = require("./UIparts/scanArea");
 const mode_1 = require("./UIparts/mode");
 const source = new EventSource("/updates");
 function setUpUpdater() {
+    source.addEventListener("lasers-changed", (event) => {
+        console.log("lasers-changed");
+        let lasers = JSON.parse(event.data).lasers;
+        lasers_1.updateUILasersFromLasers(lasers);
+    });
     source.addEventListener("update", (event) => {
         let resource = JSON.parse(event.data).resource;
         let idEls = resource.id.split("-");
