@@ -10,6 +10,7 @@ function tryToConnectToMicro() {
         // if (ports.some(port => port.vendorId == "2341")) {
         //let portName = ports.find(port => port.vendorId == "2341").comName.toString();
         if (ports.length > 0) {
+            ports.forEach(port => console.log(port));
             let portName = ports[0].comName;
             console.log(portName);
             sp = new SerialPort(portName, {
@@ -95,6 +96,7 @@ function sendUpdateToPrism(res) {
         newValue: res.value
     };
     sp.write(serializeData(objTx));
+    sp.write("\n");
 }
 function serializeData(obj) {
     return JSON.stringify(obj);

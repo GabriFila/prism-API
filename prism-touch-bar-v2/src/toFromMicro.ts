@@ -7,10 +7,12 @@ let sp: SerialPort = undefined;
 
 export function tryToConnectToMicro() {
   SerialPort.list().then(ports => {
-   // if (ports.some(port => port.vendorId == "2341")) {
-      //let portName = ports.find(port => port.vendorId == "2341").comName.toString();
-     if(ports.length > 0){
-     let portName = ports[0].comName;
+    // if (ports.some(port => port.vendorId == "2341")) {
+    //let portName = ports.find(port => port.vendorId == "2341").comName.toString();
+    if (ports.length > 0) {
+      ports.forEach(port=> console.log(port)
+        )
+      let portName = ports[0].comName;
       console.log(portName);
       sp = new SerialPort(portName, {
         baudRate: 9600,
@@ -47,10 +49,9 @@ parser.on("data", data => {
 });
 
 function updateMicroState(newData: SerialData) {
-
   if (newData.id == "lasers-changed") {
     console.log("arrived laser changed");
-    
+
     let nLasers = (newData.newValue as LaserChange[]).length;
     for (let i = 0; i < nLasers; i++) {
       let newLaser = (newData.newValue as LaserChange[])[i];
@@ -71,7 +72,7 @@ function updateMicroState(newData: SerialData) {
       microState.lasers[i].power.id = `no-laser`;
       microState.lasers[i].isPresent.value = false;
     }
-    observer.send(this,"lasers-changed");
+    observer.send(this, "lasers-changed");
   } else {
     let idEls = newData.id.split("-");
     switch (idEls[0]) {
@@ -99,6 +100,7 @@ function sendUpdateToPrism(res: Resource) {
   };
 
   sp.write(serializeData(objTx));
+  sp.write("\n");
 }
 
 function serializeData(obj: object): string {
