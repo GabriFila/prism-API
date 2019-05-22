@@ -24,11 +24,11 @@
     "typescript": "3.4.5"
   },
   "pkg": {
-    "scripts": "./ts-dist/*.js",
+    "scripts": "./ts-dist/server.js",
     "assets": [
       "./public/**/*",
-      "./ts-dist/toFromPrism.js"
+      "./ts-dist/*.js"
     ]
   },
-  "bin": "./ts-dist/*.js"
+  "bin": "./ts-dist/server.js"
 }
