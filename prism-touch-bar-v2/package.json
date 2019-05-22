@@ -30,5 +30,5 @@
       "./ts-dist/toFromPrism.js"
     ]
   },
-  "bin": "./ts-dist/server.js"
+  "bin": "./ts-dist/*.js"
 }
