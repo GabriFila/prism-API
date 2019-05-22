@@ -27,7 +27,7 @@
     "scripts": "./ts-dist/server.js",
     "assets": [
       "./public/**/*",
-      "./ts-dist/*.js"
+      "./ts-dist/*"
     ]
   },
   "bin": "./ts-dist/server.js"
