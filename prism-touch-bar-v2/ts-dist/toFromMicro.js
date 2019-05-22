@@ -7,8 +7,11 @@ const parser = new SerialPort.parsers.Readline({ delimiter: "\n", includeDelimit
 let sp = undefined;
 function tryToConnectToMicro() {
     SerialPort.list().then(ports => {
-        if (ports.some(port => port.vendorId == "2341")) {
-            let portName = ports.find(port => port.vendorId == "2341").comName.toString();
+        // if (ports.some(port => port.vendorId == "2341")) {
+        //let portName = ports.find(port => port.vendorId == "2341").comName.toString();
+        if (ports.length > 0) {
+            ports.forEach(port => console.log(port));
+            let portName = ports[0].comName;
             console.log(portName);
             sp = new SerialPort(portName, {
                 baudRate: 9600,
@@ -93,6 +96,7 @@ function sendUpdateToPrism(res) {
         newValue: res.value
     };
     sp.write(serializeData(objTx));
+    sp.write("\n");
 }
 function serializeData(obj) {
     return JSON.stringify(obj);
