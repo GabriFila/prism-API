@@ -7,8 +7,10 @@ let sp: SerialPort = undefined;
 
 export function tryToConnectToMicro() {
   SerialPort.list().then(ports => {
-    if (ports.some(port => port.vendorId == "2341")) {
-      let portName = ports.find(port => port.vendorId == "2341").comName.toString();
+   // if (ports.some(port => port.vendorId == "2341")) {
+      //let portName = ports.find(port => port.vendorId == "2341").comName.toString();
+     if(ports.length > 0){
+     let portName = ports[0].comName;
       console.log(portName);
       sp = new SerialPort(portName, {
         baudRate: 9600,
