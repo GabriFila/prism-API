@@ -68,9 +68,9 @@ export function getXYZproperties(scanParams: ScanParams): string[] {
 
 export function updateUIParameters(scanParams: ScanParams) {
   getXYZproperties(scanParams).forEach(prop => {
-    changeScanParam((scanParams[prop] as XYZ).x.id, (scanParams[prop] as XYZ).x.value as number);
-    changeScanParam((scanParams[prop] as XYZ).y.id, (scanParams[prop] as XYZ).y.value as number);
-    changeScanParam((scanParams[prop] as XYZ).z.id, (scanParams[prop] as XYZ).z.value as number);
+    changeScanParam((scanParams[prop] as XYZ).x.id, (scanParams[prop] as XYZ).x.value as number, false);
+    changeScanParam((scanParams[prop] as XYZ).y.id, (scanParams[prop] as XYZ).y.value as number, false);
+    changeScanParam((scanParams[prop] as XYZ).z.id, (scanParams[prop] as XYZ).z.value as number, false);
   });
   (document.getElementById("scanParams-dwellTime") as HTMLInputElement).value = scanParams.dwellTime.value.toString();
 }
@@ -99,8 +99,6 @@ export function changeScanParam(id: string, value: string | number, sendPUT: boo
       Number(dwellTime.value) *
       (Number(pixelNumberX.value) + Number(pixelNumberY.value) + Number(pixelNumberZ.value))
     ).toString();
-
-
   } else {
     let tempElLimit = el;
     tempElLimit.classList.add("limit");

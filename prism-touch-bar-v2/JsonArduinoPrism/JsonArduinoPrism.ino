@@ -74,18 +74,27 @@ void loop() {
     }
   */
   if (Serial.available()) {
+    for (byte i = 0 ; i < 10; i++) {
+      digitalWrite(LED_BUILTIN, HIGH);
+      delay(100);
+      digitalWrite(LED_BUILTIN, LOW);
+      delay(100);
+    }
     deserializeJson(objRx, Serial);
     serializeJson(objRx, Serial);
+    Serial.println();
   }
 
 
 
   // if (millis() % 1000 == 0){
-  if (digitalRead(BUTTON) == HIGH) {
+  /*
+    if (digitalRead(BUTTON) == HIGH) {
     //   digitalWrite(LED_BUILTIN, HIGH);
     sendSomeData();
     delay(200);
-  }
+    }
+  */
 }
 
 

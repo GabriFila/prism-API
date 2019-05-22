@@ -20,7 +20,7 @@ export function setUpMotorsControls() {
         sendPut("prismState/motors/x", (xyMotor.mag * Math.cos(xyMotor.arg)) / xyMotor.maxMag);
         sendPut("prismState/motors/y", (xyMotor.mag * Math.sin(xyMotor.arg)) / xyMotor.maxMag);
       }
-    }, 200);
+    }, 500);
   });
 
   xyMotor.element.addEventListener("touchend", () => clearInterval(intervalCheckerXY));
@@ -32,7 +32,7 @@ export function setUpMotorsControls() {
   zMotor.element.addEventListener("touchstart", () => {
     intervalCheckerZ = setInterval(() => {
       sendPut("prismState/motors/z", Number(zMotor.sliderValue) * Number(zSensBtn.innerHTML.slice(0, -1)));
-    }, 200);
+    }, 500);
   });
 
   zMotor.element.addEventListener("touchend", () => clearInterval(intervalCheckerZ));
