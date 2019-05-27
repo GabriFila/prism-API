@@ -1,6 +1,8 @@
 import * as express from "express";
 import * as path from "path";
 import * as bodyParser from "body-parser";
+import * as dotenv from "dotenv";
+import * as observer from "node-observer";
 
 import { updates } from "./middlewares/routes/updates-route";
 import { prismState } from "./middlewares/routes/prismState-route";
@@ -10,12 +12,15 @@ import { limitsChecker } from "./middlewares/limitsChecker";
 import { responseSender } from "./middlewares/responseSender";
 import { tryToConnectToMicro } from "./toFromMicro";
 
-import * as observer from "node-observer";
+if (process.argv[2] === undefined) {
+  dotenv.config({ path: "./variables.dev.env" });
+} else if (process.argv[2] === "-prod") {
+  dotenv.config({ path: "./variables.prod.env" });
+}
 
 const server = express();
 let isMicroConnected: boolean = false;
 
-//json parser middlware
 server.use(bodyParser.json());
 server.use(bodyChecker);
 
@@ -46,5 +51,5 @@ observer.subscribe(this, "micro-connected", () => {
 tryToConnectToMicro();
 
 //Start server
-let port = process.env.PORT || 5000;
+let port = process.env.PORT;
 server.listen(5000, () => console.log(`Listening from ${port}`));

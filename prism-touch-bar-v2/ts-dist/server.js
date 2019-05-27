@@ -3,16 +3,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");
+const dotenv = require("dotenv");
+const observer = require("node-observer");
 const updates_route_1 = require("./middlewares/routes/updates-route");
 const prismState_route_1 = require("./middlewares/routes/prismState-route");
 const bodyChecker_1 = require("./middlewares/bodyChecker");
 const limitsChecker_1 = require("./middlewares/limitsChecker");
 const responseSender_1 = require("./middlewares/responseSender");
 const toFromMicro_1 = require("./toFromMicro");
-const observer = require("node-observer");
+if (process.argv[2] === undefined) {
+    dotenv.config({ path: "./variables.dev.env" });
+}
+else if (process.argv[2] === "-prod") {
+    dotenv.config({ path: "./variables.prod.env" });
+}
+console.log(process.env.ENV);
 const server = express();
 let isMicroConnected = false;
-//json parser middlware
 server.use(bodyParser.json());
 server.use(bodyChecker_1.bodyChecker);
 //routes
@@ -39,6 +46,6 @@ observer.subscribe(this, "micro-connected", () => {
 });
 toFromMicro_1.tryToConnectToMicro();
 //Start server
-let port = process.env.PORT || 5000;
+let port = process.env.PORT;
 server.listen(5000, () => console.log(`Listening from ${port}`));
 //# sourceMappingURL=server.js.map
