@@ -1,6 +1,6 @@
 import { CircJoystickObj } from "../drag-pinch-joystick/circJoystick";
 import { SliderJoystickObj } from "../drag-pinch-joystick/sliderJoystickObj";
-import { sendPut } from "../toFromAPI";
+import { sendPut } from "./toFromAPI";
 
 const zThumb: HTMLDivElement = document.querySelector("#z-thumb");
 const zSlider: HTMLDivElement = document.querySelector("#z-slider");

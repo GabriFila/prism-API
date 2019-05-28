@@ -1,8 +1,8 @@
-import { MicroState, Resource, Laser } from "../model";
-import { updateUILasersFromLasers, laserUIRows } from "./mainUIparts/lasers";
-import { updateUIParameters, updateLimits, limits, changeScanParam } from "./mainUIparts/scanParameteres";
-import { scanArea, adatapLookSurface } from "./mainUIparts/scanArea";
-import { updateModeBtns } from "./mainUIparts/mode";
+import { MicroState, Resource, Laser } from "../../model";
+import { updateUILasersFromLasers, laserUIRows } from "./lasers";
+import { updateUIParameters, updateLimits, limits, changeScanParam } from "./scanParameteres";
+import { scanArea, adatapLookSurface } from "./scanArea";
+import { updateModeBtns } from "./mode";
 
 const source = new EventSource("/updates");
 

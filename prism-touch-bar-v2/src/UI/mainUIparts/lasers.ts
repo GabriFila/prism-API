@@ -1,5 +1,5 @@
 import { Laser } from "../../model";
-import { sendPut } from "../toFromAPI";
+import { sendPut } from "./toFromAPI";
 
 class LaserUIRow {
   box: HTMLDivElement;

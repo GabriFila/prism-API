@@ -1,6 +1,6 @@
 import { PinchObj } from "../drag-pinch-joystick/pinchObj";
 import { offsetX, offsetY, rangeX, rangeY, limits, changeScanParam } from "./scanParameteres";
-import { sendPut } from "../toFromAPI";
+import { sendPut } from "./toFromAPI";
 
 const inspectArea: HTMLDivElement = document.querySelector("#scan-area");
 const sampleArea: HTMLDivElement = document.querySelector("#total-area");

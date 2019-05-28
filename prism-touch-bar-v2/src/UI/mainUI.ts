@@ -1,6 +1,6 @@
 /*numpad element*/
 import { UIparameters } from "./mainUIparts/scanParameteres";
-import { getCurrentMicroState, sendPut, setUpUpdater } from "./toFromAPI";
+import { getCurrentMicroState, sendPut, setUpUpdater } from "./mainUIparts/toFromAPI";
 import { setUpModeBtns } from "./mainUIparts/mode";
 import { setUpMotorsControls } from "./mainUIparts/motorsControls";
 import { setUpLookSurface } from "./mainUIparts/scanArea";

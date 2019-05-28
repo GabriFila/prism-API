@@ -1,5 +1,5 @@
 import { ScanParams, XYZ } from "../../model";
-import { sendPut } from "../toFromAPI";
+import { sendPut } from "./toFromAPI";
 import { adatapLookSurface } from "./scanArea";
 
 class Limit {
