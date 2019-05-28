@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const pinchObj_1 = require("./drag-pinch-joystick/pinchObj");
+const pinchObj_1 = require("../drag-pinch-joystick/pinchObj");
 const scanParameteres_1 = require("./scanParameteres");
 const toFromAPI_1 = require("../toFromAPI");
 const inspectArea = document.querySelector("#scan-area");

@@ -1,13 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /*numpad element*/
-const scanParameteres_1 = require("./UIparts/scanParameteres");
+const scanParameteres_1 = require("./mainUIparts/scanParameteres");
 const toFromAPI_1 = require("./toFromAPI");
-const mode_1 = require("./UIparts/mode");
-const motorsControls_1 = require("./UIparts/motorsControls");
-const scanArea_1 = require("./UIparts/scanArea");
-const lasers_1 = require("./UIparts/lasers");
-const numpad_1 = require("./UIparts/numpad");
+const mode_1 = require("./mainUIparts/mode");
+const motorsControls_1 = require("./mainUIparts/motorsControls");
+const scanArea_1 = require("./mainUIparts/scanArea");
+const lasers_1 = require("./mainUIparts/lasers");
+const numpad_1 = require("./mainUIparts/numpad");
 /*get microscope state on UI start-up */
 toFromAPI_1.getCurrentMicroState();
 toFromAPI_1.setUpUpdater();

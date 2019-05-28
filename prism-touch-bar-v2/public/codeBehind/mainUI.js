@@ -424,6 +424,55 @@ exports.SliderJoystickObj = SliderJoystickObj;
 },{"./movObj":3}],6:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/*numpad element*/
+const scanParameteres_1 = require("./mainUIparts/scanParameteres");
+const toFromAPI_1 = require("./toFromAPI");
+const mode_1 = require("./mainUIparts/mode");
+const motorsControls_1 = require("./mainUIparts/motorsControls");
+const scanArea_1 = require("./mainUIparts/scanArea");
+const lasers_1 = require("./mainUIparts/lasers");
+const numpad_1 = require("./mainUIparts/numpad");
+/*get microscope state on UI start-up */
+toFromAPI_1.getCurrentMicroState();
+toFromAPI_1.setUpUpdater();
+mode_1.setUpModeBtns();
+lasers_1.setUpLasers();
+numpad_1.setUpNumPad();
+scanArea_1.setUpLookSurface();
+motorsControls_1.setUpMotorsControls();
+//last item in focus
+exports.lastFocus = undefined;
+//remove highlight border only when touching something excluding numpad and selectred parameter
+document.body.addEventListener("click", function (e) {
+    if (exports.lastFocus != null) {
+        if (numpad_1.numPad.filter(numBtn => numBtn === e.target).length == 0) {
+            if (e.target !== numpad_1.delBtn && e.target !== numpad_1.dotBtn)
+                if (scanParameteres_1.UIparameters.filter(param => param === e.target).length == 0) {
+                    removeHighlithBoder();
+                    toFromAPI_1.sendPut(`prismState/${exports.lastFocus.id.replace("-", "/").replace("-", "/")}`, Number(exports.lastFocus.value));
+                    console.log("here");
+                    exports.lastFocus = null;
+                }
+        }
+    }
+});
+//setting up scanning parameters
+//store last parameters input in focus
+scanParameteres_1.UIparameters.forEach(param => {
+    param.addEventListener("touchstart", () => {
+        removeHighlithBoder();
+        exports.lastFocus = param;
+        param.value = "";
+        param.classList.add("highlighted");
+    });
+});
+function removeHighlithBoder() {
+    scanParameteres_1.UIparameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));
+}
+
+},{"./mainUIparts/lasers":7,"./mainUIparts/mode":8,"./mainUIparts/motorsControls":9,"./mainUIparts/numpad":10,"./mainUIparts/scanArea":11,"./mainUIparts/scanParameteres":12,"./toFromAPI":13}],7:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const toFromAPI_1 = require("../toFromAPI");
 class LaserUIRow {
     get isOn() {
@@ -522,7 +571,7 @@ function setUpLasers() {
 }
 exports.setUpLasers = setUpLasers;
 
-},{"../toFromAPI":13}],7:[function(require,module,exports){
+},{"../toFromAPI":13}],8:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const toFromAPI_1 = require("../toFromAPI");
@@ -553,11 +602,11 @@ function updateModeBtns(newValue) {
 }
 exports.updateModeBtns = updateModeBtns;
 
-},{"../toFromAPI":13}],8:[function(require,module,exports){
+},{"../toFromAPI":13}],9:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const circJoystick_1 = require("./drag-pinch-joystick/circJoystick");
-const sliderJoystickObj_1 = require("./drag-pinch-joystick/sliderJoystickObj");
+const circJoystick_1 = require("../drag-pinch-joystick/circJoystick");
+const sliderJoystickObj_1 = require("../drag-pinch-joystick/sliderJoystickObj");
 const toFromAPI_1 = require("../toFromAPI");
 const zThumb = document.querySelector("#z-thumb");
 const zSlider = document.querySelector("#z-slider");
@@ -593,7 +642,7 @@ function setUpMotorsControls() {
 }
 exports.setUpMotorsControls = setUpMotorsControls;
 
-},{"../toFromAPI":13,"./drag-pinch-joystick/circJoystick":1,"./drag-pinch-joystick/sliderJoystickObj":5}],9:[function(require,module,exports){
+},{"../drag-pinch-joystick/circJoystick":1,"../drag-pinch-joystick/sliderJoystickObj":5,"../toFromAPI":13}],10:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const mainUI_1 = require("../mainUI");
@@ -639,10 +688,10 @@ function numPadClick(el, input) {
         return Number(el.value) * 10 + input;
 }
 
-},{"../mainUI":12,"./scanParameteres":11}],10:[function(require,module,exports){
+},{"../mainUI":6,"./scanParameteres":12}],11:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const pinchObj_1 = require("./drag-pinch-joystick/pinchObj");
+const pinchObj_1 = require("../drag-pinch-joystick/pinchObj");
 const scanParameteres_1 = require("./scanParameteres");
 const toFromAPI_1 = require("../toFromAPI");
 const inspectArea = document.querySelector("#scan-area");
@@ -674,7 +723,7 @@ function adatapLookSurface() {
 }
 exports.adatapLookSurface = adatapLookSurface;
 
-},{"../toFromAPI":13,"./drag-pinch-joystick/pinchObj":4,"./scanParameteres":11}],11:[function(require,module,exports){
+},{"../drag-pinch-joystick/pinchObj":4,"../toFromAPI":13,"./scanParameteres":12}],12:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const toFromAPI_1 = require("../toFromAPI");
@@ -786,62 +835,13 @@ function updateLimits(scanParams) {
 }
 exports.updateLimits = updateLimits;
 
-},{"../toFromAPI":13}],12:[function(require,module,exports){
+},{"../toFromAPI":13}],13:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-/*numpad element*/
-const scanParameteres_1 = require("./UIparts/scanParameteres");
-const toFromAPI_1 = require("./toFromAPI");
-const mode_1 = require("./UIparts/mode");
-const motorsControls_1 = require("./UIparts/motorsControls");
-const scanArea_1 = require("./UIparts/scanArea");
-const lasers_1 = require("./UIparts/lasers");
-const numpad_1 = require("./UIparts/numpad");
-/*get microscope state on UI start-up */
-toFromAPI_1.getCurrentMicroState();
-toFromAPI_1.setUpUpdater();
-mode_1.setUpModeBtns();
-lasers_1.setUpLasers();
-numpad_1.setUpNumPad();
-scanArea_1.setUpLookSurface();
-motorsControls_1.setUpMotorsControls();
-//last item in focus
-exports.lastFocus = undefined;
-//remove highlight border only when touching something excluding numpad and selectred parameter
-document.body.addEventListener("click", function (e) {
-    if (exports.lastFocus != null) {
-        if (numpad_1.numPad.filter(numBtn => numBtn === e.target).length == 0) {
-            if (e.target !== numpad_1.delBtn && e.target !== numpad_1.dotBtn)
-                if (scanParameteres_1.UIparameters.filter(param => param === e.target).length == 0) {
-                    removeHighlithBoder();
-                    toFromAPI_1.sendPut(`prismState/${exports.lastFocus.id.replace("-", "/").replace("-", "/")}`, Number(exports.lastFocus.value));
-                    console.log("here");
-                    exports.lastFocus = null;
-                }
-        }
-    }
-});
-//setting up scanning parameters
-//store last parameters input in focus
-scanParameteres_1.UIparameters.forEach(param => {
-    param.addEventListener("touchstart", () => {
-        removeHighlithBoder();
-        exports.lastFocus = param;
-        param.value = "";
-        param.classList.add("highlighted");
-    });
-});
-function removeHighlithBoder() {
-    scanParameteres_1.UIparameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));
-}
-
-},{"./UIparts/lasers":6,"./UIparts/mode":7,"./UIparts/motorsControls":8,"./UIparts/numpad":9,"./UIparts/scanArea":10,"./UIparts/scanParameteres":11,"./toFromAPI":13}],13:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const lasers_1 = require("./UIparts/lasers");
-const scanParameteres_1 = require("./UIparts/scanParameteres");
-const scanArea_1 = require("./UIparts/scanArea");
-const mode_1 = require("./UIparts/mode");
+const lasers_1 = require("./mainUIparts/lasers");
+const scanParameteres_1 = require("./mainUIparts/scanParameteres");
+const scanArea_1 = require("./mainUIparts/scanArea");
+const mode_1 = require("./mainUIparts/mode");
 const source = new EventSource("/updates");
 function setUpUpdater() {
     source.addEventListener("lasers-changed", (event) => {
@@ -902,4 +902,4 @@ function getCurrentMicroState() {
 }
 exports.getCurrentMicroState = getCurrentMicroState;
 
-},{"./UIparts/lasers":6,"./UIparts/mode":7,"./UIparts/scanArea":10,"./UIparts/scanParameteres":11}]},{},[12]);
+},{"./mainUIparts/lasers":7,"./mainUIparts/mode":8,"./mainUIparts/scanArea":11,"./mainUIparts/scanParameteres":12}]},{},[6]);

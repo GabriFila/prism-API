@@ -1,11 +1,11 @@
 /*numpad element*/
-import { UIparameters } from "./UIparts/scanParameteres";
+import { UIparameters } from "./mainUIparts/scanParameteres";
 import { getCurrentMicroState, sendPut, setUpUpdater } from "./toFromAPI";
-import { setUpModeBtns } from "./UIparts/mode";
-import { setUpMotorsControls } from "./UIparts/motorsControls";
-import { setUpLookSurface } from "./UIparts/scanArea";
-import { setUpLasers } from "./UIparts/lasers";
-import { numPad, delBtn, dotBtn, setUpNumPad } from "./UIparts/numpad";
+import { setUpModeBtns } from "./mainUIparts/mode";
+import { setUpMotorsControls } from "./mainUIparts/motorsControls";
+import { setUpLookSurface } from "./mainUIparts/scanArea";
+import { setUpLasers } from "./mainUIparts/lasers";
+import { numPad, delBtn, dotBtn, setUpNumPad } from "./mainUIparts/numpad";
 
 /*get microscope state on UI start-up */
 

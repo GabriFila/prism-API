@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const lasers_1 = require("./UIparts/lasers");
-const scanParameteres_1 = require("./UIparts/scanParameteres");
-const scanArea_1 = require("./UIparts/scanArea");
-const mode_1 = require("./UIparts/mode");
+const lasers_1 = require("./mainUIparts/lasers");
+const scanParameteres_1 = require("./mainUIparts/scanParameteres");
+const scanArea_1 = require("./mainUIparts/scanArea");
+const mode_1 = require("./mainUIparts/mode");
 const source = new EventSource("/updates");
 function setUpUpdater() {
     source.addEventListener("lasers-changed", (event) => {

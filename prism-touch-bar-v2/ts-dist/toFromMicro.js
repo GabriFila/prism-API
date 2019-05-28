@@ -3,8 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const observer = require("node-observer");
 const model_1 = require("./model");
 const SerialPort = require("serialport");
+//parse incoming data on every \n
 const parser = new SerialPort.parsers.Readline({ delimiter: "\n", includeDelimiter: false });
 let sp = undefined;
+//try to connect to serial port
 function tryToConnectToMicro() {
     SerialPort.list().then(ports => {
         if (ports.some(port => port.vendorId == "2341")) {
@@ -43,7 +45,6 @@ parser.on("data", data => {
 });
 function updateMicroState(newData) {
     if (newData.id == "lasers-changed") {
-        console.log("arrived laser changed");
         let nLasers = newData.newValue.length;
         for (let i = 0; i < nLasers; i++) {
             let newLaser = newData.newValue[i];
@@ -67,6 +68,7 @@ function updateMicroState(newData) {
         observer.send(this, "lasers-changed");
     }
     else {
+        // resource value updated
         let idEls = newData.id.split("-");
         switch (idEls[0]) {
             case "scanParams":
