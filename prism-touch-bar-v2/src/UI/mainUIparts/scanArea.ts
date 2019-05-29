@@ -1,4 +1,4 @@
-import { PinchObj } from "../drag-pinch-joystick/pinchObj";
+import { PinchObj } from "../dragPinchJoystick/pinchObj";
 import { offsetX, offsetY, rangeX, rangeY, limits, changeScanParam } from "./scanParameteres";
 import { sendPut } from "./toFromAPI";
 

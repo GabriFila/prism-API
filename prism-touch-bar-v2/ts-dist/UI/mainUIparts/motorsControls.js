@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const circJoystick_1 = require("../drag-pinch-joystick/circJoystick");
-const sliderJoystickObj_1 = require("../drag-pinch-joystick/sliderJoystickObj");
-const toFromAPI_1 = require("../toFromAPI");
+const circJoystick_1 = require("../dragPinchJoystick/circJoystick");
+const sliderJoystickObj_1 = require("../dragPinchJoystick/sliderJoystickObj");
+const toFromAPI_1 = require("./toFromAPI");
 const zThumb = document.querySelector("#z-thumb");
 const zSlider = document.querySelector("#z-slider");
 const joyPad = document.querySelector("#joystick-pad");

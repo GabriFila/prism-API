@@ -426,7 +426,7 @@ exports.SliderJoystickObj = SliderJoystickObj;
 Object.defineProperty(exports, "__esModule", { value: true });
 /*numpad element*/
 const scanParameteres_1 = require("./mainUIparts/scanParameteres");
-const toFromAPI_1 = require("./toFromAPI");
+const toFromAPI_1 = require("./mainUIparts/toFromAPI");
 const mode_1 = require("./mainUIparts/mode");
 const motorsControls_1 = require("./mainUIparts/motorsControls");
 const scanArea_1 = require("./mainUIparts/scanArea");
@@ -470,10 +470,10 @@ function removeHighlithBoder() {
     scanParameteres_1.UIparameters.filter(param => param.classList.contains("highlighted")).forEach(param => param.classList.remove("highlighted"));
 }
 
-},{"./mainUIparts/lasers":7,"./mainUIparts/mode":8,"./mainUIparts/motorsControls":9,"./mainUIparts/numpad":10,"./mainUIparts/scanArea":11,"./mainUIparts/scanParameteres":12,"./toFromAPI":13}],7:[function(require,module,exports){
+},{"./mainUIparts/lasers":7,"./mainUIparts/mode":8,"./mainUIparts/motorsControls":9,"./mainUIparts/numpad":10,"./mainUIparts/scanArea":11,"./mainUIparts/scanParameteres":12,"./mainUIparts/toFromAPI":13}],7:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const toFromAPI_1 = require("../toFromAPI");
+const toFromAPI_1 = require("./toFromAPI");
 class LaserUIRow {
     get isOn() {
         return this._isOn;
@@ -571,10 +571,10 @@ function setUpLasers() {
 }
 exports.setUpLasers = setUpLasers;
 
-},{"../toFromAPI":13}],8:[function(require,module,exports){
+},{"./toFromAPI":13}],8:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const toFromAPI_1 = require("../toFromAPI");
+const toFromAPI_1 = require("./toFromAPI");
 const modeBtns = document.querySelectorAll(".mode-btn");
 function setUpModeBtns() {
     // mode btns events
@@ -602,12 +602,12 @@ function updateModeBtns(newValue) {
 }
 exports.updateModeBtns = updateModeBtns;
 
-},{"../toFromAPI":13}],9:[function(require,module,exports){
+},{"./toFromAPI":13}],9:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const circJoystick_1 = require("../drag-pinch-joystick/circJoystick");
-const sliderJoystickObj_1 = require("../drag-pinch-joystick/sliderJoystickObj");
-const toFromAPI_1 = require("../toFromAPI");
+const circJoystick_1 = require("../dragPinchJoystick/circJoystick");
+const sliderJoystickObj_1 = require("../dragPinchJoystick/sliderJoystickObj");
+const toFromAPI_1 = require("./toFromAPI");
 const zThumb = document.querySelector("#z-thumb");
 const zSlider = document.querySelector("#z-slider");
 const joyPad = document.querySelector("#joystick-pad");
@@ -642,7 +642,7 @@ function setUpMotorsControls() {
 }
 exports.setUpMotorsControls = setUpMotorsControls;
 
-},{"../drag-pinch-joystick/circJoystick":1,"../drag-pinch-joystick/sliderJoystickObj":5,"../toFromAPI":13}],10:[function(require,module,exports){
+},{"../dragPinchJoystick/circJoystick":1,"../dragPinchJoystick/sliderJoystickObj":5,"./toFromAPI":13}],10:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const mainUI_1 = require("../mainUI");
@@ -691,9 +691,9 @@ function numPadClick(el, input) {
 },{"../mainUI":6,"./scanParameteres":12}],11:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const pinchObj_1 = require("../drag-pinch-joystick/pinchObj");
+const pinchObj_1 = require("../dragPinchJoystick/pinchObj");
 const scanParameteres_1 = require("./scanParameteres");
-const toFromAPI_1 = require("../toFromAPI");
+const toFromAPI_1 = require("./toFromAPI");
 const inspectArea = document.querySelector("#scan-area");
 const sampleArea = document.querySelector("#total-area");
 exports.scanArea = new pinchObj_1.PinchObj(inspectArea, sampleArea, 20);
@@ -723,10 +723,10 @@ function adatapLookSurface() {
 }
 exports.adatapLookSurface = adatapLookSurface;
 
-},{"../drag-pinch-joystick/pinchObj":4,"../toFromAPI":13,"./scanParameteres":12}],12:[function(require,module,exports){
+},{"../dragPinchJoystick/pinchObj":4,"./scanParameteres":12,"./toFromAPI":13}],12:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const toFromAPI_1 = require("../toFromAPI");
+const toFromAPI_1 = require("./toFromAPI");
 class Limit {
     constructor(id) {
         this.id = id;
@@ -835,13 +835,13 @@ function updateLimits(scanParams) {
 }
 exports.updateLimits = updateLimits;
 
-},{"../toFromAPI":13}],13:[function(require,module,exports){
+},{"./toFromAPI":13}],13:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const lasers_1 = require("./mainUIparts/lasers");
-const scanParameteres_1 = require("./mainUIparts/scanParameteres");
-const scanArea_1 = require("./mainUIparts/scanArea");
-const mode_1 = require("./mainUIparts/mode");
+const lasers_1 = require("./lasers");
+const scanParameteres_1 = require("./scanParameteres");
+const scanArea_1 = require("./scanArea");
+const mode_1 = require("./mode");
 const source = new EventSource("/updates");
 function setUpUpdater() {
     source.addEventListener("lasers-changed", (event) => {
@@ -902,4 +902,4 @@ function getCurrentMicroState() {
 }
 exports.getCurrentMicroState = getCurrentMicroState;
 
-},{"./mainUIparts/lasers":7,"./mainUIparts/mode":8,"./mainUIparts/scanArea":11,"./mainUIparts/scanParameteres":12}]},{},[6]);
+},{"./lasers":7,"./mode":8,"./scanArea":11,"./scanParameteres":12}]},{},[6]);
