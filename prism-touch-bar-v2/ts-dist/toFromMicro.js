@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const observer = require("node-observer");
 const model_1 = require("./model");
 const SerialPort = require("serialport");
-//parse incoming data on every \n
+//parse incoming serial data on every \n
 const parser = new SerialPort.parsers.Readline({ delimiter: "\n", includeDelimiter: false });
 let sp = undefined;
 //try to connect to serial port
@@ -48,7 +48,7 @@ function tryToConnectToMicro() {
     }
 }
 exports.tryToConnectToMicro = tryToConnectToMicro;
-//gets serial input and parses it
+//get serial input and parse it
 parser.on("data", data => {
     try {
         let objRx = JSON.parse(data);
@@ -61,6 +61,7 @@ parser.on("data", data => {
     }
 });
 function updateMicroState(newData) {
+    //lasers changed event handler
     if (newData.id == "lasers-changed") {
         let nLasers = newData.newValue.length;
         for (let i = 0; i < nLasers; i++) {

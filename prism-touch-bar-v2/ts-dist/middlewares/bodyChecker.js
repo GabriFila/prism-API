@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+//check if PUT request has newValue field
 function bodyChecker(req, res, next) {
     if (req.method == "PUT")
         if ("newValue" in req.body)

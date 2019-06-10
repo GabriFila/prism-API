@@ -1,3 +1,5 @@
+//add required field to express response type 
+
 declare namespace Express {
   export interface Response {
     resource?: Resource;

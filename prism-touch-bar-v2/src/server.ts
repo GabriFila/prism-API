@@ -11,6 +11,7 @@ import { limitsChecker } from "./middlewares/limitsChecker";
 import { responseSender } from "./middlewares/responseSender";
 import { tryToConnectToMicro } from "./toFromMicro";
 
+//set right enviromment variables file
 if (process.argv[2] === undefined) {
   console.log("dev mode");
   dotenv.config({ path: "./variables.dev.env" });
@@ -61,6 +62,6 @@ observer.subscribe(this, "micro-connected", () => {
 //first attemp to connect
 tryToConnectToMicro();
 
-//Start server
+//start server
 let port = process.env.PORT;
 server.listen(port, () => console.log(`Listening from ${port}`));

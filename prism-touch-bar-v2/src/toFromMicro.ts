@@ -2,7 +2,7 @@ import * as observer from "node-observer";
 import { Resource, microState, XYZ, Laser } from "./model";
 import * as SerialPort from "serialport";
 
-//parse incoming data on every \n
+//parse incoming serial data on every \n
 const parser = new SerialPort.parsers.Readline({ delimiter: "\n", includeDelimiter: false });
 let sp: SerialPort = undefined;
 
@@ -49,7 +49,7 @@ export function tryToConnectToMicro() {
   }
 }
 
-//gets serial input and parses it
+//get serial input and parse it
 parser.on("data", data => {
   try {
     let objRx = JSON.parse(data);
@@ -62,6 +62,7 @@ parser.on("data", data => {
 });
 
 function updateMicroState(newData: SerialData) {
+  //lasers changed event handler
   if (newData.id == "lasers-changed") {
     let nLasers = (newData.newValue as LaserChange[]).length;
     for (let i = 0; i < nLasers; i++) {
@@ -119,11 +120,13 @@ function serializeData(obj: object): string {
   return JSON.stringify(obj);
 }
 
+//interface for incoming serial data
 interface SerialData {
   id: string;
   newValue: number | string | boolean | LaserChange[];
 }
 
+//interface for laser change serial event
 interface LaserChange {
   wL: number;
   isOn: boolean;

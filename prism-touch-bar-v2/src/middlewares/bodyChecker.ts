@@ -1,5 +1,6 @@
 import * as express from "express";
 
+//check if PUT request has newValue field
 export function bodyChecker(req: express.Request, res: express.Response, next: express.NextFunction) {
   if (req.method == "PUT")
     if ("newValue" in req.body) next();

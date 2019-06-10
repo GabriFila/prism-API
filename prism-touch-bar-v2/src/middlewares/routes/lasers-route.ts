@@ -8,9 +8,7 @@ lasers.get("/", (req, res) => {
   res.json(microState.lasers);
 });
 
-//request has to have both power and status
 lasers.put("/:param", (req, res, next) => {
-  //there is newValue parameter in request
   if ("waveLength" in req.query) {
     let targetWL = req.query.waveLength;
     if (microState.lasers.some(laser => laser.waveLength.value == targetWL)) {

@@ -7,9 +7,7 @@ exports.lasers = express.Router();
 exports.lasers.get("/", (req, res) => {
     res.json(model_1.microState.lasers);
 });
-//request has to have both power and status
 exports.lasers.put("/:param", (req, res, next) => {
-    //there is newValue parameter in request
     if ("waveLength" in req.query) {
         let targetWL = req.query.waveLength;
         if (model_1.microState.lasers.some(laser => laser.waveLength.value == targetWL)) {

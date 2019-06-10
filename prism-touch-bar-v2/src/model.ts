@@ -27,8 +27,6 @@ export interface Laser {
   isPresent: Resource;
 }
 
-export let microState: MicroState = require("../microState.json");
-
 export interface Resource {
   id: string;
   value: number | boolean | string;
@@ -36,3 +34,6 @@ export interface Resource {
   min?: number;
   max?: number;
 }
+
+//make microstate object from json model
+export let microState: MicroState = require("../microState.json");

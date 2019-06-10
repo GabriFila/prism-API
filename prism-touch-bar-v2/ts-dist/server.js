@@ -11,6 +11,7 @@ const prismState_route_1 = require("./middlewares/routes/prismState-route");
 const limitsChecker_1 = require("./middlewares/limitsChecker");
 const responseSender_1 = require("./middlewares/responseSender");
 const toFromMicro_1 = require("./toFromMicro");
+//set right enviromment variables file
 if (process.argv[2] === undefined) {
     console.log("dev mode");
     dotenv.config({ path: "./variables.dev.env" });
@@ -53,7 +54,7 @@ observer.subscribe(this, "micro-connected", () => {
 });
 //first attemp to connect
 toFromMicro_1.tryToConnectToMicro();
-//Start server
+//start server
 let port = process.env.PORT;
 server.listen(port, () => console.log(`Listening from ${port}`));
 //# sourceMappingURL=server.js.map
