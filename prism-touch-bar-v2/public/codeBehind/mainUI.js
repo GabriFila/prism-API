@@ -450,7 +450,6 @@ document.body.addEventListener("click", function (e) {
                 if (scanParameteres_1.UIparameters.filter(param => param === e.target).length == 0) {
                     removeHighlithBoder();
                     toFromAPI_1.sendPut(`prismState/${exports.lastFocus.id.replace("-", "/").replace("-", "/")}`, Number(exports.lastFocus.value));
-                    console.log("here");
                     exports.lastFocus = null;
                 }
         }
@@ -845,7 +844,6 @@ const mode_1 = require("./mode");
 const source = new EventSource("/updates");
 function setUpUpdater() {
     source.addEventListener("lasers-changed", (event) => {
-        console.log("lasers-changed");
         let lasers = JSON.parse(event.data).lasers;
         lasers_1.updateUILasersFromLasers(lasers);
     });

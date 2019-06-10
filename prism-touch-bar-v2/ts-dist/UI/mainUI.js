@@ -26,7 +26,6 @@ document.body.addEventListener("click", function (e) {
                 if (scanParameteres_1.UIparameters.filter(param => param === e.target).length == 0) {
                     removeHighlithBoder();
                     toFromAPI_1.sendPut(`prismState/${exports.lastFocus.id.replace("-", "/").replace("-", "/")}`, Number(exports.lastFocus.value));
-                    console.log("here");
                     exports.lastFocus = null;
                 }
         }

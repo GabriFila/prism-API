@@ -8,34 +8,48 @@ const parser = new SerialPort.parsers.Readline({ delimiter: "\n", includeDelimit
 let sp = undefined;
 //try to connect to serial port
 function tryToConnectToMicro() {
-    SerialPort.list().then(ports => {
-        if (ports.some(port => port.vendorId == "2341")) {
-            let portName = ports.find(port => port.vendorId == "2341").comName.toString();
-            console.log(portName);
-            sp = new SerialPort(portName, {
-                baudRate: 9600,
-                autoOpen: false
-            });
-            observer.subscribe(this, "update-to-micro", (who, resource) => {
-                sendUpdateToPrism(resource);
-            });
-            observer.send(this, "micro-connected");
-            sp.open(() => console.log(`Serial port ${sp.path} open`));
-            sp.pipe(parser);
-        }
-        else {
-            observer.send(this, "micro-not-connected");
-        }
-    });
+    if (process.env.SERIAL_PORT == "") {
+        observer.send(this, "micro-connected");
+    }
+    else if (process.env.SERIAL_PORT == "auto") {
+        SerialPort.list().then(ports => {
+            if (ports.length > 0) {
+                let portName = ports[0].comName.toString();
+                sp = new SerialPort(portName, {
+                    baudRate: 9600,
+                    autoOpen: false
+                });
+                observer.subscribe(this, "update-to-micro", (who, resource) => {
+                    sendUpdateToPrism(resource);
+                });
+                observer.send(this, "micro-connected");
+                sp.open(() => console.log(`Serial port ${sp.path} open`));
+                sp.pipe(parser);
+            }
+            else {
+                observer.send(this, "micro-not-connected");
+            }
+        });
+    }
+    else {
+        sp = new SerialPort(process.env.SERIAL_PORT, {
+            baudRate: 9600,
+            autoOpen: false
+        });
+        observer.subscribe(this, "update-to-micro", (who, resource) => {
+            sendUpdateToPrism(resource);
+        });
+        observer.send(this, "micro-connected");
+        sp.open(() => console.log(`Serial port ${sp.path} open`));
+        sp.pipe(parser);
+    }
 }
 exports.tryToConnectToMicro = tryToConnectToMicro;
 //gets serial input and parses it
 parser.on("data", data => {
-    console.log("data arrived");
     try {
         let objRx = JSON.parse(data);
         if (objRx != null) {
-            //console.log(objRx);
             updateMicroState(objRx);
         }
     }

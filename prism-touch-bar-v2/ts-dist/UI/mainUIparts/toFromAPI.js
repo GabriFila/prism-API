@@ -7,7 +7,6 @@ const mode_1 = require("./mode");
 const source = new EventSource("/updates");
 function setUpUpdater() {
     source.addEventListener("lasers-changed", (event) => {
-        console.log("lasers-changed");
         let lasers = JSON.parse(event.data).lasers;
         lasers_1.updateUILasersFromLasers(lasers);
     });

@@ -8,8 +8,6 @@ const source = new EventSource("/updates");
 
 export function setUpUpdater() {
   source.addEventListener("lasers-changed", (event: any) => {
-    console.log("lasers-changed");
-    
     let lasers: Laser[] = JSON.parse(event.data).lasers;
     updateUILasersFromLasers(lasers);
   });
@@ -28,7 +26,7 @@ export function setUpUpdater() {
         break;
       case "laser":
         let targetLaserRow = laserUIRows.find(laserRow => laserRow.waveLength == Number(idEls[1]));
-        
+
         switch (idEls[3]) {
           case "isOn":
             targetLaserRow.isOn = resource.value as boolean;

@@ -19,16 +19,13 @@ updates.get("/", (req, res) => {
   observer.subscribe(this, "micro-connected", () => SSEwriteEvent("micro-connected"));
 
   observer.subscribe(this, "lasers-changed", () => {
-    console.log("sent-laser changed");
     
     res.write(`data: ${JSON.stringify({lasers: microState.lasers})}\n`);
     res.write(`event: lasers-changed\n`);
     res.write(`\n`);
   });
 
-  function SSEwriteResource(resource: Resource) {
-    console.log(resource);
-    
+  function SSEwriteResource(resource: Resource) {    
     res.write(`data: ${JSON.stringify({ resource })} \n`);
     res.write(`event: update\n`);
     res.write(`\n`);
