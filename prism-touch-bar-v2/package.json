@@ -4,7 +4,9 @@
   "description": "An express-based api to control prism microscope",
   "main": "server.js",
   "scripts": {
-    "start": "tsc && npm run prepare-mainUI && npm run prepare-connectUI && node ./ts-dist/server.js",
+    "start": "npm run prep && node ./ts-dist/server.js",
+    "prod": "npm run prep && node ./ts-dist/server.js prod",
+    "prep": "tsc && npm run prepare-mainUI && npm run prepare-connectUI",
     "prepare-mainUI": "browserify ts-dist/UI/mainUI.js -o public/codeBehind/mainUI.js",
     "prepare-connectUI": "browserify ts-dist/UI/waitConnectUI.js -o public/codeBehind/waitConnectUI.js",
     "prep-raspi": "pkg package.json --targets node10-linux-armv7 --out-path prod"

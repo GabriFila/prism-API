@@ -12,8 +12,10 @@ import { responseSender } from "./middlewares/responseSender";
 import { tryToConnectToMicro } from "./toFromMicro";
 
 if (process.argv[2] === undefined) {
+  console.log("dev mode");
   dotenv.config({ path: "./variables.dev.env" });
-} else if (process.argv[2] === "-prod") {
+} else if (process.argv[2] === "prod") {
+  console.log("prod mode");
   dotenv.config({ path: "./variables.prod.env" });
 }
 
@@ -45,7 +47,6 @@ server.get("/", (req, res) => {
     res.sendFile(path.join(__dirname + "/../public/views/mainUI.html"));
   } else res.sendFile(path.join(__dirname + "/../public/views/connect.html"));
 });
-
 
 //keeo trying to make a connection when previous attemp failed
 observer.subscribe(this, "micro-not-connected", () => {

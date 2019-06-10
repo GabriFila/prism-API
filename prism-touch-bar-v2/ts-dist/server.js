@@ -12,9 +12,11 @@ const limitsChecker_1 = require("./middlewares/limitsChecker");
 const responseSender_1 = require("./middlewares/responseSender");
 const toFromMicro_1 = require("./toFromMicro");
 if (process.argv[2] === undefined) {
+    console.log("dev mode");
     dotenv.config({ path: "./variables.dev.env" });
 }
-else if (process.argv[2] === "-prod") {
+else if (process.argv[2] === "prod") {
+    console.log("prod mode");
     dotenv.config({ path: "./variables.prod.env" });
 }
 const server = express();
