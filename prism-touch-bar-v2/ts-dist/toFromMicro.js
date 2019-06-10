@@ -8,8 +8,10 @@ const parser = new SerialPort.parsers.Readline({ delimiter: "\n", includeDelimit
 let sp = undefined;
 //try to connect to serial port
 function tryToConnectToMicro() {
+    //simulate connection with microscope
     if (process.env.SERIAL_PORT == "") {
         observer.send(this, "micro-connected");
+        //open available serial port
     }
     else if (process.env.SERIAL_PORT == "auto") {
         SerialPort.list().then(ports => {
@@ -30,6 +32,7 @@ function tryToConnectToMicro() {
                 observer.send(this, "micro-not-connected");
             }
         });
+        //open specific serialport
     }
     else {
         sp = new SerialPort(process.env.SERIAL_PORT, {
