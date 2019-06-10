@@ -11,6 +11,7 @@ prismState.get("/", (req, res, next) => {
   res.status(200).json(microState);
 });
 
+//add routes for specific resources
 prismState.use("/scanParams", scanParams);
 prismState.use("/mode", mode);
 prismState.use("/lasers", lasers);

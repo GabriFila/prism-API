@@ -10,6 +10,7 @@ exports.prismState = express.Router();
 exports.prismState.get("/", (req, res, next) => {
     res.status(200).json(model_1.microState);
 });
+//add routes for specific resources
 exports.prismState.use("/scanParams", scanParams_route_1.scanParams);
 exports.prismState.use("/mode", mode_route_1.mode);
 exports.prismState.use("/lasers", lasers_route_1.lasers);
