@@ -46,7 +46,7 @@ server.use("/public", express.static(path.join(__dirname + "/../public")));
 server.get("/", (req, res) => {
   if (isMicroConnected) {
     res.sendFile(path.join(__dirname + "/../public/views/mainUI.html"));
-  } else res.sendFile(path.join(__dirname + "/../public/views/connect.html"));
+  } else res.sendFile(path.join(__dirname + "/../public/views/waitConnect.html"));
 });
 
 //keeo trying to make a connection when previous attemp failed

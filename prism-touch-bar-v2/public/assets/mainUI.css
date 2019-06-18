@@ -119,6 +119,7 @@ body {
   display: flex;
   flex-direction: column;
   flex: 3;
+  
 }
 
 .param-row {
@@ -130,6 +131,7 @@ body {
 #preset-row {
   display: flex;
   justify-items: center;
+  display: none;
 }
 
 #preset-selector {
