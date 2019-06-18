@@ -41,7 +41,7 @@ server.get("/", (req, res) => {
         res.sendFile(path.join(__dirname + "/../public/views/mainUI.html"));
     }
     else
-        res.sendFile(path.join(__dirname + "/../public/views/connect.html"));
+        res.sendFile(path.join(__dirname + "/../public/views/waitConnect.html"));
 });
 //keeo trying to make a connection when previous attemp failed
 observer.subscribe(this, "micro-not-connected", () => {
