@@ -11,7 +11,7 @@ const prismState_route_1 = require("./middlewares/routes/prismState-route");
 const limitsChecker_1 = require("./middlewares/limitsChecker");
 const responseSender_1 = require("./middlewares/responseSender");
 const toFromMicro_1 = require("./toFromMicro");
-//set right enviromment variables file
+//set right enviromment variables
 if (process.argv[2] === undefined) {
     console.log("dev mode");
     dotenv.config({ path: "./variables.dev.env" });
@@ -31,9 +31,9 @@ server.use("/prismState", prismState_route_1.prismState);
 server.use("/updates", updates_route_1.updates);
 //middleware to check limit
 server.use(limitsChecker_1.limitsChecker);
-//middleware to send succes response back and make necessary updates
+//middleware to send succes response back and make necessary API updates
 server.use(responseSender_1.responseSender);
-//static file to render UI on client
+//static file to render UI on clients
 server.use("/public", express.static(path.join(__dirname + "/../public")));
 //send web app UI or connection waiting screen
 server.get("/", (req, res) => {

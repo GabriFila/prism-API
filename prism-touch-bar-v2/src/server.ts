@@ -57,7 +57,6 @@ observer.subscribe(this, "micro-not-connected", () => {
 //connection succeded
 observer.subscribe(this, "micro-connected", () => {
   isMicroConnected = true;
-  setTimeout(checkIfMicroStillConnected, 1000);
 });
 
 //first attemp to connect
