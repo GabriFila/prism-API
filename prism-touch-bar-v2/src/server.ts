@@ -11,7 +11,7 @@ import { limitsChecker } from "./middlewares/limitsChecker";
 import { responseSender } from "./middlewares/responseSender";
 import { tryToConnectToMicro } from "./toFromMicro";
 
-//set right enviromment variables file
+//set right enviromment variables
 if (process.argv[2] === undefined) {
   console.log("dev mode");
   dotenv.config({ path: "./variables.dev.env" });
@@ -36,10 +36,10 @@ server.use("/updates", updates);
 //middleware to check limit
 server.use(limitsChecker);
 
-//middleware to send succes response back and make necessary updates
+//middleware to send succes response back and make necessary API updates
 server.use(responseSender);
 
-//static file to render UI on client
+//static file to render UI on clients
 server.use("/public", express.static(path.join(__dirname + "/../public")));
 
 //send web app UI or connection waiting screen
@@ -57,6 +57,7 @@ observer.subscribe(this, "micro-not-connected", () => {
 //connection succeded
 observer.subscribe(this, "micro-connected", () => {
   isMicroConnected = true;
+  setTimeout(checkIfMicroStillConnected, 1000);
 });
 
 //first attemp to connect
