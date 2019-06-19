@@ -9,11 +9,11 @@ let sp = undefined;
 //try to connect to serial port
 function tryToConnectToMicro() {
     //simulate connection with microscope
-    if (process.env.SERIAL_PORT == "") {
+    if (process.env.SERIAL_CONNECTION == "none") {
         observer.send(this, "micro-connected");
         //open available serial port
     }
-    else if (process.env.SERIAL_PORT == "auto") {
+    else if (process.env.SERIAL_CONNECTION == "auto") {
         SerialPort.list().then(ports => {
             if (ports.length > 0) {
                 let portName = ports[0].comName.toString();
@@ -34,7 +34,7 @@ function tryToConnectToMicro() {
         });
         //open specific serialport
     }
-    else {
+    else if (process.env.SERIAL_CONNECTION == "port") {
         sp = new SerialPort(process.env.SERIAL_PORT, {
             baudRate: 9600,
             autoOpen: false
@@ -45,6 +45,26 @@ function tryToConnectToMicro() {
         observer.send(this, "micro-connected");
         sp.open(() => console.log(`Serial port ${sp.path} open`));
         sp.pipe(parser);
+    }
+    else if (process.env.SERIAL_CONNECTION == "vendorId") {
+        SerialPort.list().then(ports => {
+            if (ports.length > 0 && ports.some(port => port.vendorId == process.env.SERIAL_VENDOR_ID)) {
+                let portName = ports.find(port => port.vendorId == process.env.SERIAL_VENDOR_ID).comName.toString();
+                sp = new SerialPort(portName, {
+                    baudRate: 9600,
+                    autoOpen: false
+                });
+                observer.subscribe(this, "update-to-micro", (who, resource) => {
+                    sendUpdateToPrism(resource);
+                });
+                observer.send(this, "micro-connected");
+                sp.open(() => console.log(`Serial port opened, vendor id = ${process.env.SERIAL_VENDOR_ID}`));
+                sp.pipe(parser);
+            }
+            else {
+                observer.send(this, "micro-not-connected");
+            }
+        });
     }
 }
 exports.tryToConnectToMicro = tryToConnectToMicro;
