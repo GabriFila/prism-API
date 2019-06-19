@@ -104,6 +104,10 @@ body {
   border-radius: 10%;
 }
 
+.action-icon {
+  font-size: 1em;
+}
+
 .div-action-buttons {
   display: flex;
   flex: 1;
