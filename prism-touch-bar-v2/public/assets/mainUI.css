@@ -71,6 +71,7 @@ body {
 .col {
   display: flex;
   flex-direction: column;
+  border: solid 3px var(--light-gray);
 }
 
 #col-0 {
@@ -228,6 +229,7 @@ body {
   margin: 3px;
 }
 
+/*slider*/
 input[type="range"].slider {
   cursor: pointer;
   flex: 7;
@@ -236,10 +238,11 @@ input[type="range"].slider {
   background-color: var(--sky-blue);
 }
 
+/*slider thuumb*/
 input[type="range"].slider::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 7px;
-  height: 20px;
+  width: 8px;
+  height: 30px;
   background-color: var(--dark-gray);
   border: 1px solid var(--light-gray);
   border-radius: 25%;
