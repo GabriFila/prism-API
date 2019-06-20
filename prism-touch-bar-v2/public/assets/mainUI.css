@@ -71,7 +71,7 @@ body {
 .col {
   display: flex;
   flex-direction: column;
-  border: solid 3px var(--light-gray);
+  border: solid 2px var(--light-gray);
 }
 
 #col-0 {
