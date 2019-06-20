@@ -98,7 +98,7 @@ function updateMicroState(newData: SerialData) {
       microState.lasers[i].isPresent.value = true;
     }
     for (let i = nLasers; i < 4; i++) {
-      microState.lasers[i].waveLength.value = 0;
+      microState.lasers[i].waveLength.value = undefined;
       microState.lasers[i].waveLength.id = `no-laser`;
       microState.lasers[i].isOn.id = `no-laser`;
       microState.lasers[i].power.id = `no-laser`;

@@ -97,7 +97,7 @@ function updateMicroState(newData) {
             model_1.microState.lasers[i].isPresent.value = true;
         }
         for (let i = nLasers; i < 4; i++) {
-            model_1.microState.lasers[i].waveLength.value = 0;
+            model_1.microState.lasers[i].waveLength.value = undefined;
             model_1.microState.lasers[i].waveLength.id = `no-laser`;
             model_1.microState.lasers[i].isOn.id = `no-laser`;
             model_1.microState.lasers[i].power.id = `no-laser`;
