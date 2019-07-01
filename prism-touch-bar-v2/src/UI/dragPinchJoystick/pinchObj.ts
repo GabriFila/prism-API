@@ -1,5 +1,4 @@
 import { DragObj } from "./dragObj";
-import { MovObj } from "./movObj";
 
 export class PinchObj extends DragObj {
   pinchFactor: number;
@@ -43,8 +42,8 @@ export class PinchObj extends DragObj {
           Math.sqrt(Math.pow(e.touches[0].clientX - e.touches[1].clientX, 2) + Math.pow(e.touches[0].clientY - e.touches[1].clientY, 2)) /
           this.initialPinchDistance;
 
-        //limitPinchFactor(this.pinchFactor);
-        this.pinchFactor = Math.pow(this.pinchFactor, 1 / 12);
+        //limit pinchfactor sensibility
+        this.pinchFactor = (this.pinchFactor * 0.0625) + 0.9375;
 
         let aspectRatio = this.elWidth / this.elHeight;
         let newWidth: number = this.elWidth * this.pinchFactor;
