@@ -1,4 +1,3 @@
-/*numpad element*/
 import { UIparameters } from "./mainUIparts/scanParameteres";
 import { getCurrentMicroState, sendPut, setUpUpdater } from "./mainUIparts/toFromAPI";
 import { setUpModeBtns } from "./mainUIparts/mode";
@@ -7,12 +6,13 @@ import { setUpLookSurface } from "./mainUIparts/scanArea";
 import { setUpLasers } from "./mainUIparts/lasers";
 import { numPad, delBtn, dotBtn, setUpNumPad } from "./mainUIparts/numpad";
 
-/*get microscope state on UI start-up */
-
+//get microscope state on UI start-up 
 getCurrentMicroState();
 
+//set up SSE events
 setUpUpdater();
 
+//set up various part of UI
 setUpModeBtns();
 
 setUpLasers();
@@ -23,7 +23,7 @@ setUpLookSurface();
 
 setUpMotorsControls();
 
-//last item in focus
+//last item in focus for right element highlithing
 export let lastFocus: HTMLInputElement = undefined;
 
 //remove highlight border only when touching something excluding numpad and selectred parameter
@@ -40,7 +40,6 @@ document.body.addEventListener("click", function(e) {
   }
 });
 
-//setting up scanning parameters
 //store last parameters input in focus
 UIparameters.forEach(param => {
   param.addEventListener("touchstart", () => {

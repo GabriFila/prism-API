@@ -1,3 +1,5 @@
+
+// interfaces for microstate objects
 export interface MicroState {
   scanParams: ScanParams;
   lasers: Laser[];

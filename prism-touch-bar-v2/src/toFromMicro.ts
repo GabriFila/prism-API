@@ -2,7 +2,7 @@ import * as observer from "node-observer";
 import { Resource, microState, XYZ } from "./model";
 import * as SerialPort from "serialport";
 
-//parse incoming serial data on every \n
+//parse incoming serial data on every '\n'
 const parser = new SerialPort.parsers.Readline({ delimiter: "\n", includeDelimiter: false });
 let sp: SerialPort = undefined;
 
@@ -11,7 +11,7 @@ export function tryToConnectToMicro() {
   //simulate connection with microscope
   if (process.env.SERIAL_CONNECTION == "none") {
     observer.send(this, "micro-connected");
-    //open available serial port
+    //open first available serial port
   } else if (process.env.SERIAL_CONNECTION == "auto") {
     SerialPort.list().then(ports => {
       if (ports.length > 0) {
@@ -46,7 +46,9 @@ export function tryToConnectToMicro() {
     observer.send(this, "micro-connected");
     sp.open(() => console.log(`Serial port ${sp.path} open`));
     sp.pipe(parser);
-  } else if (process.env.SERIAL_CONNECTION == "vendorId") {
+  }
+  //open port winth specific vendorId
+  else if (process.env.SERIAL_CONNECTION == "vendorId") {
     SerialPort.list().then(ports => {
       if (ports.length > 0 && ports.some(port => port.vendorId == process.env.SERIAL_VENDOR_ID)) {
         let portName = ports.find(port => port.vendorId == process.env.SERIAL_VENDOR_ID).comName.toString();
@@ -69,7 +71,7 @@ export function tryToConnectToMicro() {
   }
 }
 
-//get serial input and parse it
+//gparse serial input when it is arrived
 parser.on("data", data => {
   try {
     let objRx = JSON.parse(data);
@@ -81,32 +83,13 @@ parser.on("data", data => {
   }
 });
 
+//user serial input
 function updateMicroState(newData: SerialData) {
-  //lasers changed event handler
+  //handle lasers-changed event 
   if (newData.id == "lasers-changed") {
-    let nLasers = (newData.newValue as LaserChange[]).length;
-    for (let i = 0; i < nLasers; i++) {
-      let newLaser = (newData.newValue as LaserChange[])[i];
-      let newWaveLength = newLaser.wL;
-      microState.lasers[i].waveLength.id = `laser-${newWaveLength}-nm-waveLength`;
-      microState.lasers[i].waveLength.value = newLaser.wL;
-      microState.lasers[i].isOn.id = `laser-${newWaveLength}-nm-isOn`;
-      microState.lasers[i].isOn.value = newLaser.isOn;
-      microState.lasers[i].power.id = `laser-${newWaveLength}-nm-power`;
-      microState.lasers[i].power.value = newLaser.pw;
-      microState.lasers[i].isPresent.id = `laser-${newWaveLength}-nm-isPresent`;
-      microState.lasers[i].isPresent.value = true;
-    }
-    for (let i = nLasers; i < 4; i++) {
-      microState.lasers[i].waveLength.value = undefined;
-      microState.lasers[i].waveLength.id = `no-laser`;
-      microState.lasers[i].isOn.id = `no-laser`;
-      microState.lasers[i].power.id = `no-laser`;
-      microState.lasers[i].isPresent.value = false;
-    }
-    observer.send(this, "lasers-changed");
+    changeLasers(newData);
   } else {
-    // resource value updated
+    //handle resource value update
     let idEls = newData.id.split("-");
     switch (idEls[0]) {
       case "scanParams":
@@ -126,6 +109,32 @@ function updateMicroState(newData: SerialData) {
   }
 }
 
+//to change lasers
+function changeLasers(newData: SerialData) {
+  let nLasers = (newData.newValue as LaserChange[]).length;
+  for (let i = 0; i < nLasers; i++) {
+    let newLaser = (newData.newValue as LaserChange[])[i];
+    let newWaveLength = newLaser.wL;
+    microState.lasers[i].waveLength.id = `laser-${newWaveLength}-nm-waveLength`;
+    microState.lasers[i].waveLength.value = newLaser.wL;
+    microState.lasers[i].isOn.id = `laser-${newWaveLength}-nm-isOn`;
+    microState.lasers[i].isOn.value = newLaser.isOn;
+    microState.lasers[i].power.id = `laser-${newWaveLength}-nm-power`;
+    microState.lasers[i].power.value = newLaser.pw;
+    microState.lasers[i].isPresent.id = `laser-${newWaveLength}-nm-isPresent`;
+    microState.lasers[i].isPresent.value = true;
+  }
+  for (let i = nLasers; i < 4; i++) {
+    microState.lasers[i].waveLength.value = undefined;
+    microState.lasers[i].waveLength.id = `no-laser`;
+    microState.lasers[i].isOn.id = `no-laser`;
+    microState.lasers[i].power.id = `no-laser`;
+    microState.lasers[i].isPresent.value = false;
+  }
+  observer.send(this, "lasers-changed");
+}
+
+//write update on serial port
 function sendUpdateToPrism(res: Resource) {
   let objTx: SerialData = {
     id: res.id,
