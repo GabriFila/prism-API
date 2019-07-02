@@ -8,4 +8,5 @@
     "outDir": "./ts-dist",
     "baseUrl": "."
   },
+  "include": ["src/**/*.ts","test/**/*.ts","types"]
 }

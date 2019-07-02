@@ -38,4 +38,4 @@ export interface Resource {
 }
 
 //make microstate object from json model
-export let microState: MicroState = require("../microState.json");
+export let microState: MicroState = require("../../microState.json");

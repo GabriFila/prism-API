@@ -20,7 +20,7 @@ if (process.argv[2] === undefined) {
   dotenv.config({ path: "./variables.prod.env" });
 }
 
-const server = express();
+export const server = express();
 let isMicroConnected: boolean = false;
 
 //middleware to parse body
@@ -40,13 +40,13 @@ server.use(limitsChecker);
 server.use(responseSender);
 
 //static file to render UI on clients
-server.use("/public", express.static(path.join(__dirname + "/../public")));
+server.use("/public", express.static(path.join(__dirname + "/../../public")));
 
 //send web app UI or connection waiting screen
 server.get("/", (req, res) => {
   if (isMicroConnected) {
-    res.sendFile(path.join(__dirname + "/../public/views/mainUI.html"));
-  } else res.sendFile(path.join(__dirname + "/../public/views/waitConnect.html"));
+    res.sendFile(path.join(__dirname + "/../../public/views/mainUI.html"));
+  } else res.sendFile(path.join(__dirname + "/../../public/views/waitConnect.html"));
 });
 
 //keeo trying to make a connection when previous attemp failed
