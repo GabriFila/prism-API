@@ -4,7 +4,7 @@
   "description": "An express-based api to control prism microscope",
   "main": "server.js",
   "scripts": {
-    "test": "tsc && mocha ts-dist/test --recursive --exit || true",
+    "test": "tsc && mocha ts-dist/test --recursive --exit",
     "start": "npm run prep && node ./ts-dist/src/server.js",
     "prod": "npm run prep && node ./ts-dist/src/server.js prod",
     "prep": "tsc && npm run prepare-mainUI && npm run prepare-connectUI",
@@ -30,6 +30,7 @@
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
     "mocha": "^6.1.4",
+    "nyc": "^14.1.1",
     "pkg": "^4.4.0",
     "typescript": "3.4.5"
   },
