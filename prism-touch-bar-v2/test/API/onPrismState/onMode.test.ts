@@ -7,7 +7,7 @@ chai.use(chaiHttp);
 
 const expect = chai.expect;
 
-describe("on /mode ", () => {
+describe("on prismState/mode ", () => {
   it("GET correct", done => {
     chai
       .request(server)

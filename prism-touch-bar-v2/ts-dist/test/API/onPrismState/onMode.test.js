@@ -5,7 +5,7 @@ const chai = require("chai");
 const chaiHttp = require("chai-http");
 chai.use(chaiHttp);
 const expect = chai.expect;
-describe("on /mode ", () => {
+describe("on prismState/mode ", () => {
     it("GET correct", done => {
         chai
             .request(server_1.server)

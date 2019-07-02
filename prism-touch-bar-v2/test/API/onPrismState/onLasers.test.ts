@@ -7,7 +7,7 @@ chai.use(chaiHttp);
 
 const expect = chai.expect;
 
-describe("on /lasers ", () => {
+describe("on prismState/lasers ", () => {
   it("PUT correct", done => {
     chai
       .request(server)
