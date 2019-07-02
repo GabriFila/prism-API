@@ -18,4 +18,4 @@ describe("on /prismState ", () => {
         });
     });
 });
-//# sourceMappingURL=api.test.js.map
+//# sourceMappingURL=onPrismState.test.js.map
