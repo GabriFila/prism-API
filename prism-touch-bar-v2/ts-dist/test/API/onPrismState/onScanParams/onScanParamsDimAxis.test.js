@@ -5,6 +5,7 @@ const chai = require("chai");
 const chaiHttp = require("chai-http");
 chai.use(chaiHttp);
 const expect = chai.expect;
+const should = chai.should();
 describe("On /scanParams/:dim/:axis", () => {
     it("PUT correct", done => {
         chai

@@ -4,6 +4,7 @@ import * as chai from "chai";
 import chaiHttp = require("chai-http");
 
 chai.use(chaiHttp);
+const should = chai.should();
 
 describe("on /prismState ", () => {
   it("GET", done => {

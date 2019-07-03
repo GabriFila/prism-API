@@ -6,6 +6,7 @@ import chaiHttp = require("chai-http");
 chai.use(chaiHttp);
 
 const expect = chai.expect;
+const should = chai.should();
 
 describe("On /scanParams/:dim", () => {
   it("PUT correct", done => {

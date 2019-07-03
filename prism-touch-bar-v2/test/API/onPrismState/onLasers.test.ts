@@ -6,6 +6,7 @@ import chaiHttp = require("chai-http");
 chai.use(chaiHttp);
 
 const expect = chai.expect;
+const should = chai.should();
 
 describe("on prismState/lasers ", () => {
   it("PUT correct", done => {
@@ -17,6 +18,8 @@ describe("on prismState/lasers ", () => {
         newValue: 70
       })
       .end((err, res) => {
+console.log(res);
+
         res.should.have.status(200);
         res.body.should.have.property("newValue");
         expect(res.body.newValue).to.be.equal(70);
