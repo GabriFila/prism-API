@@ -2,7 +2,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  cursor: none;
+  /*cursor: none;*/
 }
 
 :root {
@@ -94,25 +94,29 @@ body {
 #start-sector {
   display: flex;
   flex: 1;
+  align-items: center;
 }
-
-
-.div-action-buttons {
-  display: flex;
-  flex: 1;
-}
-
-.mode-btn {
-  width: 20%;
-  height: 20%;
-  margin: auto;
-  font-size: 1.5em;
-  border: none;
-  border-radius: 10%;
+#logo-container {
+  flex:4;
 }
 
 #logo {
+  flex: 1;
+  max-width:100%;
+}
 
+#mode-btn-container {
+  flex:9;
+  display: flex;
+}
+
+.mode-btn {
+  height: 20%;
+  font-size: 1.5em;
+  flex:1;
+  border: none;
+  border-radius: 10%;
+  margin: auto 9px;
 }
 
 .action-icon {
@@ -168,7 +172,6 @@ body {
 .left-param-label {
   flex: 4;
   font-size: 1.1em;
-  /*text-align: center;*/
   padding-left: 20px;
 }
 
@@ -215,7 +218,6 @@ body {
   flex: 1;
   display: flex;
   align-items: center;
-  border: 2px solid yellow;
 }
 
 .slider-labels {
