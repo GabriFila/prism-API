@@ -85,15 +85,19 @@ function setUpLasers() {
             let tempValue = laserUIRow.slider.value;
             laserUIRow.powerLabel.innerHTML = tempValue + "%";
         });
-        laserUIRow.slider.addEventListener("touchend", () => {
+        laserUIRow.slider.addEventListener("touchend", laserSliderMoved);
+        laserUIRow.slider.addEventListener("mouseup", laserSliderMoved);
+        function laserSliderMoved() {
             let tempValue = laserUIRow.slider.value;
             laserUIRow.powerLabel.innerHTML = tempValue + "%";
             toFromAPI_1.sendPut(`prismState/lasers/power?waveLength=${laserUIRow.waveLength}`, Number(laserUIRow.power));
-        });
-        laserUIRow.btn.addEventListener("mouseup", () => {
+        }
+        laserUIRow.btn.addEventListener("touchend", onOffBtnChanged);
+        laserUIRow.btn.addEventListener("mouseup", onOffBtnChanged);
+        function onOffBtnChanged() {
             laserUIRow.isOn = !laserUIRow.isOn;
             toFromAPI_1.sendPut(`prismState/lasers/isOn?waveLength=${laserUIRow.waveLength}`, laserUIRow.isOn);
-        });
+        }
     });
 }
 exports.setUpLasers = setUpLasers;

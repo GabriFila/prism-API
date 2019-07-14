@@ -8,20 +8,24 @@ const sampleArea = document.querySelector("#total-area");
 exports.scanArea = new pinchObj_1.PinchObj(inspectArea, sampleArea, 20);
 function setUpLookSurface() {
     //update own UI parameters
-    exports.scanArea.area.addEventListener("touchmove", () => {
+    exports.scanArea.area.addEventListener("touchmove", scanAreaMoving);
+    exports.scanArea.area.addEventListener("mousemove", scanAreaMoving);
+    function scanAreaMoving() {
         scanParameteres_1.changeScanParam(scanParameteres_1.offsetX.id, (exports.scanArea.leftRelPos * scanParameteres_1.limits.find(limit => limit.id == scanParameteres_1.offsetX.id).max) / exports.scanArea.areaWidth, false);
         scanParameteres_1.changeScanParam(scanParameteres_1.offsetY.id, (exports.scanArea.topRelPos * scanParameteres_1.limits.find(limit => limit.id == scanParameteres_1.offsetY.id).max) / exports.scanArea.areaHeight, false);
         scanParameteres_1.changeScanParam(scanParameteres_1.rangeX.id, (exports.scanArea.elWidth * scanParameteres_1.limits.find(limit => limit.id == scanParameteres_1.rangeX.id).max) / exports.scanArea.areaWidth, false);
         scanParameteres_1.changeScanParam(scanParameteres_1.rangeY.id, (exports.scanArea.elHeight * scanParameteres_1.limits.find(limit => limit.id == scanParameteres_1.rangeY.id).max) / exports.scanArea.areaHeight, false);
-    });
+    }
     window.addEventListener("resize", adatapLookSurface);
     //send parameter change when untouched
-    exports.scanArea.area.addEventListener("touchend", () => {
+    exports.scanArea.area.addEventListener("touchend", scanAreaMoved);
+    exports.scanArea.area.addEventListener("mouseup", scanAreaMoved);
+    function scanAreaMoved() {
         toFromAPI_1.sendPut("prismState/scanParams/offset/x", Number(scanParameteres_1.offsetX.value));
         toFromAPI_1.sendPut("prismState/scanParams/offset/y", Number(scanParameteres_1.offsetY.value));
         toFromAPI_1.sendPut("prismState/scanParams/range/x", Number(scanParameteres_1.rangeX.value));
         toFromAPI_1.sendPut("prismState/scanParams/range/y", Number(scanParameteres_1.rangeY.value));
-    });
+    }
 }
 exports.setUpLookSurface = setUpLookSurface;
 function adatapLookSurface() {

@@ -18,8 +18,6 @@ describe("on prismState/lasers ", () => {
         newValue: 70
       })
       .end((err, res) => {
-console.log(res);
-
         res.should.have.status(200);
         res.body.should.have.property("newValue");
         expect(res.body.newValue).to.be.equal(70);

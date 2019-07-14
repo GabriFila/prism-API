@@ -21,10 +21,7 @@ class LaserUIRow {
     return this._visible;
   }
   public set visible(value: boolean) {
-    if (!value) 
-      this.box.style.display = "none";
-    
-
+    if (!value) this.box.style.display = "none";
     this._visible = value;
   }
   position: number;
@@ -111,15 +108,21 @@ export function setUpLasers() {
       let tempValue = laserUIRow.slider.value;
       laserUIRow.powerLabel.innerHTML = tempValue + "%";
     });
-    laserUIRow.slider.addEventListener("touchend", () => {
+    laserUIRow.slider.addEventListener("touchend", laserSliderMoved);
+    laserUIRow.slider.addEventListener("mouseup", laserSliderMoved);
+
+    function laserSliderMoved() {
       let tempValue = laserUIRow.slider.value;
       laserUIRow.powerLabel.innerHTML = tempValue + "%";
       sendPut(`prismState/lasers/power?waveLength=${laserUIRow.waveLength}`, Number(laserUIRow.power));
-    });
+    }
 
-    laserUIRow.btn.addEventListener("mouseup", () => {
+    laserUIRow.btn.addEventListener("touchend", onOffBtnChanged);
+    laserUIRow.btn.addEventListener("mouseup", onOffBtnChanged);
+
+    function onOffBtnChanged() {
       laserUIRow.isOn = !laserUIRow.isOn;
       sendPut(`prismState/lasers/isOn?waveLength=${laserUIRow.waveLength}`, laserUIRow.isOn);
-    });
+    }
   });
 }

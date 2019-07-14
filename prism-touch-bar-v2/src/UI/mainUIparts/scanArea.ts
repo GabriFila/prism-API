@@ -8,22 +8,28 @@ export const scanArea = new PinchObj(inspectArea, sampleArea, 20);
 
 export function setUpLookSurface() {
   //update own UI parameters
-  scanArea.area.addEventListener("touchmove", () => {
+  scanArea.area.addEventListener("touchmove", scanAreaMoving);
+  scanArea.area.addEventListener("mousemove", scanAreaMoving);
+
+  function scanAreaMoving() {
     changeScanParam(offsetX.id, (scanArea.leftRelPos * limits.find(limit => limit.id == offsetX.id).max) / scanArea.areaWidth, false);
     changeScanParam(offsetY.id, (scanArea.topRelPos * limits.find(limit => limit.id == offsetY.id).max) / scanArea.areaHeight, false);
     changeScanParam(rangeX.id, (scanArea.elWidth * limits.find(limit => limit.id == rangeX.id).max) / scanArea.areaWidth, false);
     changeScanParam(rangeY.id, (scanArea.elHeight * limits.find(limit => limit.id == rangeY.id).max) / scanArea.areaHeight, false);
-  });
+  }
 
   window.addEventListener("resize", adatapLookSurface);
 
   //send parameter change when untouched
-  scanArea.area.addEventListener("touchend", () => {
+  scanArea.area.addEventListener("touchend", scanAreaMoved);
+  scanArea.area.addEventListener("mouseup", scanAreaMoved);
+
+  function scanAreaMoved() {
     sendPut("prismState/scanParams/offset/x", Number(offsetX.value));
     sendPut("prismState/scanParams/offset/y", Number(offsetY.value));
     sendPut("prismState/scanParams/range/x", Number(rangeX.value));
     sendPut("prismState/scanParams/range/y", Number(rangeY.value));
-  });
+  }
 }
 
 export function adatapLookSurface() {
