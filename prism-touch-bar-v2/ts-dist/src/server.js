@@ -5,6 +5,7 @@ const path = require("path");
 const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
 const observer = require("node-observer");
+const morgan = require("morgan");
 const bodyChecker_1 = require("./middlewares/bodyChecker");
 const updates_route_1 = require("./middlewares/routes/updates-route");
 const prismState_route_1 = require("./middlewares/routes/prismState-route");
@@ -22,6 +23,10 @@ else if (process.argv[2] === "prod") {
 }
 exports.server = express();
 let isMicroConnected = false;
+//morgan logger middleware
+if (process.env.ENV == "dev") {
+    exports.server.use(morgan("tiny"));
+}
 //middleware to parse body
 exports.server.use(bodyParser.json());
 //middleware to check if body has newValue field

@@ -3,6 +3,7 @@ import * as path from "path";
 import * as bodyParser from "body-parser";
 import * as dotenv from "dotenv";
 import * as observer from "node-observer";
+import * as morgan from "morgan";
 
 import { bodyChecker } from "./middlewares/bodyChecker";
 import { updates } from "./middlewares/routes/updates-route";
@@ -22,6 +23,11 @@ if (process.argv[2] === undefined) {
 
 export const server = express();
 let isMicroConnected: boolean = false;
+
+//morgan logger middleware
+if (process.env.ENV == "dev") {
+  server.use(morgan("tiny"));
+}
 
 //middleware to parse body
 server.use(bodyParser.json());
